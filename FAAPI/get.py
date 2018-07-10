@@ -36,8 +36,11 @@ class FAGet():
             return None
 
     def getParse(self, Session, url, **params):
+        self.Log(f'FAGet getParse -> url:{url} params:{params}')
         get = self.get(Session, url, **params)
         get = bs4.BeautifulSoup(get.text, 'lxml') if get else None
+
+        self.Log(f'FAGet getParse -> {"success" if get else "fail"}')
 
         return get
 
