@@ -14,8 +14,8 @@ class FAGet():
         self.Log     = logger
 
     def get(self, Session, url, **params):
-        url = f'{FAGet.base_url.strip("/")}/{url.strip("/")}/'
         self.Log(f'FAGet get -> url:{url} params:{params}')
+        url = f'{FAGet.base_url.strip("/")}/{url.strip("/")}/'
 
         t = FAGet.interval - time.time() - self.lastget
         if t > 0:
