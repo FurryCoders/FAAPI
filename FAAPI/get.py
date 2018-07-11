@@ -17,9 +17,9 @@ class FAGet():
         self.Log(f'FAGet get -> url:{url} params:{params}')
         url = f'{FAGet.base_url.strip("/")}/{url.strip("/")}/'
 
-        t = FAGet.interval - time.time() - self.lastget
+        t = FAGet.interval - (time.time() - self.lastget)
         if t > 0:
-            self.Log(f'FAGet get -> wait {t} secs')
+            self.Log(f'FAGet get -> wait {t:.1f} secs')
             time.sleep(t)
 
         self.lastget = time.time()
