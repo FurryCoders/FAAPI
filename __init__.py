@@ -1,1 +1,1 @@
-from .FAAPI import *
+from .faapi import *
