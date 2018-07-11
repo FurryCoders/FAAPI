@@ -15,3 +15,17 @@ class FAAPI():
     def getParse(self, url, **params):
         self.Log(f'FAAPI getParse -> {url} {params}')
         return self.Get.getParse(self.Session.Session, url, **params)
+
+    def gallery(self, user, page=1):
+        self.Log(f'FAAPI gallery -> user:{user} page:{page}')
+        if type(page) != int or page < 1:
+            raise TypeError('page argument needs to be an integer greater then 1')
+
+        return self.Get.pageFindAll(self.Session.Session, f'/gallery/{user}/{page}', name='figure')
+
+    def scraps(self, user, page=1):
+        self.Log(f'FAAPI scraps -> user:{user} page:{page}')
+        if type(page) != int or page < 1:
+            raise TypeError('page argument needs to be an integer greater then 1')
+
+        return self.Get.pageFindAll(self.Session.Session, f'/scraps/{user}/{page}', name='figure')
