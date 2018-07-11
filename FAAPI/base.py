@@ -50,3 +50,18 @@ class FAAPI():
         next = (next[0].get('href', ''))[11+len(user):] if next else ''
 
         return [subs, next]
+
+    def search(self, q='', **params):
+        self.Log(f'FAAPI favorites -> params:{params}')
+        if not q and not params.get('q', ''):
+            raise TypeError('cannot search with empty "q" parameter')
+
+        params['q'] = params.get('q', q)
+
+        page = self.Get.getParse(self.Session.Session, '/search/', **params)
+
+        subs = self.Page.pageFindAll(page, name='figure') if page else []
+        next = self.Page.pageFind(page, name='input', class_='button') if page else ''
+        next = bool(next)
+
+        return [subs, next]
