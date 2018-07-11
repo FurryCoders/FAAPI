@@ -26,7 +26,7 @@ class FAAPI():
         page = self.Get.getParse(self.Session.Session, f'/gallery/{user}/{page}')
         page = self.Page.pageFindAll(page, name='figure') if page else []
 
-        return page
+        return [page, f'/gallery/{user}/{page+1}']
 
     def scraps(self, user, page=1):
         self.Log(f'FAAPI scraps -> user:{user} page:{page}')
@@ -36,4 +36,4 @@ class FAAPI():
         page = self.Get.getParse(self.Session.Session, f'/scraps/{user}/{page}')
         page = self.Page.pageFindAll(page, name='figure') if page else []
 
-        return page
+        return [page, f'/scraps/{user}/{page+1}']
