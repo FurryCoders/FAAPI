@@ -4,7 +4,8 @@ import json
 import cfscrape
 import requests
 
-from .get import FAGet
+from .get  import FAGet
+from .page import FAPage
 
 default_cookies_f = 'FA.cookies.json'
 
@@ -39,7 +40,8 @@ class FASession():
         for cookie in self.cookies:
             self.Session.cookies.set(cookie['name'], cookie['value'])
 
-        check_p = FAGet(self.Log).pageFind(self.Session, '/controls/settings/', name='a', id='my-username')
+        check_p = FAGet(self.Log).getParse(self.Session, '/controls/settings/')
+        check_p = FAPage(self.Log).pageFind(check_p, name='a', id='my-username')
 
         if not check_p:
             self.Log('FASession makeSession -> failed cookies check')

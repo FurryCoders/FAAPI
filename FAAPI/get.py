@@ -43,30 +43,3 @@ class FAGet():
         self.Log(f'FAGet getParse -> {"success" if get else "fail"}')
 
         return get
-
-
-    def pageFind(self, Session, url, **kwargs):
-        self.Log(f'FAGet pageFind -> url:{url} kwargs:{kwargs}')
-        page = self.get(Session, url)
-        page = bs4.BeautifulSoup(page.text, 'lxml') if page else None
-
-        if kwargs and page:
-            find = page.find(**kwargs)
-            self.Log(f'FAGet pageFind -> {len(find)} items')
-            return find
-        else:
-            self.Log(f'FAGet pageFind -> fail')
-            return False
-
-    def pageFindAll(self, Session, url, **kwargs):
-        self.Log(f'FAGet pageFindAll -> url:{url} kwargs:{kwargs}')
-        page = self.get(Session, url)
-        page = bs4.BeautifulSoup(page.text, 'lxml') if page else None
-
-        if kwargs and page:
-            find = page.findAll(**kwargs)
-            self.Log(f'FAGet pageFindAll -> {len(find)} items')
-            return find
-        else:
-            self.Log(f'FAGet pageFindAll -> fail')
-            return False
