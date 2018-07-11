@@ -37,3 +37,16 @@ class FAAPI():
         page = self.Page.pageFindAll(page, name='figure') if page else []
 
         return [page, f'/scraps/{user}/{page+1}']
+
+    def favorites(self, user, page=''):
+        self.Log(f'FAAPI favorites -> user:{user} page:{page}')
+        if type(page) != str:
+            raise TypeError('page argument needs to be strs')
+
+        page = self.Get.getParse(self.Session.Session, f'/favorites/{user}/{page.strip("/")}')
+
+        subs = self.Page.pageFindAll(page, name='figure') if page else []
+        next = self.Page.pageFind(page, name='a', class_='button mobile-button right') if page else []
+        next = (next[0].get('href', ''))[11+len(user):] if next else ''
+
+        return [subs, next]
