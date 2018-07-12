@@ -26,8 +26,9 @@ class FASub():
         if str(type(sub)) not in ("<class 'bs4.BeautifulSoup'>", "<class 'NoneType'>"):
             raise TypeError('sub needs to be of type bs4.BeautifulSoup')
 
-        self.sub = sub
-        self.Log = logger
+        self.sub  = sub
+        self.file = None
+        self.Log  = logger
 
         self.analyze()
 
@@ -116,3 +117,11 @@ class FASub():
         self.filelink = self.sub.find('a', 'button download-logged-in')
         self.filelink = "https:" + self.filelink['href'] if self.filelink else ''
         self.Log(f'FASub analyze -> filelink:{bool(self.filelink)}')
+
+    def getFile(self, getBinary=None):
+        self.Log(f'FASub getFile -> sub:{bool(self.sub)} filelink:{bool(self.filelink)}')
+        if not self.filelink or not getBinary:
+            self.file = None
+            return
+
+        self.file = getBinary(self.filelink)

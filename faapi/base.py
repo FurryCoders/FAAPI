@@ -20,12 +20,14 @@ class FAAPI():
         self.Log(f'FAAPI getParse -> {url} {params}')
         return self.Get.getParse(url, **params)
 
-    def getSub(self, ID):
+    def getSub(self, ID, file=False):
         self.Log(f'FAAPI getSub -> ID:{ID}')
         if type(ID) != int and not str(ID).isdigit():
             raise TypeError('ID needs to be an integer or string of integers')
 
         sub = self.getParse(f'/view/{ID}')
+        if file:
+            sub.getBinary(self.Get.getBinary)
         return FASub(sub, logger=self.LogV)
 
     def gallery(self, user, page=1):
