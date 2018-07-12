@@ -27,13 +27,18 @@ class FASession():
             self.Log('FASession makeSession -> failed ping')
             return
 
-        if not self.cookies and os.path.isfile(self.cookies_f):
-            with open(self.cookies_f, 'r') as f:
-                try:
-                    self.cookies = json.load(f)
-                except:
-                    self.Log('FASession makeSession -> failed file')
-                    return
+        if not self.cookies:
+            if os.path.isfile(self.cookies_f):
+                with open(self.cookies_f, 'r') as f:
+                    try:
+                        self.cookies = json.load(f)
+                        self.Log('FASession makeSession -> read cookies file')
+                    except:
+                        self.Log('FASession makeSession -> failed cookies file')
+                        return
+            else:
+                self.Log('FASession makeSession -> no cookies found')
+                return
 
         self.cookies = [{'name': c['name'], 'value': c['value']} for c in self.cookies if type(c) == dict and 'name' in c and 'value' in c]
 
