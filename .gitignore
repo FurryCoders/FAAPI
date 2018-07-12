@@ -105,4 +105,4 @@ ENV/
 *.cookies.json
 
 # api test files
-apitest*.py
+apitest*
