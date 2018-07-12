@@ -12,10 +12,10 @@ class FAPage():
 
         if page:
             find = page.findAll(limit=1, **kwargs)
-            self.Log(f'FAGet pageFind -> {len(find)} items')
+            self.Log(f'FAPage pageFind -> {len(find)} items')
             return find
         else:
-            self.Log(f'FAGet pageFind -> fail')
+            self.Log(f'FAPage pageFind -> fail')
             return None
 
     def pageFindAll(self, page, **kwargs):
@@ -27,8 +27,8 @@ class FAPage():
 
         if page:
             find = page.findAll(**kwargs)
-            self.Log(f'FAGet pageFindAll -> {len(find)} items')
+            self.Log(f'FAPage pageFindAll -> {len(find)} items')
             return find
         else:
-            self.Log(f'FAGet pageFindAll -> fail')
+            self.Log(f'FAPage pageFindAll -> fail')
             return None
