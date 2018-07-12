@@ -31,6 +31,14 @@ class FAAPI():
             sub.getFile(self.Get.getBinary)
         return sub
 
+    def userpage(self, user):
+        self.Log(f'FAAPI userpage -> user:{user}')
+
+        page = self.Get.getParse(f'/user/{user}/')
+        page = self.Page.pageFind(page, name='div', class_='userpage-layout-profile-container link-override')[0] if page else ''
+
+        return page
+
     def gallery(self, user, page=1):
         self.Log(f'FAAPI gallery -> user:{user} page:{page}')
         if type(page) != int or page < 1:
