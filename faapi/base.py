@@ -11,6 +11,7 @@ class FAAPI():
         self.Page    = FAPage(logger_verb)
         self.Log     = logger_norm
         self.LogV    = logger_verb
+        logger_norm('FAAPI -> init complete')
 
     def get(self, url, **params):
         self.Log(f'FAAPI get -> {url} {params}')

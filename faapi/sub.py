@@ -31,6 +31,7 @@ class FASub():
         self.Log  = logger
 
         self.analyze()
+        logger('FASub -> init complete')
 
     def __iter__(self):
         yield 'id',       self.id

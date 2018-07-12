@@ -18,6 +18,7 @@ class FASession():
         self.Log       = logger
 
         self.makeSession()
+        logger('FASession -> init complete')
 
     def makeSession(self):
         self.Log('FASession makeSession -> start')
