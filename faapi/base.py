@@ -9,6 +9,7 @@ class FAAPI():
         self.Get     = FAGet(logger_verb)
         self.Page    = FAPage(logger_verb)
         self.Log     = logger_norm
+        self.LogV    = logger_verb
 
     def get(self, url, **params):
         self.Log(f'FAAPI get -> {url} {params}')
