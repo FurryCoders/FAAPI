@@ -27,7 +27,7 @@ class FASub():
             raise TypeError('sub needs to be of type bs4.BeautifulSoup')
 
         self.sub  = sub
-        self.file = None
+        self.file = bytes()
         self.Log  = logger
 
         self.analyze()
@@ -121,7 +121,6 @@ class FASub():
     def getFile(self, getBinary=None):
         self.Log(f'FASub getFile -> sub:{bool(self.sub)} filelink:{bool(self.filelink)}')
         if not self.filelink or not getBinary:
-            self.file = None
             return
 
         self.file = getBinary(self.filelink)
