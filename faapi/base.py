@@ -6,20 +6,20 @@ from .page    import FAPage
 from .sub     import FASub
 
 class FAAPI():
-    def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda x: None), logger_verb=(lambda x: None), logger_warn=(lambda x: None)):
-        if any(not callable(log) for log in (logger_norm, logger_verb, logger_warn)):
+    def __init__(self, cookies_f='', cookies_l=[], **loggers):
+        if any(not callable(log) for log in loggers.values()):
             raise TypeError('logger arguments need to be functions')
-        elif any(len(getargspec(log)[0]) < 1 for log in (logger_norm, logger_verb, logger_warn)):
+        elif any(len(getargspec(log)[0]) < 1 for log in loggers.values()):
             raise TypeError('logger arguments need to accept at least one argument')
 
-        logger_norm('FAAPI -> init')
-        self.Session = FASession(cookies_f, cookies_l, logger_verb, logger_warn)
-        self.Get     = FAGet(self.Session.Session, logger_verb, logger_warn)
-        self.Page    = FAPage(logger_verb)
-        self.Log     = logger_norm
-        self.LogV    = logger_verb
-        self.LogW    = logger_warn
-        logger_verb('FAAPI -> init complete')
+        loggers.get('logger_norm', (lambda *x: None))('FAAPI -> init')
+        self.Log     = loggers.get('logger_norm', (lambda *x: None))
+        self.LogV    = loggers.get('logger_verb', (lambda *x: None))
+        self.LogW    = loggers.get('logger_warn', (lambda *x: None))
+        self.Session = FASession(cookies_f, cookies_l, self.LogV, self.LogW)
+        self.Get     = FAGet(self.Session.Session, self.LogV, self.LogW)
+        self.Page    = FAPage(self.LogV)
+        self.LogV('FAAPI -> init complete')
 
     def get(self, url, **params):
         self.Log(f'FAAPI get -> {url} {params}')
