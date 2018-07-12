@@ -6,7 +6,7 @@ from .page    import FAPage
 from .sub     import FASub
 
 class FAAPI():
-    def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda *x: None), logger_verb=(lambda *x: None), logger_warn=(lambda *x: None)):
+    def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda x: None), logger_verb=(lambda x: None), logger_warn=(lambda x: None)):
         if any(not callable(log) for log in (logger_norm, logger_verb, logger_warn)):
             raise TypeError('logger arguments need to be functions')
         elif any(len(getargspec(log)[0]) < 1 for log in (logger_norm, logger_verb, logger_warn)):
