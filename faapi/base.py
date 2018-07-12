@@ -26,9 +26,10 @@ class FAAPI():
             raise TypeError('ID needs to be an integer or string of integers')
 
         sub = self.getParse(f'/view/{ID}')
+        sub = FASub(sub, logger=self.LogV)
         if file:
-            sub.getBinary(self.Get.getBinary)
-        return FASub(sub, logger=self.LogV)
+            sub.getFile(self.Get.getBinary)
+        return sub
 
     def gallery(self, user, page=1):
         self.Log(f'FAAPI gallery -> user:{user} page:{page}')
