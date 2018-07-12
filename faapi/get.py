@@ -44,3 +44,27 @@ class FAGet():
         self.Log(f'FAGet getParse -> {"success" if get else "fail"}')
 
         return get
+
+    def getBinary(self, url):
+        self.Log(f'FAGet getBinary -> url:{url}')
+
+        try:
+            file_stream = self.Session.get(url, stream=True)
+            file_binary = bytes()
+
+            self.Log(f'FAGet getBinary -> stream status:{file_stream.ok}')
+
+            if not file_stream.ok:
+                file_stream.close()
+                return file_binary
+
+            for chunk in file_stream.iter_content(chunk_size=1024):
+                file_binary += chunk
+                time.sleep(.01)
+
+            return file_binary
+        except:
+            err = traceback.format_exception(*sys.exc_info())
+            err = ['FAGet get -> error: '+e.strip().replace('\n', ' =') for e in err]
+            self.Log(err)
+            return bytes()
