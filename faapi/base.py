@@ -1,3 +1,5 @@
+from inspect  import getargspec
+
 from .session import FASession
 from .get     import FAGet
 from .page    import FAPage
@@ -7,6 +9,8 @@ class FAAPI():
     def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda *x: None), logger_verb=(lambda *x: None), logger_warn=(lambda *x: None)):
         if callable(logger_norm) != callable(logger_verb) != callable(logger_warn) != True:
             raise TypeError('logger arguments need to be functions')
+        elif len(getargspec(logger_norm)[0]) < 1 or len(getargspec(logger_verb)[0]) < 1 or len(getargspec(logger_warn)[0]) < 1:
+            raise TypeError('logger arguments need to accept at least one argument')
 
         logger_norm('FAAPI -> init')
         self.Session = FASession(cookies_f, cookies_l, logger_verb, logger_warn)
