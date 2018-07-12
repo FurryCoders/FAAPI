@@ -63,7 +63,7 @@ class FAAPI():
 
     def search(self, q='', **params):
         self.Log(f'FAAPI search -> params:{params}')
-        if not q and not params.get('q', ''):
+        if not q and not 'q' in params:
             raise TypeError('cannot search with empty "q" parameter')
 
         params['q'] = params.get('q', q)
