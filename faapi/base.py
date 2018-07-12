@@ -1,6 +1,7 @@
 from .session import FASession
 from .get     import FAGet
 from .page    import FAPage
+from .sub     import FASub
 
 class FAAPI():
     def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda *x: None), logger_verb=(lambda *x: None)):
@@ -18,6 +19,14 @@ class FAAPI():
     def getParse(self, url, **params):
         self.Log(f'FAAPI getParse -> {url} {params}')
         return self.Get.getParse(self.Session.Session, url, **params)
+
+    def getSub(self, ID):
+        self.Log(f'FAAPI getSub -> ID:{ID}')
+        if type(ID) != int and not str(ID).isdigit():
+            raise TypeError('ID needs to be an integer or string of integers')
+
+        sub = self.getParse(f'/view/{ID}')
+        return FASub(sub, logger=self.LogV)
 
     def gallery(self, user, page=1):
         self.Log(f'FAAPI gallery -> user:{user} page:{page}')
