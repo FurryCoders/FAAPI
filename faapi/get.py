@@ -62,6 +62,7 @@ class FAGet():
                 file_binary += chunk
                 time.sleep(.01)
 
+            self.Log(f'FAGet getBinary -> success')
             return file_binary
         except:
             err = traceback.format_exception(*sys.exc_info())
