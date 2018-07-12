@@ -8,11 +8,12 @@ class FAGet():
     base_url = 'https://www.furaffinity.net/'
     interval = 12
 
-    def __init__(self, Session, logger=(lambda *x: None)):
+    def __init__(self, Session, logger=(lambda *x: None), logger_warn=(lambda *x: None)):
         logger('FAGet -> init')
         self.Session = Session
         self.lastget = -FAGet.interval
         self.Log     = logger
+        self.LogW    = logger_warn
 
     def get(self, url, **params):
         self.Log(f'FAGet get -> url:{url} params:{params}')
@@ -33,7 +34,7 @@ class FAGet():
         except:
             err = traceback.format_exception(*sys.exc_info())
             err = ['FAGet get -> error: '+e.strip().replace('\n', ' =') for e in err]
-            self.Log(err)
+            self.LogW(err)
             return None
 
     def getParse(self, url, **params):
@@ -67,5 +68,5 @@ class FAGet():
         except:
             err = traceback.format_exception(*sys.exc_info())
             err = ['FAGet get -> error: '+e.strip().replace('\n', ' =') for e in err]
-            self.Log(err)
+            self.LogW(err)
             return bytes()

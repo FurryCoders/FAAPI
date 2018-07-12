@@ -4,13 +4,14 @@ from .page    import FAPage
 from .sub     import FASub
 
 class FAAPI():
-    def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda *x: None), logger_verb=(lambda *x: None)):
+    def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda *x: None), logger_verb=(lambda *x: None), logger_warn=(lambda *x: None)):
         logger_norm('FAAPI -> init')
-        self.Session = FASession(cookies_f, cookies_l, logger_verb)
-        self.Get     = FAGet(self.Session.Session, logger_verb)
+        self.Session = FASession(cookies_f, cookies_l, logger_verb, logger_warn)
+        self.Get     = FAGet(self.Session.Session, logger_verb, logger_warn)
         self.Page    = FAPage(logger_verb)
         self.Log     = logger_norm
         self.LogV    = logger_verb
+        self.LogW    = logger_warn
         logger_verb('FAAPI -> init complete')
 
     def get(self, url, **params):
