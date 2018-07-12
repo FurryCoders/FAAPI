@@ -5,6 +5,9 @@ from .sub     import FASub
 
 class FAAPI():
     def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda *x: None), logger_verb=(lambda *x: None), logger_warn=(lambda *x: None)):
+        if callable(logger_norm) != callable(logger_verb) != callable(logger_warn) != True:
+            raise TypeError('logger arguments need to be functions')
+
         logger_norm('FAAPI -> init')
         self.Session = FASession(cookies_f, cookies_l, logger_verb, logger_warn)
         self.Get     = FAGet(self.Session.Session, logger_verb, logger_warn)
