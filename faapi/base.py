@@ -10,7 +10,7 @@ class FAAPI():
         if any(not callable(log) for log in loggers.values()):
             raise TypeError('logger arguments need to be functions')
         elif any(len(getargspec(log)[0]) < 1 for log in loggers.values()):
-            raise TypeError('logger arguments need to accept at least one argument')
+            raise TypeError('logger functions need to accept at least one argument')
 
         loggers.get('logger_norm', (lambda *x: None))('FAAPI -> init')
         self.Log     = loggers.get('logger_norm', (lambda *x: None))
