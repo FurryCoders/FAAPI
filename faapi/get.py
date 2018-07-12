@@ -7,6 +7,7 @@ import traceback, sys
 class FAGet():
     base_url = 'https://www.furaffinity.net/'
     interval = 12
+    throttle = 100*1024
 
     def __init__(self, Session, logger=(lambda *x: None), logger_warn=(lambda *x: None)):
         logger('FAGet -> init')
@@ -61,7 +62,7 @@ class FAGet():
 
             for chunk in file_stream.iter_content(chunk_size=1024):
                 file_binary += chunk
-                time.sleep(.01)
+                time.sleep(1/(self.throttle/1024))
 
             self.Log(f'FAGet getBinary -> success')
             return file_binary
