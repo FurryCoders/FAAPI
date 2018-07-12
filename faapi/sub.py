@@ -119,7 +119,7 @@ class FASub():
         self.Log(f'FASub analyze -> filelink:{bool(self.filelink)}')
 
     def getFile(self, getBinary=None):
-        self.Log(f'FASub getFile -> sub:{bool(self.sub)} filelink:{bool(self.filelink)}')
+        self.Log(f'FASub getFile -> filelink:{bool(self.filelink)}')
         if not self.filelink or not getBinary:
             return
 
