@@ -40,7 +40,7 @@ class FASession():
         for cookie in self.cookies:
             self.Session.cookies.set(cookie['name'], cookie['value'])
 
-        check_p = FAGet(self.Log).getParse(self.Session, '/controls/settings/')
+        check_p = FAGet(self.Session, self.Log).getParse('/controls/settings/')
         check_p = FAPage(self.Log).pageFind(check_p, name='a', id='my-username')
 
         if not check_p:
