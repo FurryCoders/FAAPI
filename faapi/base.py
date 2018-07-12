@@ -52,7 +52,7 @@ class FAAPI():
         return [subs, next]
 
     def search(self, q='', **params):
-        self.Log(f'FAAPI favorites -> params:{params}')
+        self.Log(f'FAAPI search -> params:{params}')
         if not q and not params.get('q', ''):
             raise TypeError('cannot search with empty "q" parameter')
 
