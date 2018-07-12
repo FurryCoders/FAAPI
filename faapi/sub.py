@@ -109,7 +109,7 @@ class FASub():
         self.Log(f'FASub analyze -> rating:{self.rating}')
 
         self.desc = self.sub.find('div', 'submission-description-container')
-        self.desc = str(self.desc) if self.desc else ''
+        self.desc = str(self.desc.prettify()) if self.desc else ''
         self.desc = self.desc.split('</div>', 1)[-1]
         self.desc = self.desc.rsplit('</div>', 1)[0]
         self.desc = self.desc.strip()
