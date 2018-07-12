@@ -31,6 +31,19 @@ class FASub():
 
         self.analyze()
 
+    def __iter__(self):
+        yield 'id',       self.id
+        yield 'title',    self.title
+        yield 'author',   self.author
+        yield 'date',     self.date
+        yield 'keyw',     self.keyw
+        yield 'category', self.category
+        yield 'species',  self.species
+        yield 'gender',   self.gender
+        yield 'rating',   self.rating
+        yield 'desc',     self.desc
+        yield 'filelink', self.filelink
+
     def analyze(self):
         self.Log(f'FASub analyze -> sub:{bool(self.sub)}')
         if not self.sub:
