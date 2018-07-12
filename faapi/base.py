@@ -7,13 +7,6 @@ from .sub     import FASub
 
 class FAAPI():
     def __init__(self, cookies_f='', cookies_l=[], logger_norm=(lambda x: None), logger_verb=(lambda x: None), logger_warn=(lambda x: None)):
-        if type(cookies_f) != str:
-            raise TypeError('cookies_f needs to be of type str')
-        elif type(cookies_l) != list:
-            raise TypeError('cookies_l needs to be of type list')
-        elif any(type(cookie) != dict for cookie in cookies_l):
-            raise TypeError('cookies_l needs to be a list of dicts')
-
         if any(not callable(log) for log in (logger_norm, logger_verb, logger_warn)):
             raise TypeError('logger arguments need to be functions')
         elif any(len(getargspec(log)[0]) < 1 for log in (logger_norm, logger_verb, logger_warn)):
