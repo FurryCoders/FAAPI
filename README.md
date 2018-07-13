@@ -193,7 +193,7 @@ What follows are some examples of how to sue the api correctly.
 
 The ID's and usernames used are random.
 
-```Python
+```python
 from faapi import *
 
 
