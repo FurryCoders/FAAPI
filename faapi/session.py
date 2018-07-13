@@ -7,8 +7,6 @@ import requests
 from .get  import FAGet
 from .page import FAPage
 
-default_cookies_f = 'FA.cookies.json'
-
 class FASession():
     def __init__(self, cookies_f='', cookies_l=[], logger=(lambda *x: None), logger_warn=(lambda *x: None)):
         if type(cookies_f) != str:
@@ -19,7 +17,7 @@ class FASession():
             raise TypeError('cookies_l needs to be a list of dicts')
 
         logger('FASession -> init')
-        self.cookies_f = cookies_f if cookies_f else default_cookies_f
+        self.cookies_f = cookies_f
         self.cookies   = cookies_l
         self.Session   = None
         self.Log       = logger
