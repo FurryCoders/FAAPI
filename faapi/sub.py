@@ -130,6 +130,8 @@ class FASub():
 
         self.getBinary = getBinary if getBinary else self.getBinary
 
+        self.Log(f'FASub getFile -> getBinary:{bool(self.getBinary)}')
+
         if not self.getBinary:
             return
         elif self.getBinary and not callable(self.getBinary):
