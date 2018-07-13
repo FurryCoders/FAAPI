@@ -185,3 +185,72 @@ The metadata variables are the following:<br>
 2. `getFile(getBinary=None)`<br>
 This method can be called to download the submission file using the getBinary function saved at init or the one used as optional argument for the method. If the latter is present then it overrides the one saved at init.<br>
 The getBinary function needs to take a url as argument and return a `bytes()` object, these are the only requirements but it is suggested to use the functioned included with the api at `FAAPI.Get.getBinary`.
+
+---
+
+## Examples
+What follows are some examples of how to sue the api correctly.
+
+The ID's and usernames used are random.
+
+```Python
+from faapi import *
+
+
+# Create the api object without logger functions
+#  using a file to load the cookies
+api = FAAPI(cookies_f='cookies.json')
+
+
+# Download a user's main page
+user = api.userpage('abcdeABCDE1234')
+
+
+# Download all of a user's favorites
+#  the while cycle continues until the function
+#  returns an empty next page value
+next = '/'
+favs = []
+while next:
+    favs += [api.favorites('abcdeABCDE5678', page=next)]
+    next =  favs[-1][1]
+
+
+# Download a search page
+#  Search for 'forest tiger' using 'order-by=date' parameter
+#  (need expanded dict since 'order-by' throws an error)
+#  and select page 3
+search = api.search(q='forest tiger', **{'order-by':'date'}, page=3)
+
+
+# Download a submission
+sub1 = api.getSub(ID=17042208)
+
+# Print the various fields parsed by the submission
+print(f'id  : {sub.id}')
+print(f'titl: {sub.title}')
+print(f'auth: {sub.author}')
+print(f'date: {sub.date}')
+print(f'keyw: {sub.keyw}')
+print(f'catg: {sub.category}')
+print(f'spec: {sub.species}')
+print(f'gend: {sub.gender}')
+print(f'ratn: {sub.rating}')
+print(f'desc: {sub.desc}')
+print(f'link: {sub.filelink}')
+
+# Download the file for a submission
+sub1.getFile()
+
+
+# Download a submission and its file
+sub2 = api.getSub(ID=17042213, file=True)
+
+
+# Download a submission page as a parsed object
+sub3 = api.getParse('/view/17042208')
+
+# Create an FASub object manually
+#  use the getBinary function provided by FAGet
+sub3 = FASub(sub3, getBinary=api.Get.getBinary)
+```
