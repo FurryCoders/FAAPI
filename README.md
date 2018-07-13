@@ -152,6 +152,8 @@ Same as `FAPage.pageFind()` but returns all matches insteacd of only the first.
 ### FASub
 This is the only other class exported by the module. It can take a submission `bs4.BeautifulSoup` object as argument and parse it saving the submission metadata as instance variables.
 
+The `FASub` object can be directly converted to a dict object or iterated through.
+
 #### init
 `FASub` takes three arguments:<br>
 * `sub` - the parsed html of the submission page, a `bs4.BeautifulSoup` object.
