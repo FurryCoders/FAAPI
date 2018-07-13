@@ -21,14 +21,18 @@ re_ext3 = re.compile('.*</strong>( )*')
 re_ext4 = re.compile('</div>.*')
 
 class FASub():
-    def __init__(self, sub, logger=(lambda *x: None)):
+    def __init__(self, sub, getBinary=None, logger=(lambda *x: None)):
         logger('FASub -> init')
         if str(type(sub)) not in ("<class 'bs4.BeautifulSoup'>", "<class 'NoneType'>"):
             raise TypeError('sub needs to be of type bs4.BeautifulSoup')
 
-        self.sub  = sub
-        self.file = bytes()
-        self.Log  = logger
+        if getBinary and not callable(getBinary):
+            raise TypeError('getBinary needs to be of type function')
+
+        self.sub       = sub
+        self.getBinary = getBinary
+        self.file      = bytes()
+        self.Log       = logger
 
         self.analyze()
         logger('FASub -> init complete')
@@ -121,7 +125,14 @@ class FASub():
 
     def getFile(self, getBinary=None):
         self.Log(f'FASub getFile -> filelink:{bool(self.filelink)}')
-        if not self.filelink or not getBinary:
+        if not self.filelink:
             return
 
-        self.file = getBinary(self.filelink)
+        self.getBinary = getBinary if getBinary else self.getBinary
+
+        if not self.getBinary:
+            return
+        elif self.getBinary and not callable(self.getBinary):
+            raise TypeError('getBinary needs to be of type function')
+
+        self.file = self.getBinary(self.filelink)

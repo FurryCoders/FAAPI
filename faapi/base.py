@@ -35,9 +35,9 @@ class FAAPI():
             raise TypeError('ID needs to be an integer or string of integers')
 
         sub = self.Get.getParse(f'/view/{ID}')
-        sub = FASub(sub, logger=self.LogV)
+        sub = FASub(sub, getBinary=self.Get.getBinary, logger=self.LogV)
         if file:
-            sub.getFile(self.Get.getBinary)
+            sub.getFile()
         return sub
 
     def userpage(self, user):
