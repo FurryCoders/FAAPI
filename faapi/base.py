@@ -56,7 +56,7 @@ class FAAPI():
         page = self.Get.getParse(f'/gallery/{user}/{page}')
         page = self.Page.pageFindAll(page, name='figure') if page else []
 
-        return [page, f'/gallery/{user}/{page+1}']
+        return [page, page+1]
 
     def scraps(self, user, page=1):
         self.Log(f'FAAPI scraps -> user:{user} page:{page}')
@@ -66,7 +66,7 @@ class FAAPI():
         page = self.Get.getParse(f'/scraps/{user}/{page}')
         page = self.Page.pageFindAll(page, name='figure') if page else []
 
-        return [page, f'/scraps/{user}/{page+1}']
+        return [page, page+1]
 
     def favorites(self, user, page=''):
         self.Log(f'FAAPI favorites -> user:{user} page:{page}')
