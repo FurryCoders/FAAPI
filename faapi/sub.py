@@ -134,7 +134,7 @@ class FASub():
 
         if not self.getBinary:
             return
-        elif self.getBinary and not callable(self.getBinary):
+        elif not callable(self.getBinary):
             raise TypeError('getBinary needs to be of type function')
 
         self.file = self.getBinary(self.filelink)
