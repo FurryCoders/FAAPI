@@ -82,7 +82,7 @@ class FASub():
         self.Log(f'FASub analyze -> author:{self.author}')
 
         self.date = self.sub.find('meta', {"name":"twitter:data1"})
-        self.date = self.date.get('content').replace(',', '') if self.date else None
+        self.date = self.date.get('content','').replace(',', '') if self.date else None
         self.date = self.date.split(' ') if self.date else None
         self.date = f'{self.date[2]}-{months[self.date[0]]}-{self.date[1]:0>2}' if self.date else ''
         self.Log(f'FASub analyze -> date:{self.date}')
