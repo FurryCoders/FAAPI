@@ -109,7 +109,7 @@ class FASub():
         self.Log(f'FASub analyze -> gender:{self.gender}')
 
         self.rating = self.sub.find('meta', {"name":"twitter:data2"})
-        self.rating = self.rating['content'] if self.rating else ''
+        self.rating = self.rating.get('content','') if self.rating else ''
         self.Log(f'FASub analyze -> rating:{self.rating}')
 
         self.desc = self.sub.find('div', 'submission-description-container')
