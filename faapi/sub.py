@@ -80,11 +80,10 @@ class FASub():
         self.author = self.author.string if self.author else ''
         self.Log(f'FASub analyze -> author:{self.author}')
 
-        self.date   = self.sub.find('meta', {"name":"twitter:data1"})
-        self.date   = self.date.get('content').replace(',', '') if self.date else None
-        self.date   = self.date.split(' ') if self.date else None
-        self.date   = [self.date[2], months[self.date[0]], self.date[1].rjust(2, '0')] if self.date else None
-        self.date   = '-'.join(self.date) if self.date else ''
+        self.date = self.sub.find('meta', {"name":"twitter:data1"})
+        self.date = self.date.get('content').replace(',', '') if self.date else None
+        self.date = self.date.split(' ') if self.date else None
+        self.date = f'{self.date[2]}-{months[self.date[0]]}-{self.date[1]:0>2}' if self.date else ''
         self.Log(f'FASub analyze -> date:{self.date}')
 
         self.keyw = [k.string for k in self.sub.find_all('span', 'tags')]
