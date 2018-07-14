@@ -120,7 +120,8 @@ class FASub():
         self.Log(f'FASub analyze -> desc:{bool(self.desc)}')
 
         self.filelink = self.sub.find('a', 'button download-logged-in')
-        self.filelink = "https:" + self.filelink['href'] if self.filelink else ''
+        self.filelink = self.filelink.get('href','') if self.filelink else None
+        self.filelink = 'https:' + self.filelink if self.filelink else ''
         self.Log(f'FASub analyze -> filelink:{bool(self.filelink)}')
 
     def getFile(self, getBinary=None):
