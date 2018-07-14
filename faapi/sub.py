@@ -68,7 +68,8 @@ class FASub():
             return
 
         self.id = self.sub.find('meta', property='og:url')
-        self.id = int(self.id['content'].split('/')[-2]) if self.id else 0
+        self.id = self.id.get('content', None) if self.id else None
+        self.id = int(self.id.split('/')[-2]) if self.id else 0
         self.Log(f'FASub analyze -> id:{self.id}')
 
         self.title  = self.sub.find('h2', 'submission-title-header')
