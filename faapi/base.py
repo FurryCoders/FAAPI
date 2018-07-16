@@ -53,20 +53,20 @@ class FAAPI():
         if type(page) != int or page < 1:
             raise TypeError('page argument needs to be an integer greater than 1')
 
-        page = self.Get.getParse(f'/gallery/{user}/{page}')
-        page = self.Page.pageFindAll(page, name='figure') if page else []
+        subs = self.Get.getParse(f'/gallery/{user}/{page}')
+        subs = self.Page.pageFindAll(subs, name='figure') if subs else []
 
-        return [page, page+1]
+        return [subs, page+1]
 
     def scraps(self, user, page=1):
         self.Log(f'FAAPI scraps -> user:{user} page:{page}')
         if type(page) != int or page < 1:
             raise TypeError('page argument needs to be an integer greater than 1')
 
-        page = self.Get.getParse(f'/scraps/{user}/{page}')
-        page = self.Page.pageFindAll(page, name='figure') if page else []
+        subs = self.Get.getParse(f'/scraps/{user}/{page}')
+        subs = self.Page.pageFindAll(subs, name='figure') if subs else []
 
-        return [page, page+1]
+        return [subs, page+1]
 
     def favorites(self, user, page=''):
         self.Log(f'FAAPI favorites -> user:{user} page:{page}')
