@@ -32,3 +32,31 @@ class FAPage():
         else:
             self.Log(f'FAPage pageFindAll -> fail')
             return None
+
+    def subParse(self, sub):
+        self.Log(f'FAPage subParse -> sub:{bool(sub)}')
+        if not sub:
+            return None
+
+        if type(sub) == list:
+            if any(str(type(s)) != "<class 'bs4.element.Tag'>" for s in sub):
+                raise TypeError('submissions need to be of type bs4.BeautifulSoup')
+        elif str(type(sub)) != "<class 'bs4.element.Tag'>":
+            raise TypeError('submission needs to be of type bs4.BeautifulSoup')
+
+        if type(sub) != list:
+            sub = [sub]
+
+        for i in range(0, len(sub)):
+            s = sub[i]
+
+            s = {
+                'id':     s['id'][4:],
+                'title':  s.findAll('a')[-2]['title'],
+                'author': s.findAll('a')[-1]['title'],
+                'rating': s['class'][0][2:]
+                }
+
+            sub[i] = s
+
+        return sub if len(sub) > 1 else sub[0]
