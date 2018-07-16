@@ -56,7 +56,7 @@ class FAAPI():
         subs = self.Get.getParse(f'/gallery/{user}/{page}')
         subs = self.Page.pageFindAll(subs, name='figure') if subs else []
 
-        return [subs, page+1]
+        return [self.Page.subParse(subs), page+1]
 
     def scraps(self, user, page=1):
         self.Log(f'FAAPI scraps -> user:{user} page:{page}')
@@ -66,7 +66,7 @@ class FAAPI():
         subs = self.Get.getParse(f'/scraps/{user}/{page}')
         subs = self.Page.pageFindAll(subs, name='figure') if subs else []
 
-        return [subs, page+1]
+        return [self.Page.subParse(subs), page+1]
 
     def favorites(self, user, page=''):
         self.Log(f'FAAPI favorites -> user:{user} page:{page}')
@@ -79,7 +79,7 @@ class FAAPI():
         next = self.Page.pageFind(page, name='a', class_='button mobile-button right') if page else []
         next = (next[0].get('href', ''))[11+len(user):] if next else ''
 
-        return [subs, next]
+        return [self.Page.subParse(subs), next]
 
     def search(self, q='', **params):
         self.Log(f'FAAPI search -> params:{params}')
@@ -94,4 +94,4 @@ class FAAPI():
         next = not bool(self.Page.pageFind(page, name='input', class_='button hidden')) if page else False
         next = {'page': params.get('page', 1)+1} if next else ''
 
-        return [subs, next]
+        return [self.Page.subParse(subs), next]
