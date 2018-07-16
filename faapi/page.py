@@ -11,7 +11,7 @@ class FAPage():
             raise TypeError('kwargs canot be empty')
 
         if page:
-            find = page.findAll(limit=1, **kwargs)
+            find = list(page.findAll(limit=1, **kwargs))
             self.Log(f'FAPage pageFind -> {len(find)} items')
             return find
         else:
@@ -26,7 +26,7 @@ class FAPage():
             raise TypeError('kwargs canot be empty')
 
         if page:
-            find = page.findAll(**kwargs)
+            find = list(page.findAll(**kwargs))
             self.Log(f'FAPage pageFindAll -> {len(find)} items')
             return find
         else:
