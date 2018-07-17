@@ -71,7 +71,7 @@ class FAAPI():
     def favorites(self, user, page=''):
         self.Log(f'FAAPI favorites -> user:{user} page:{page}')
         if type(page) != str:
-            raise TypeError('page argument needs to be strs')
+            raise TypeError('page argument needs to be string')
 
         page = self.Get.getParse(f'/favorites/{user}/{page.strip("/")}')
 
