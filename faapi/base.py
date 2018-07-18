@@ -83,12 +83,12 @@ class FAAPI():
 
     def search(self, q='', **params):
         self.Log(f'FAAPI search -> params:{params}')
-        if not q and 'q' not in params:
+        if not q:
             raise TypeError('cannot search with empty "q" parameter')
         elif any(type(v) not in (str, int) for v in params.values()):
             raise TypeError('params values must be of type string or int')
 
-        params['q'] = params.get('q', q)
+        params['q'] = q
 
         page = self.Get.getParse('/search/', **params)
 
