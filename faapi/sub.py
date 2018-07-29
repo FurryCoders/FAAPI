@@ -57,7 +57,7 @@ class FASub():
             self.title    = None
             self.author   = None
             self.date     = None
-            self.keyw     = None
+            self.tags     = None
             self.category = None
             self.species  = None
             self.gender   = None
@@ -87,10 +87,10 @@ class FASub():
         self.date = f'{self.date[2]}-{months[self.date[0]]}-{self.date[1]:0>2}' if self.date else ''
         self.Log(f'FASub analyze -> date:{self.date}')
 
-        self.keyw = [k.string for k in self.sub.find_all('span', 'tags')]
-        self.keyw = self.keyw[0:int(len(self.keyw)/2)]
-        self.keyw = sorted(set(self.keyw), key=str.lower)
-        self.Log(f'FASub analyze -> keyw:{bool(self.keyw)}')
+        self.tags = [k.string for k in self.sub.find_all('span', 'tags')]
+        self.tags = self.tags[0:int(len(self.tags)/2)]
+        self.tags = sorted(set(self.tags), key=str.lower)
+        self.Log(f'FASub analyze -> keyw:{bool(self.tags)}')
 
         extras_raw = self.sub.find('div', 'sidebar-section-no-bottom')
         extras_raw = [str(e) for e in extras_raw.find_all('div')] if extras_raw else []

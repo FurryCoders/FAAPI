@@ -172,7 +172,7 @@ The metadata variables are the following:<br>
     * `title` - submission title
     * `author` - submission author
     * `date` - upload date in YYYY-MM-DD format
-    * `keyw` - keywords list, sorted alphabetically
+    * `tags` - tags list, sorted alphabetically
     * `category` - category \*
     * `species` - species \*
     * `gender` - gender \*
@@ -231,7 +231,7 @@ print(f'id  : {sub.id}')
 print(f'titl: {sub.title}')
 print(f'auth: {sub.author}')
 print(f'date: {sub.date}')
-print(f'keyw: {sub.keyw}')
+print(f'tags: {sub.tags}')
 print(f'catg: {sub.category}')
 print(f'spec: {sub.species}')
 print(f'gend: {sub.gender}')
