@@ -30,7 +30,7 @@ class FAAPI():
         return self.Get.getParse(url, **params)
 
     def getSub(self, ID, file=False):
-        self.Log(f'FAAPI getSub -> ID:{ID}')
+        self.Log(f'FAAPI getSub -> ID:{ID} file:{bool(file)}')
         if type(ID) != int and not str(ID).isdigit():
             raise TypeError('ID needs to be an integer or string of integers')
 
