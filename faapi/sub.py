@@ -89,7 +89,7 @@ class FASub():
 
         self.keyw = [k.string for k in self.sub.find_all('span', 'tags')]
         self.keyw = self.keyw[0:int(len(self.keyw)/2)]
-        self.keyw = sorted(self.keyw, key=str.lower)
+        self.keyw = sorted(set(self.keyw), key=str.lower)
         self.Log(f'FASub analyze -> keyw:{bool(self.keyw)}')
 
         extras_raw = self.sub.find('div', 'sidebar-section-no-bottom')
