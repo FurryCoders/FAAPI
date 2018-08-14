@@ -1,4 +1,5 @@
 import re
+import filetype
 
 months = {
     'January' : '01',
@@ -31,7 +32,6 @@ class FASub():
 
         self.sub       = sub
         self.getBinary = getBinary
-        self.file      = bytes()
         self.Log       = logger
 
         self.analyze()
@@ -49,6 +49,7 @@ class FASub():
         yield 'rating',   self.rating
         yield 'desc',     self.desc
         yield 'filelink', self.filelink
+        yield 'fileext',  self.fileext
 
     def analyze(self):
         self.Log(f'FASub analyze -> sub:{bool(self.sub)}')
@@ -64,6 +65,8 @@ class FASub():
             self.rating   = None
             self.desc     = None
             self.filelink = None
+            self.fileext  = None
+            self.file     = None
 
             return
 
@@ -122,7 +125,11 @@ class FASub():
         self.filelink = self.sub.find('a', 'button download-logged-in')
         self.filelink = self.filelink.get('href','') if self.filelink else None
         self.filelink = 'https:' + self.filelink if self.filelink else ''
+        self.fileext = self.filelink.split('.')[-1] if self.filelink and '.' in self.filelink else None
+        self.file    = bytes() if self.filelink else None
         self.Log(f'FASub analyze -> filelink:{bool(self.filelink)}')
+        self.Log(f'FASub analyze -> fileext:{bool(self.fileext)}')
+        self.Log(f'FASub analyze -> file:{bool(self.file)}')
 
     def getFile(self, getBinary=None):
         self.Log(f'FASub getFile -> filelink:{bool(self.filelink)}')
@@ -139,3 +146,10 @@ class FASub():
             raise TypeError('getBinary needs to be of type function')
 
         self.file = self.getBinary(self.filelink)
+
+        self.fileext = filetype.guess_extension(self.file) if self.file else self.fileext
+
+        if self.fileext == None:
+            self.fileext = self.filelink.split('.')[-1] if '.' in self.filelink else ''
+        elif self.fileext == 'zip':
+            self.fileext = 'docx' if self.filelink.split('.')[-1] == 'docx' else self.fileext
