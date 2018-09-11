@@ -81,11 +81,9 @@ class FAAPI():
 
         return [self.Page.subParse(subs), next]
 
-    def search(self, q='', **params):
-        params['q'] = q
-
+    def search(self, **params):
         self.Log(f'FAAPI search -> params:{params}')
-        if not params['q']:
+        if 'q' not in params:
             raise TypeError('cannot search with empty "q" parameter')
         elif any(type(v) not in (str, int) for v in params.values()):
             raise TypeError('params values must be of type string or int')
