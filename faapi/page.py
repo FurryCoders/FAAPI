@@ -59,4 +59,4 @@ class FAPage():
 
             sub[i] = s
 
-        return sub if len(sub) > 1 else sub[0]
+        return sub
