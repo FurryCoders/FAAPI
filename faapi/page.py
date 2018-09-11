@@ -36,7 +36,7 @@ class FAPage():
     def subParse(self, sub):
         self.Log(f'FAPage subParse -> sub:{bool(sub)}')
         if not sub:
-            return None
+            return []
 
         if type(sub) == list:
             if any(str(type(s)) != "<class 'bs4.element.Tag'>" for s in sub):
