@@ -91,7 +91,7 @@ class FAAPI():
         page = self.Get.getParse('/search/', **params)
 
         subs = self.Page.pageFindAll(page, name='figure') if page else []
-        next = not bool(self.Page.pageFind(page, name='input', class_='button hidden')) if page else False
+        next = not bool(self.Page.pageFind(page, name='input', class_='button hidden')) if subs else False
         next = params.get('page', 1)+1 if next else 0
 
         return [self.Page.subParse(subs), next]
