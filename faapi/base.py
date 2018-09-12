@@ -95,3 +95,33 @@ class FAAPI():
         next = params.get('page', 1)+1 if next else 0
 
         return [self.Page.subParse(subs), next]
+
+    def checkUser(self, user):
+        self.Log(f'FAAPI checkUser -> user:{user}')
+        if type(user) != str:
+            raise TypeError('user argument needs to be of type str')
+
+        page = self.Get.getParse(f'/user/{user}/')
+        titl = self.Page.pageFind(page, name='title')
+
+        if not titl:
+            return False
+        elif titl[0].text.lower() == 'system error':
+            return False
+        else:
+            return True
+
+    def checkSub(self, ID):
+        self.Log(f'FAAPI checkSub -> ID:{ID}')
+        if type(ID) not in (str, int):
+            raise TypeError('ID argument needs to be of type str or int')
+
+        page = self.Get.getParse(f'/view/{ID}/')
+        titl = self.Page.pageFind(page, name='title')
+
+        if not titl:
+            return False
+        elif titl[0].text.lower() == 'system error':
+            return False
+        else:
+            return True
