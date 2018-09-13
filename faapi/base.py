@@ -44,9 +44,10 @@ class FAAPI():
         self.Log(f'FAAPI userpage -> user:{user}')
 
         page = self.Get.getParse(f'/user/{user}/')
-        page = self.Page.pageFind(page, name='div', class_='userpage-layout-profile-container link-override')[0] if page else ''
+        usrn = self.Page.pageFind(page, name='title')[0].text[12:21]
+        desc = self.Page.pageFind(page, name='div', class_='userpage-layout-profile-container link-override')[0] if page else ''
 
-        return page
+        return [usrn, desc]
 
     def gallery(self, user, page=1):
         self.Log(f'FAAPI gallery -> user:{user} page:{page}')
