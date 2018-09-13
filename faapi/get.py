@@ -64,7 +64,7 @@ class FAGet():
 
             for chunk in file_stream.iter_content(chunk_size=1024):
                 file_binary += chunk
-                time.sleep(1/(self.throttle/1024) if FAGet.throttle else 0)
+                time.sleep(1/(self.throttle/1024) if self.throttle else 0)
 
             self.Log(f'FAGet getBinary -> success')
             return file_binary
