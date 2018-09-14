@@ -44,8 +44,9 @@ class FAAPI():
         self.Log(f'FAAPI userpage -> user:{user}')
 
         page = self.Get.getParse(f'/user/{user}/')
-        usrn = self.Page.pageFind(page, name='title')[0].text[12:21]
-        desc = self.Page.pageFind(page, name='div', class_='userpage-layout-profile-container link-override')[0] if page else ''
+        usrn = self.Page.pageFind(page, name='title')[0].text[12:21] if page else ''
+        desc = self.Page.pageFind(page, name='div', class_='userpage-layout-profile-container link-override')
+        desc = desc[0] if desc else ''
 
         return [usrn, desc]
 
