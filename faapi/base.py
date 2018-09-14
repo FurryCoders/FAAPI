@@ -44,7 +44,8 @@ class FAAPI():
         self.Log(f'FAAPI userpage -> user:{user}')
 
         page = self.Get.getParse(f'/user/{user}/')
-        usrn = self.Page.pageFind(page, name='title')[0].text[12:21] if page else ''
+        usrn = self.Page.pageFind(page, name='title')[0] if page else ''
+        usrn = usrn.text[12:21] if not usrn.text.lower().startswith('account disabled') else ''
         desc = self.Page.pageFind(page, name='div', class_='userpage-layout-profile-container link-override')
         desc = desc[0] if desc else ''
 
@@ -56,6 +57,12 @@ class FAAPI():
             raise TypeError('page argument needs to be an integer greater than 1')
 
         subs = self.Get.getParse(f'/gallery/{user}/{page}')
+
+        titl = self.Page.pageFind(subs, name='title')[0].text
+        if titl.lower().startswith('account disabled'):
+            self.LogV(f'FAAPI gallery -> user:{user} disabled')
+            return [None, 0]
+
         subs = self.Page.pageFindAll(subs, name='figure') if subs else []
 
         return [self.Page.subParse(subs), page+1]
@@ -66,6 +73,12 @@ class FAAPI():
             raise TypeError('page argument needs to be an integer greater than 1')
 
         subs = self.Get.getParse(f'/scraps/{user}/{page}')
+
+        titl = self.Page.pageFind(subs, name='title')[0].text
+        if titl.lower().startswith('account disabled'):
+            self.LogV(f'FAAPI scraps -> user:{user} disabled')
+            return [None, 0]
+
         subs = self.Page.pageFindAll(subs, name='figure') if subs else []
 
         return [self.Page.subParse(subs), page+1]
@@ -76,6 +89,11 @@ class FAAPI():
             raise TypeError('page argument needs to be string')
 
         page = self.Get.getParse(f'/favorites/{user}/{page.strip("/")}')
+
+        titl = self.Page.pageFind(subs, name='title')[0].text
+        if titl.lower().startswith('account disabled'):
+            self.LogV(f'FAAPI favorites -> user:{user} disabled')
+            return [None, '']
 
         subs = self.Page.pageFindAll(page, name='figure') if page else []
         next = self.Page.pageFind(page, name='a', class_='button mobile-button right') if page else []
@@ -109,6 +127,8 @@ class FAAPI():
         if not titl:
             return False
         elif titl[0].text.lower() == 'system error':
+            return False
+        elif titl[0].text.lower().startswith('account disabled'):
             return False
         else:
             return True
