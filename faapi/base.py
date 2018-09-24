@@ -90,7 +90,7 @@ class FAAPI():
 
         page = self.Get.getParse(f'/favorites/{user}/{page.strip("/")}')
 
-        titl = self.Page.pageFind(subs, name='title')[0].text
+        titl = self.Page.pageFind(page, name='title')[0].text
         if titl.lower().startswith('account disabled'):
             self.LogV(f'FAAPI favorites -> user:{user} disabled')
             return [None, '']
