@@ -28,14 +28,15 @@ class FAAPI:
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
 
-    def get(self, url: str, **params):
+    def handle_delay(self):
         if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
             if self.raise_for_delay:
                 raise Exception(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
             sleep(delay_diff)
-
         self.last_get = perf_counter()
 
+    def get(self, url: str, **params):
+        self.handle_delay()
         return get(self.session, url, **params)
 
     def get_parse(self, url: str, **params) -> Optional[BeautifulSoup]:
@@ -52,6 +53,7 @@ class FAAPI:
         return sub, sub_file
 
     def get_sub_file(self, sub: Sub) -> Optional[bytes]:
+        self.handle_delay()
         return get_binary_raw(self.session, sub.file_url)
 
     def userpage(self, user: str) -> Tuple[str, str, str]:
