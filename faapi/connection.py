@@ -5,6 +5,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
+from time import sleep
 
 from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
@@ -78,3 +79,20 @@ def get_robots() -> Dict[str, Union[str, List[str]]]:
 def get(session: CloudflareScraper, path: str) -> Tuple[int, Response]:
     res = session.get(join_url(root, path))
     return res.status_code, res
+
+
+def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float] = 100) -> Optional[bytes]:
+    assert isinstance(speed, int) or isinstance(speed, float)
+
+    file_stream = session.get(url, stream=True)
+
+    if not file_stream.ok:
+        file_stream.close()
+        return None
+
+    file_binary = bytes()
+    for chunk in file_stream.iter_content(chunk_size=1024):
+        file_binary += chunk
+        sleep(1 / speed) if speed > 0 else None
+
+    return file_binary
