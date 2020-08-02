@@ -40,7 +40,7 @@ class FASub:
         yield "title", self.title
         yield "author", self.author
         yield "date", self.date
-        yield "keyw", self.keyw
+        yield "tags", self.tags
         yield "category", self.category
         yield "species", self.species
         yield "gender", self.gender
