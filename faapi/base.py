@@ -51,6 +51,9 @@ class FAAPI:
 
         return sub, sub_file
 
+    def get_sub_file(self, sub: Sub) -> Optional[bytes]:
+        return get_binary_raw(self.session, sub.file_url)
+
     def userpage(self, user: str) -> Tuple[str, str, str]:
         assert isinstance(user, str)
 
