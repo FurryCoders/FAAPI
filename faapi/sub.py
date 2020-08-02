@@ -24,7 +24,7 @@ class FASub:
         self.description: str = ""
         self.file_url: str = ""
 
-        self.analyze()
+        self.parse_page()
 
     def __iter__(self):
         yield "id", self.id
@@ -39,7 +39,7 @@ class FASub:
         yield "description", self.description
         yield "file_url", self.file_url
 
-    def analyze(self):
+    def parse_page(self):
         if self.sub_page is None:
             return
 
