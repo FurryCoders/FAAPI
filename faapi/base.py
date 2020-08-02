@@ -6,8 +6,9 @@ from typing import Union
 
 from .connection import cookies_load
 from .connection import get
+from .connection import get_binary_raw
 from .connection import join_url
-from .connection import make_session, get_binary_raw
+from .connection import make_session
 from .parse import BeautifulSoup
 from .parse import page_parse
 from .sub import Sub
