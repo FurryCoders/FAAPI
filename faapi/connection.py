@@ -60,7 +60,7 @@ def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
     return session
 
 
-def get_robots() -> Dict[str, Union[str, List[str]]]:
+def get_robots() -> Dict[str, List[str]]:
     res = get_raw(join_url(root, "robots.txt"))
 
     if not res.ok:
@@ -68,7 +68,7 @@ def get_robots() -> Dict[str, Union[str, List[str]]]:
 
     robot: Dict[str, Union[int, str, List[str]]] = {}
 
-    for elem in filter(lambda r: r not in ("", "#"), res.text.split()):
+    for elem in filter(lambda r: r not in ("", "#"), res.text.split("\n")):
         key, value = elem.split(":", 1)
         robot[key] = robot.get(key, []) + [value.strip()]
 
