@@ -224,7 +224,7 @@ search = api.search(q='forest tiger', **{'order-by':'date'}, page=3)
 
 
 # Download a submission
-sub1 = api.get_sub(ID=17042208)
+sub1 = api.get_sub(sub_id=17042208)
 
 # Print the various fields parsed by the submission
 print(f'id  : {sub.id}')
@@ -244,7 +244,7 @@ sub1.getFile()
 
 
 # Download a submission and its file
-sub2 = api.get_sub(ID=17042213, file=True)
+sub2 = api.get_sub(sub_id=17042213, file=True)
 
 
 # Download a submission page as a parsed object

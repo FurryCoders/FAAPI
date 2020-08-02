@@ -1,13 +1,15 @@
+from re import search as re_search
 from typing import List
 from typing import Optional
+from typing import Tuple
 from typing import Union
 
 from .connection import cookies_load
 from .connection import get
 from .connection import get_binary_raw
+from .connection import join_url
 from .connection import make_session
 from .parse import BeautifulSoup
-from .parse import page_find
 from .parse import page_parse
 from .parse import sub_parse_figure
 from .sub import FASub
@@ -26,122 +28,117 @@ class FAAPI:
         res = get(self.session, url, **params)
         return page_parse(res.text) if res.ok else None
 
-    def get_sub(self, ID: Union[int, str], file=False):
-        assert isinstance(ID, int) or (isinstance(ID, str) and ID.isdigit())
+    def get_sub(self, sub_id: Union[int, str], file=False):
+        assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
 
-        sub = self.get_parse(f"/view/{ID}")
-        sub = FASub(sub, getBinary=get_binary_raw)
+        sub_page = self.get_parse(f"/view/{sub_id}")
+        sub = FASub(sub_page, getBinary=get_binary_raw)
         if file:
             sub.getFile()
+
         return sub
 
-    def userpage(self, user: str):
+    def userpage(self, user: str) -> Tuple[str, str, str]:
         assert isinstance(user, str)
 
-        page = self.get_parse(f"/user/{user}/")
-        usrn = page_find(page, name="title")[0] if page else ""
-        usrn = (
-            usrn.text[12:21]
-            if not usrn.text.lower().startswith("account disabled")
-            else ""
-        )
-        desc = page_find(
-            page, name="div", class_="userpage-layout-profile-container link-override"
-        )
-        desc = desc[0] if desc else ""
+        page: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
+        if page is None:
+            return "", "", ""
 
-        return [usrn, desc]
+        username_div = page.find(name="div", attrs={"class": "username"})
 
-    def gallery(self, user: str, page: int = 1):
-        assert isinstance(user, str)
-        assert isinstance(page, int) and page >= 1
+        username = username_div.find("span").text.strip()
+        status = username[0]
+        username = username[1:]
 
-        subs = self.get_parse(f"/gallery/{user}/{page}")
+        description = page.find(name="div", attrs={"class": "userpage-profile"}).text.strip()
 
-        titl = page_find(subs, name="title")[0].text
-        if titl.lower().startswith("account disabled"):
-            return [None, 0]
+        return username, status, description
 
-        subs = page_find(subs, name="figure") if subs else []
-
-        return [list(map(sub_parse_figure, subs)), page + 1]
-
-    def scraps(self, user: str, page: int = 1):
+    def gallery(self, user: str, page: int = 1) -> Tuple[List[dict], int]:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
-        subs = self.get_parse(f"/scraps/{user}/{page}")
+        page_parsed = self.get_parse(join_url("gallery", user, str(page)))
 
-        titl = page_find(subs, name="title")[0].text
-        if titl.lower().startswith("account disabled"):
-            return [None, 0]
+        if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
+            return [], 0
 
-        subs = page_find(subs, name="figure") if subs else []
+        subs = page_parsed.findAll(name="figure")
 
-        return [list(map(sub_parse_figure, subs)), page + 1]
+        return list(map(sub_parse_figure, subs)), page + 1
 
-    def favorites(self, user: str, page: str = ""):
+    def scraps(self, user: str, page: int = 1) -> Tuple[List[dict], int]:
+        assert isinstance(user, str)
+        assert isinstance(page, int) and page >= 1
+
+        page_parsed = self.get_parse(join_url("scraps", user, str(page)))
+
+        if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
+            return [], 0
+
+        subs = page_parsed.findAll(name="figure")
+
+        return list(map(sub_parse_figure, subs)), page + 1
+
+    def favorites(self, user: str, page: str = "") -> Tuple[List[dict], str]:
         assert isinstance(user, str)
         assert isinstance(page, str)
 
-        page = self.get_parse(f'/favorites/{user}/{page.strip("/")}')
+        page_parsed = self.get_parse(join_url("favorites", user, page))
 
-        titl = page_find(page, name="title")[0].text
-        if titl.lower().startswith("account disabled"):
-            return [None, ""]
+        if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
+            return [], ""
 
-        subs = page_find(page, name="figure") if page else []
-        next = (
-            page_find(page, name="a", class_="button mobile-button right")
-            if page
-            else []
-        )
-        next = (next[0].get("href", ""))[11 + len(user):] if next else ""
+        subs = page_parsed.findAll(name="figure")
 
-        return [list(map(sub_parse_figure, subs)), next]
+        button_next = page_parsed.find(name="a", limit=1, attrs={"class": "button standard right"})
+        page_next: str = button_next["href"].split("/", 3)[-1]
 
-    def search(self, **params):
-        if "q" not in params:
-            raise TypeError('cannot search with empty "q" parameter')
-        elif any(type(v) not in (str, int) for v in params.values()):
-            raise TypeError("params values must be of type string or int")
+        return list(map(sub_parse_figure, subs)), page_next
 
-        page = self.get_parse("/search/", **params)
+    def search(self, **params) -> Tuple[List[dict], int, int, int, int]:
+        assert "q" in params
 
-        subs = page_find(page, name="figure") if page else []
-        next = (
-            not bool(page_find(page, name="input", class_="button hidden"))
-            if subs
-            else False
-        )
-        next = params.get("page", 1) + 1 if next else 0
+        page_parsed = self.get_parse("search", **params)
 
-        return [list(map(sub_parse_figure, subs)), next]
+        subs = page_parsed.find(name="figure")
+        if page_parsed is None:
+            return [], 0, 0, 0, 0
 
-    def check_user(self, user: str):
+        query_stats = page_parsed.find("div", id="query-stats")
+        for div in query_stats("div"):
+            div.decompose()
+
+        a, b, tot = re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups()
+        page_next = (params.get("page", 1) + 1) if b < tot else 0
+
+        return list(map(sub_parse_figure, subs)), page_next, a, b, tot
+
+    def user_exists(self, user: str):
         assert isinstance(user, str)
 
-        page = self.get_parse(f"/user/{user}/")
-        titl = page_find(page, name="title")
+        page_parsed = self.get_parse(f"/user/{user}/")
+        title = page_parsed.title.text
 
-        if not titl:
+        if not title:
             return False
-        elif titl[0].text.lower() == "system error":
+        elif title.text.lower() == "system error":
             return False
-        elif titl[0].text.lower().startswith("account disabled"):
+        elif title.text.lower().startswith("account disabled"):
             return False
         else:
             return True
 
-    def check_sub(self, ID: Union[int, str]):
-        assert isinstance(ID, int) or (isinstance(ID, str) and ID.isdigit())
+    def sub_exists(self, sub_id: Union[int, str]):
+        assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
 
-        page = self.get_parse(f"/view/{ID}/")
-        titl = page_find(page, name="title")
+        page_parsed = self.get_parse(f"/view/{sub_id}/")
+        title = page_parsed.title.text
 
-        if not titl:
+        if not title:
             return False
-        elif titl[0].text.lower() == "system error":
+        elif title.text.lower() == "system error":
             return False
         else:
             return True
