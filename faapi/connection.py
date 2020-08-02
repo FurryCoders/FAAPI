@@ -1,11 +1,10 @@
 from json import load as json_load
 from os.path import isfile
+from time import sleep
 from typing import Dict
 from typing import List
 from typing import Optional
-from typing import Tuple
 from typing import Union
-from time import sleep
 
 from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
@@ -76,9 +75,8 @@ def get_robots() -> Dict[str, Union[str, List[str]]]:
     return robot
 
 
-def get(session: CloudflareScraper, path: str) -> Tuple[int, Response]:
-    res = session.get(join_url(root, path))
-    return res.status_code, res
+def get(session: CloudflareScraper, path: str) -> Response:
+    return session.get(join_url(root, path))
 
 
 def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float] = 100) -> Optional[bytes]:
