@@ -252,5 +252,5 @@ sub3 = api.get_parse('/view/17042208')
 
 # Create an FASub object manually
 #  use the getBinary function provided by FAGet
-sub3 = FASub(sub3, getBinary=api.Get.getBinary)
+sub3 = FASub(sub3, get_binary=api.Get.get_binary)
 ```
