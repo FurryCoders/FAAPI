@@ -1,37 +1,28 @@
-import re
-import filetype
+from typing import List
 
-months = {
-    "January": "01",
-    "February": "02",
-    "March": "03",
-    "April": "04",
-    "May": "05",
-    "June": "06",
-    "July": "07",
-    "August": "08",
-    "September": "09",
-    "October": "10",
-    "November": "11",
-    "December": "12",
-}
-
-re_ext1 = re.compile(":</strong>.*")
-re_ext2 = re.compile(".*<strong>")
-re_ext3 = re.compile(".*</strong>( )*")
-re_ext4 = re.compile("</div>.*")
+from bs4 import BeautifulSoup
+from bs4 import ResultSet
+from bs4.element import Tag
+from dateutil.parser import parse
 
 
 class FASub:
-    def __init__(self, sub, getBinary=None):
-        if str(type(sub)) not in ("<class 'bs4.BeautifulSoup'>", "<class 'NoneType'>"):
-            raise TypeError("sub needs to be of type bs4.BeautifulSoup")
+    def __init__(self, sub_page: BeautifulSoup = None):
+        assert isinstance(sub_page, BeautifulSoup)
 
-        if getBinary and not callable(getBinary):
-            raise TypeError("getBinary needs to be of type function")
+        self.sub_page = sub_page
 
-        self.sub = sub
-        self.getBinary = getBinary
+        self.id: int = 0
+        self.title: str = ""
+        self.author: str = ""
+        self.date: str = ""
+        self.tags: List[str] = []
+        self.category: str = ""
+        self.species: str = ""
+        self.gender: str = ""
+        self.rating: str = ""
+        self.description: str = ""
+        self.file_url: str = ""
 
         self.analyze()
 
@@ -45,104 +36,36 @@ class FASub:
         yield "species", self.species
         yield "gender", self.gender
         yield "rating", self.rating
-        yield "desc", self.desc
-        yield "filelink", self.filelink
-        yield "fileext", self.fileext
+        yield "description", self.description
+        yield "file_url", self.file_url
 
     def analyze(self):
-        if not self.sub:
-            self.id = None
-            self.title = None
-            self.author = None
-            self.date = None
-            self.tags = None
-            self.category = None
-            self.species = None
-            self.gender = None
-            self.rating = None
-            self.desc = None
-            self.filelink = None
-            self.fileext = None
-            self.file = None
-
+        if self.sub_page is None:
             return
 
-        self.id = self.sub.find("meta", property="og:url")
-        self.id = self.id.get("content", None) if self.id else None
-        self.id = int(self.id.split("/")[-2]) if self.id else 0
+        tag_id: Tag = self.sub_page.find("meta", property="og:url")
+        tag_sub_info: Tag = self.sub_page.find("div", attrs={"class": "submission-id-sub-container"})
+        tag_title: Tag = tag_sub_info.find("div", attrs={"class": "submission-title"})
+        tag_author: Tag = tag_sub_info.find("a")
+        tag_date: Tag = self.sub_page.find("span", attrs={"class": "popup_date"})
+        tag_tags: ResultSet = self.sub_page.find("section", attrs={"class": "tags-row"}).findAll("a")
+        tag_rating: Tag = self.sub_page.find("div", attrs={"class": "rating"}).find("span")
+        tag_info: ResultSet = self.sub_page.find("section", attrs={"class": "info text"}).findAll("div")
+        tag_category1: Tag = tag_info[1].find("span", attrs={"class": "category-name"})
+        tag_category2: Tag = tag_info[1].find("span", attrs={"class": "type-name"})
+        tag_species: Tag = tag_info[2].find("span")
+        tag_gender: Tag = tag_info[3].find("span")
+        tag_description: Tag = self.sub_page.find("div", attrs={"class": "submission-description"})
+        tag_file_url: Tag = self.sub_page.find("div", attrs={"class": "download"}).find("a")
 
-        self.title = self.sub.find("h2", "submission-title-header")
-        self.title = self.title.string if self.title else ""
-
-        self.author = self.sub.find("div", "submission-artist-container")
-        self.author = self.author.find("h2") if self.author else None
-        self.author = self.author.string if self.author else ""
-
-        self.date = self.sub.find("meta", {"name": "twitter:data1"})
-        self.date = self.date.get("content", "").replace(",", "") if self.date else None
-        self.date = self.date.split(" ") if self.date else None
-        self.date = (
-            f"{self.date[2]}-{months[self.date[0]]}-{self.date[1]:0>2}"
-            if self.date
-            else ""
-        )
-
-        self.tags = [k.string for k in self.sub.find_all("span", "tags")]
-        self.tags = self.tags[0 : int(len(self.tags) / 2)]
-        self.tags = sorted(set(self.tags), key=str.lower)
-
-        extras_raw = self.sub.find("div", "sidebar-section-no-bottom")
-        extras_raw = [str(e) for e in extras_raw.find_all("div")] if extras_raw else []
-        extras = {}
-        for e in extras_raw:
-            e_typ = re_ext1.sub("", e)
-            e_typ = re_ext2.sub("", e_typ)
-            e_val = re_ext3.sub("", e)
-            e_val = re_ext4.sub("", e_val)
-            extras[e_typ.lower()] = e_val.replace("&gt;", ">")
-        self.category = extras.get("category", "")
-        self.species = extras.get("species", "")
-        self.gender = extras.get("gender", "")
-
-        self.rating = self.sub.find("meta", {"name": "twitter:data2"})
-        self.rating = self.rating.get("content", "") if self.rating else ""
-
-        self.desc = self.sub.find("div", "submission-description-container")
-        self.desc = str(self.desc.prettify()) if self.desc else None
-        self.desc = self.desc.split("</div>", 1)[-1] if self.desc else None
-        self.desc = self.desc.rsplit("</div>", 1)[0] if self.desc else ""
-        self.desc = self.desc.strip()
-
-        self.filelink = self.sub.find("a", "button download-logged-in")
-        self.filelink = self.filelink.get("href", "") if self.filelink else None
-        self.filelink = "https:" + self.filelink if self.filelink else ""
-        self.fileext = (
-            self.filelink.split(".")[-1]
-            if self.filelink and "." in self.filelink
-            else None
-        )
-        self.file = bytes() if self.filelink else None
-
-    def getFile(self, getBinary=None):
-        if not self.filelink:
-            return
-
-        self.getBinary = getBinary if getBinary else self.getBinary
-
-        if not self.getBinary:
-            return
-        elif not callable(self.getBinary):
-            raise TypeError("getBinary needs to be of type function")
-
-        self.file = self.getBinary(self.filelink)
-
-        self.fileext = (
-            filetype.guess_extension(self.file) if self.file else self.fileext
-        )
-
-        if self.fileext == None:
-            self.fileext = self.filelink.split(".")[-1] if "." in self.filelink else ""
-        elif self.fileext == "zip":
-            self.fileext = (
-                "docx" if self.filelink.split(".")[-1] == "docx" else self.fileext
-            )
+        self.id = int(tag_id["content"].strip("/").split("/")[-1])
+        self.title = tag_title.text.strip()
+        self.author = tag_author.text.strip()
+        self.date = parse(tag_date.text.strip()).strftime("%Y-%m-%d")
+        self.tags = [t.text.strip() for t in tag_tags]
+        self.category = tag_category1.text.strip() + "/" + tag_category2.text.strip()
+        self.species = tag_species.text.strip()
+        self.gender = tag_gender.text.strip()
+        self.rating = tag_rating.text.strip()
+        self.description = "".join(map(str, tag_description.children)).strip()
+        self.file_url = "https:" + tag_file_url["href"]
