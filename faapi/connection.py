@@ -60,7 +60,7 @@ def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
     return session
 
 
-def get_robot() -> Dict[str, Union[str, List[str]]]:
+def get_robots() -> Dict[str, Union[str, List[str]]]:
     res = get_raw(join_url(root, "robots.txt"))
 
     if not res.ok:
