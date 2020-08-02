@@ -116,10 +116,11 @@ class FAAPI:
     def user_exists(self, user: str):
         assert isinstance(user, str)
 
-        page_parsed = self.get_parse(f"/user/{user}/")
-        title = page_parsed.title.text
+        res = self.get(join_url("view", user))
 
-        if not title:
+        if not res.ok:
+            return False
+        elif not (title := page_parse(res.text).title.text):
             return False
         elif title.text.lower() == "system error":
             return False
@@ -131,10 +132,11 @@ class FAAPI:
     def sub_exists(self, sub_id: Union[int, str]):
         assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
 
-        page_parsed = self.get_parse(f"/view/{sub_id}/")
-        title = page_parsed.title.text
+        res = self.get(join_url("view", str(sub_id)))
 
-        if not title:
+        if not res.ok:
+            return False
+        elif not (title := page_parse(res.text).title.text):
             return False
         elif title.text.lower() == "system error":
             return False
