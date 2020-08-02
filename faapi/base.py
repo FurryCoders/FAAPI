@@ -1,3 +1,6 @@
+from typing import List
+from typing import Union
+
 from .connection import cookies_load
 from .connection import make_session
 from .get import FAGet
@@ -6,20 +9,21 @@ from .sub import FASub
 
 
 class FAAPI:
-    def __init__(self, cookies_f="", cookies_l=[]):
+    def __init__(self, cookies_f: str = "", cookies_l: List[dict] = None):
+        cookies_l = [] if cookies_l is None else cookies_l
+
         self.session = make_session(cookies_load(cookies_f, cookies_l))
         self.Get = FAGet(self.session)
         self.Page = FAPage()
 
-    def get(self, url, **params):
+    def get(self, url: str, **params):
         return self.Get.get(url, **params)
 
-    def getParse(self, url, **params):
+    def getParse(self, url: str, **params):
         return self.Get.getParse(url, **params)
 
-    def getSub(self, ID, file=False):
-        if type(ID) != int and not str(ID).isdigit():
-            raise TypeError("ID needs to be an integer or string of integers")
+    def getSub(self, ID: Union[int, str], file=False):
+        assert isinstance(ID, int) or (isinstance(ID, str) and ID.isdigit())
 
         sub = self.Get.getParse(f"/view/{ID}")
         sub = FASub(sub, getBinary=self.Get.getBinary)
@@ -27,7 +31,9 @@ class FAAPI:
             sub.getFile()
         return sub
 
-    def userpage(self, user):
+    def userpage(self, user: str):
+        assert isinstance(user, str)
+
         page = self.Get.getParse(f"/user/{user}/")
         usrn = self.Page.pageFind(page, name="title")[0] if page else ""
         usrn = (
@@ -42,9 +48,9 @@ class FAAPI:
 
         return [usrn, desc]
 
-    def gallery(self, user, page=1):
-        if type(page) != int or page < 1:
-            raise TypeError("page argument needs to be an integer greater than 1")
+    def gallery(self, user: str, page: int = 1):
+        assert isinstance(user, str)
+        assert isinstance(page, int) and page >= 1
 
         subs = self.Get.getParse(f"/gallery/{user}/{page}")
 
@@ -56,9 +62,9 @@ class FAAPI:
 
         return [self.Page.subParse(subs), page + 1]
 
-    def scraps(self, user, page=1):
-        if type(page) != int or page < 1:
-            raise TypeError("page argument needs to be an integer greater than 1")
+    def scraps(self, user: str, page: int = 1):
+        assert isinstance(user, str)
+        assert isinstance(page, int) and page >= 1
 
         subs = self.Get.getParse(f"/scraps/{user}/{page}")
 
@@ -70,9 +76,9 @@ class FAAPI:
 
         return [self.Page.subParse(subs), page + 1]
 
-    def favorites(self, user, page=""):
-        if type(page) != str:
-            raise TypeError("page argument needs to be string")
+    def favorites(self, user: str, page: str = ""):
+        assert isinstance(user, str)
+        assert isinstance(page, str)
 
         page = self.Get.getParse(f'/favorites/{user}/{page.strip("/")}')
 
@@ -108,9 +114,8 @@ class FAAPI:
 
         return [self.Page.subParse(subs), next]
 
-    def checkUser(self, user):
-        if type(user) != str:
-            raise TypeError("user argument needs to be of type str")
+    def checkUser(self, user: str):
+        assert isinstance(user, str)
 
         page = self.Get.getParse(f"/user/{user}/")
         titl = self.Page.pageFind(page, name="title")
@@ -124,9 +129,8 @@ class FAAPI:
         else:
             return True
 
-    def checkSub(self, ID):
-        if type(ID) not in (str, int):
-            raise TypeError("ID argument needs to be of type str or int")
+    def checkSub(self, ID: Union[int, str]):
+        assert isinstance(ID, int) or (isinstance(ID, str) and ID.isdigit())
 
         page = self.Get.getParse(f"/view/{ID}/")
         titl = self.Page.pageFind(page, name="title")
