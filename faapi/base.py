@@ -1,5 +1,3 @@
-from inspect import getargspec
-
 from .session import FASession
 from .get import FAGet
 from .page import FAPage
