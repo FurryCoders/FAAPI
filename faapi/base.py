@@ -56,7 +56,7 @@ class FAAPI:
         self.handle_delay()
         return get_binary_raw(self.session, sub.file_url)
 
-    def userpage(self, user: str) -> Tuple[str, str, str]:
+    def userpage(self, user: str) -> Tuple[str, str, BeautifulSoup]:
         assert isinstance(user, str)
 
         page: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
@@ -71,7 +71,7 @@ class FAAPI:
 
         description = page.find(name="div", attrs={"class": "userpage-profile"}).text.strip()
 
-        return username, status, description
+        return username, status, page_parse(description)
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
         assert isinstance(user, str)
