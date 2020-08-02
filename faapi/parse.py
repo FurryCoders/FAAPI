@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
@@ -7,10 +8,6 @@ from bs4.element import Tag
 
 def page_parse(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
-
-
-def page_find(page: BeautifulSoup, limit: int = None, **params) -> ResultSet:
-    return page.findAll(limit=limit, **params)
 
 
 def sub_parse_figure(figure: Tag) -> dict:
