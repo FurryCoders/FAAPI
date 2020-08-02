@@ -48,7 +48,7 @@ class FAAPI:
 
         sub_page = self.get_parse(f"/view/{sub_id}")
         sub = Sub(sub_page)
-        sub_file = get_binary_raw(self.session, sub.file_url) if get_file else None
+        sub_file = self.get_sub_file(sub) if get_file else None
 
         return sub, sub_file
 
