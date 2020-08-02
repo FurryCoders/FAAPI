@@ -1,9 +1,30 @@
+from re import search as re_search
 from typing import List
 
 from bs4 import BeautifulSoup
 from bs4 import ResultSet
 from bs4.element import Tag
 from dateutil.parser import parse
+
+
+class FASubPartial:
+    def __init__(self):
+        self.id: int = 0
+        self.title: str = ""
+        self.author: str = ""
+        self.rating: str = ""
+        self.type: str = ""
+
+    @classmethod
+    def parse_figure_tag(cls, figure_tag: Tag) -> 'FASubPartial':
+        sub = FASubPartial()
+
+        caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
+
+        sub.id = int(caption_links[0].strip("/").strip("/")[-1])
+        sub.title = caption_links[0].text
+        sub.author = caption_links[1].text
+        sub.rating, sub.type = re_search(r"r-(\w+)[^t]*t-(\w+)", figure_tag["class"]).groups()
 
 
 class FASub:
