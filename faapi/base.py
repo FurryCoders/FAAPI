@@ -22,14 +22,14 @@ class FAAPI:
     def get(self, url: str, **params):
         return get(self.session, url, **params)
 
-    def getParse(self, url: str, **params) -> Optional[BeautifulSoup]:
+    def get_parse(self, url: str, **params) -> Optional[BeautifulSoup]:
         res = get(self.session, url, **params)
         return page_parse(res.text) if res.ok else None
 
-    def getSub(self, ID: Union[int, str], file=False):
+    def get_sub(self, ID: Union[int, str], file=False):
         assert isinstance(ID, int) or (isinstance(ID, str) and ID.isdigit())
 
-        sub = self.getParse(f"/view/{ID}")
+        sub = self.get_parse(f"/view/{ID}")
         sub = FASub(sub, getBinary=get_binary_raw)
         if file:
             sub.getFile()
@@ -38,7 +38,7 @@ class FAAPI:
     def userpage(self, user: str):
         assert isinstance(user, str)
 
-        page = self.getParse(f"/user/{user}/")
+        page = self.get_parse(f"/user/{user}/")
         usrn = page_find(page, name="title")[0] if page else ""
         usrn = (
             usrn.text[12:21]
@@ -56,7 +56,7 @@ class FAAPI:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
-        subs = self.getParse(f"/gallery/{user}/{page}")
+        subs = self.get_parse(f"/gallery/{user}/{page}")
 
         titl = page_find(subs, name="title")[0].text
         if titl.lower().startswith("account disabled"):
@@ -70,7 +70,7 @@ class FAAPI:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
-        subs = self.getParse(f"/scraps/{user}/{page}")
+        subs = self.get_parse(f"/scraps/{user}/{page}")
 
         titl = page_find(subs, name="title")[0].text
         if titl.lower().startswith("account disabled"):
@@ -84,7 +84,7 @@ class FAAPI:
         assert isinstance(user, str)
         assert isinstance(page, str)
 
-        page = self.getParse(f'/favorites/{user}/{page.strip("/")}')
+        page = self.get_parse(f'/favorites/{user}/{page.strip("/")}')
 
         titl = page_find(page, name="title")[0].text
         if titl.lower().startswith("account disabled"):
@@ -106,7 +106,7 @@ class FAAPI:
         elif any(type(v) not in (str, int) for v in params.values()):
             raise TypeError("params values must be of type string or int")
 
-        page = self.getParse("/search/", **params)
+        page = self.get_parse("/search/", **params)
 
         subs = page_find(page, name="figure") if page else []
         next = (
@@ -118,10 +118,10 @@ class FAAPI:
 
         return [list(map(sub_parse_figure, subs)), next]
 
-    def checkUser(self, user: str):
+    def check_user(self, user: str):
         assert isinstance(user, str)
 
-        page = self.getParse(f"/user/{user}/")
+        page = self.get_parse(f"/user/{user}/")
         titl = page_find(page, name="title")
 
         if not titl:
@@ -133,10 +133,10 @@ class FAAPI:
         else:
             return True
 
-    def checkSub(self, ID: Union[int, str]):
+    def check_sub(self, ID: Union[int, str]):
         assert isinstance(ID, int) or (isinstance(ID, str) and ID.isdigit())
 
-        page = self.getParse(f"/view/{ID}/")
+        page = self.get_parse(f"/view/{ID}/")
         titl = page_find(page, name="title")
 
         if not titl:
