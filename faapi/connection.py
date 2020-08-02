@@ -1,5 +1,3 @@
-from json import load as json_load
-from os.path import isfile
 from time import sleep
 from typing import Dict
 from typing import List
@@ -25,21 +23,6 @@ def ping() -> bool:
         return get_raw(root).ok
     except (ConnectionError, ConnectTimeout):
         return False
-
-
-def cookies_load(cookies_file: str = "", cookies_list: List[dict] = None) -> List[dict]:
-    cookies_list = [] if cookies_list is None else cookies_list
-
-    assert isinstance(cookies_file, str)
-    assert isinstance(cookies_list, list)
-    assert all(isinstance(cookie, dict) for cookie in cookies_list)
-
-    if cookies_file and isfile(cookies_file):
-        with open(cookies_file, "r") as f:
-            cookies_list = json_load(f)
-        assert isinstance(cookies_list, list)
-
-    return cookies_list
 
 
 def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
