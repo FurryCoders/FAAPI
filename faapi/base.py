@@ -8,7 +8,6 @@ from typing import Tuple
 from typing import Union
 
 from .connection import CloudflareScraper
-from .connection import cookies_load
 from .connection import get
 from .connection import get_binary_raw
 from .connection import get_robots
@@ -21,10 +20,10 @@ from .sub import SubPartial
 
 
 class FAAPI:
-    def __init__(self, cookies_f: str = "", cookies_l: List[dict] = None):
-        cookies_l = [] if cookies_l is None else cookies_l
+    def __init__(self, cookies: List[dict] = None):
+        cookies = [] if cookies is None else cookies
 
-        self.session: CloudflareScraper = make_session(cookies_load(cookies_f, cookies_l))
+        self.session: CloudflareScraper = make_session(cookies)
         self.robots: Dict[str, List[str]] = get_robots()
         self.crawl_delay: float = float(self.robots["Crawl-delay"][0]) if self.robots.get("Crawl-delay", 0) else 1.0
         self.last_get: float = perf_counter() - self.crawl_delay
