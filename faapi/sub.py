@@ -62,6 +62,9 @@ class Sub:
         yield "description", self.description
         yield "file_url", self.file_url
 
+    def __repr__(self):
+        return repr(dict(self))
+
     def parse_page(self):
         if self.sub_page is None:
             return
