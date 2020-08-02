@@ -10,8 +10,8 @@ from .connection import join_url
 from .connection import make_session, get_binary_raw
 from .parse import BeautifulSoup
 from .parse import page_parse
-from .parse import sub_parse_figure
-from .sub import FASub
+from .sub import Sub
+from .sub import SubPartial
 
 
 class FAAPI:
@@ -27,11 +27,11 @@ class FAAPI:
         res = get(self.session, url, **params)
         return page_parse(res.text) if res.ok else None
 
-    def get_sub(self, sub_id: Union[int, str], get_file: bool = False) -> Tuple[FASub, Optional[bytes]]:
+    def get_sub(self, sub_id: Union[int, str], get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
         assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
 
         sub_page = self.get_parse(f"/view/{sub_id}")
-        sub = FASub(sub_page)
+        sub = Sub(sub_page)
         sub_file = get_binary_raw(self.session, sub.file_url) if get_file else None
 
         return sub, sub_file
@@ -53,7 +53,7 @@ class FAAPI:
 
         return username, status, description
 
-    def gallery(self, user: str, page: int = 1) -> Tuple[List[dict], int]:
+    def gallery(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
@@ -64,9 +64,9 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        return list(map(sub_parse_figure, subs)), page + 1
+        return list(map(SubPartial.parse_figure_tag, subs)), page + 1
 
-    def scraps(self, user: str, page: int = 1) -> Tuple[List[dict], int]:
+    def scraps(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
@@ -77,9 +77,9 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        return list(map(sub_parse_figure, subs)), page + 1
+        return list(map(SubPartial.parse_figure_tag, subs)), page + 1
 
-    def favorites(self, user: str, page: str = "") -> Tuple[List[dict], str]:
+    def favorites(self, user: str, page: str = "") -> Tuple[List[SubPartial], str]:
         assert isinstance(user, str)
         assert isinstance(page, str)
 
@@ -93,9 +93,9 @@ class FAAPI:
         button_next = page_parsed.find(name="a", limit=1, attrs={"class": "button standard right"})
         page_next: str = button_next["href"].split("/", 3)[-1]
 
-        return list(map(sub_parse_figure, subs)), page_next
+        return list(map(SubPartial.parse_figure_tag, subs)), page_next
 
-    def search(self, **params) -> Tuple[List[dict], int, int, int, int]:
+    def search(self, **params) -> Tuple[List[SubPartial], int, int, int, int]:
         assert "q" in params
 
         page_parsed = self.get_parse("search", **params)
@@ -111,7 +111,7 @@ class FAAPI:
         a, b, tot = re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups()
         page_next = (params.get("page", 1) + 1) if b < tot else 0
 
-        return list(map(sub_parse_figure, subs)), page_next, a, b, tot
+        return list(map(SubPartial.parse_figure_tag, subs)), page_next, a, b, tot
 
     def user_exists(self, user: str):
         assert isinstance(user, str)

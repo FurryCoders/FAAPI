@@ -7,7 +7,7 @@ from bs4.element import Tag
 from dateutil.parser import parse
 
 
-class FASubPartial:
+class SubPartial:
     def __init__(self):
         self.id: int = 0
         self.title: str = ""
@@ -16,8 +16,8 @@ class FASubPartial:
         self.type: str = ""
 
     @classmethod
-    def parse_figure_tag(cls, figure_tag: Tag) -> 'FASubPartial':
-        sub = FASubPartial()
+    def parse_figure_tag(cls, figure_tag: Tag) -> 'SubPartial':
+        sub = SubPartial()
 
         caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
 
@@ -27,7 +27,7 @@ class FASubPartial:
         sub.rating, sub.type = re_search(r"r-(\w+)[^t]*t-(\w+)", figure_tag["class"]).groups()
 
 
-class FASub:
+class Sub:
     def __init__(self, sub_page: BeautifulSoup = None):
         assert isinstance(sub_page, BeautifulSoup)
 
