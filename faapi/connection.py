@@ -75,8 +75,8 @@ def get_robots() -> Dict[str, Union[str, List[str]]]:
     return robot
 
 
-def get(session: CloudflareScraper, path: str) -> Response:
-    return session.get(join_url(root, path))
+def get(session: CloudflareScraper, path: str, **params) -> Response:
+    return session.get(join_url(root, path), params=params)
 
 
 def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float] = 100) -> Optional[bytes]:
