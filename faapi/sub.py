@@ -66,6 +66,9 @@ class Sub:
         if self.sub_page is None:
             return
 
+        if self.sub_page.find("section", attrs={"class": "notice-message"}):
+            raise Exception("Error: notice-message section found")
+
         tag_id: Tag = self.sub_page.find("meta", property="og:url")
         tag_sub_info: Tag = self.sub_page.find("div", attrs={"class": "submission-id-sub-container"})
         tag_title: Tag = tag_sub_info.find("div", attrs={"class": "submission-title"})
