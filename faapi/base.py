@@ -1,4 +1,5 @@
-from .session import FASession
+from .connection import cookies_load
+from .connection import make_session
 from .get import FAGet
 from .page import FAPage
 from .sub import FASub
@@ -6,8 +7,8 @@ from .sub import FASub
 
 class FAAPI:
     def __init__(self, cookies_f="", cookies_l=[]):
-        self.Session = FASession(cookies_f, cookies_l)
-        self.Get = FAGet(self.Session.Session)
+        self.session = make_session(cookies_load(cookies_f, cookies_l))
+        self.Get = FAGet(self.session)
         self.Page = FAPage()
 
     def get(self, url, **params):
@@ -85,7 +86,7 @@ class FAAPI:
             if page
             else []
         )
-        next = (next[0].get("href", ""))[11 + len(user) :] if next else ""
+        next = (next[0].get("href", ""))[11 + len(user):] if next else ""
 
         return [self.Page.subParse(subs), next]
 
