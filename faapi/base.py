@@ -1,6 +1,7 @@
 from re import search as re_search
 from time import perf_counter
 from time import sleep
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -24,7 +25,8 @@ class FAAPI:
         cookies_l = [] if cookies_l is None else cookies_l
 
         self.session: CloudflareScraper = make_session(cookies_load(cookies_f, cookies_l))
-        self.crawl_delay: float = float(get_robots().get("Crawl-delay", 1.0))
+        self.robots: Dict[str, List[str]] = get_robots()
+        self.crawl_delay: float = float(self.robots["Crawl-delay"][0]) if self.robots.get("Crawl-delay", 0) else 1.0
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
 
