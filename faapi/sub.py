@@ -26,6 +26,8 @@ class SubPartial:
         sub.author = caption_links[1].text
         sub.rating, sub.type = re_search(r"r-(\w+)[^t]*t-(\w+)", figure_tag["class"]).groups()
 
+        return sub
+
 
 class Sub:
     def __init__(self, sub_page: BeautifulSoup = None):
