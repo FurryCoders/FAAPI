@@ -84,7 +84,7 @@ class Sub:
         self.id = int(tag_id["content"].strip("/").split("/")[-1])
         self.title = tag_title.text.strip()
         self.author = tag_author.text.strip()
-        self.date = parse(tag_date.text.strip()).strftime("%Y-%m-%d")
+        self.date = parse(tag_date["title"].strip()).strftime("%Y-%m-%d")
         self.tags = [t.text.strip() for t in tag_tags]
         self.category = tag_category1.text.strip() + "/" + tag_category2.text.strip()
         self.species = tag_species.text.strip()
