@@ -6,9 +6,8 @@ from typing import Union
 
 from .connection import cookies_load
 from .connection import get
-from .connection import get_binary_raw
 from .connection import join_url
-from .connection import make_session
+from .connection import make_session, get_binary_raw
 from .parse import BeautifulSoup
 from .parse import page_parse
 from .parse import sub_parse_figure
@@ -28,15 +27,14 @@ class FAAPI:
         res = get(self.session, url, **params)
         return page_parse(res.text) if res.ok else None
 
-    def get_sub(self, sub_id: Union[int, str], file=False):
+    def get_sub(self, sub_id: Union[int, str], get_file: bool = False) -> Tuple[FASub, Optional[bytes]]:
         assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
 
         sub_page = self.get_parse(f"/view/{sub_id}")
-        sub = FASub(sub_page, getBinary=get_binary_raw)
-        if file:
-            sub.getFile()
+        sub = FASub(sub_page)
+        sub_file = get_binary_raw(self.session, sub.file_url) if get_file else None
 
-        return sub
+        return sub, sub_file
 
     def userpage(self, user: str) -> Tuple[str, str, str]:
         assert isinstance(user, str)
