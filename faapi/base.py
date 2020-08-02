@@ -1,12 +1,15 @@
 from re import search as re_search
+from time import perf_counter
 from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
 
+from .connection import CloudflareScraper
 from .connection import cookies_load
 from .connection import get
 from .connection import get_binary_raw
+from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
 from .parse import BeautifulSoup
@@ -19,7 +22,9 @@ class FAAPI:
     def __init__(self, cookies_f: str = "", cookies_l: List[dict] = None):
         cookies_l = [] if cookies_l is None else cookies_l
 
-        self.session = make_session(cookies_load(cookies_f, cookies_l))
+        self.session: CloudflareScraper = make_session(cookies_load(cookies_f, cookies_l))
+        self.crawl_delay: float = float(get_robots().get("Crawl-delay", 1.0))
+        self.last_get: float = perf_counter() - self.crawl_delay
 
     def get(self, url: str, **params):
         return get(self.session, url, **params)
