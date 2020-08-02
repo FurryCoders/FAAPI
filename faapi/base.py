@@ -2,6 +2,7 @@ from typing import List
 from typing import Union
 
 from .connection import cookies_load
+from .connection import get
 from .connection import make_session
 from .get import FAGet
 from .page import FAPage
@@ -16,8 +17,8 @@ class FAAPI:
         self.Get = FAGet(self.session)
         self.Page = FAPage()
 
-    def get(self, url: str, **params):
-        return self.Get.get(url, **params)
+    def get(self, url: str):
+        return get(self.session, url)
 
     def getParse(self, url: str, **params):
         return self.Get.getParse(url, **params)
