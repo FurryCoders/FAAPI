@@ -26,9 +26,12 @@ class FAAPI:
         self.session: CloudflareScraper = make_session(cookies_load(cookies_f, cookies_l))
         self.crawl_delay: float = float(get_robots().get("Crawl-delay", 1.0))
         self.last_get: float = perf_counter() - self.crawl_delay
+        self.raise_for_delay: bool = False
 
     def get(self, url: str, **params):
         if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
+            if self.raise_for_delay:
+                raise Exception(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
             sleep(delay_diff)
 
         self.last_get = perf_counter()
