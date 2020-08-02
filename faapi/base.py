@@ -1,5 +1,6 @@
 from re import search as re_search
 from time import perf_counter
+from time import sleep
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -27,6 +28,11 @@ class FAAPI:
         self.last_get: float = perf_counter() - self.crawl_delay
 
     def get(self, url: str, **params):
+        if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
+            sleep(delay_diff)
+
+        self.last_get = perf_counter()
+
         return get(self.session, url, **params)
 
     def get_parse(self, url: str, **params) -> Optional[BeautifulSoup]:
