@@ -37,7 +37,13 @@ class FAAPI:
             sleep(self.crawl_delay - delay_diff)
         self.last_get = perf_counter()
 
+    def check_path(self, path: str):
+        for pattern in self.robots.get("disallow", []):
+            if re_search(pattern.replace("*", ".*").strip("/"), path):
+                raise Exception(f"Path {path} is not allowed by robots.txt {pattern}")
+
     def get(self, url: str, **params) -> Response:
+        self.check_path(url)
         self.handle_delay()
         return get(self.session, url, **params)
 
