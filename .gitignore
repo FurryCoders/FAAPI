@@ -20,6 +20,11 @@ wheels/
 .installed.cfg
 *.egg
 
+# virtualenv
+.venv
+venv/
+ENV/
+
 
 # mypy
 .mypy_cache/
