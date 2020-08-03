@@ -115,8 +115,11 @@ class FAAPI:
 
         return list(map(SubPartial.parse_figure_tag, subs)), page_next
 
-    def search(self, q: str, **params) -> Tuple[List[SubPartial], int, int, int, int]:
-        page_parsed = self.get_parse("search", q=q, **params)
+    def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubPartial], int, int, int, int]:
+        assert isinstance(q, str)
+        assert isinstance(page, int)
+
+        page_parsed = self.get_parse("search", q=q, page=page, **params)
 
         subs = page_parsed.find(name="figure")
         if page_parsed is None:
@@ -127,7 +130,7 @@ class FAAPI:
             div.decompose()
 
         a, b, tot = re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups()
-        page_next = (params.get("page", 1) + 1) if b < tot else 0
+        page_next = (page + 1) if b < tot else 0
 
         return list(map(SubPartial.parse_figure_tag, subs)), page_next, a, b, tot
 
