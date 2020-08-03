@@ -26,28 +26,28 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
         "title": title,
         "author": author,
         "rating": rating,
-        "type": type_
+        "type": type_,
     }
 
 
 def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str]]]:
-    if sub_page.find("section", attrs={"class": "notice-message"}):
+    if sub_page.find("section", class_="notice-message"):
         raise Exception("Error: notice-message section found")
 
     tag_id: Tag = sub_page.find("meta", property="og:url")
-    tag_sub_info: Tag = sub_page.find("div", attrs={"class": "submission-id-sub-container"})
-    tag_title: Tag = tag_sub_info.find("div", attrs={"class": "submission-title"})
+    tag_sub_info: Tag = sub_page.find("div", class_="submission-id-sub-container")
+    tag_title: Tag = tag_sub_info.find("div", class_="submission-title")
     tag_author: Tag = tag_sub_info.find("a")
-    tag_date: Tag = sub_page.find("span", attrs={"class": "popup_date"})
-    tag_tags: ResultSet = sub_page.find("section", attrs={"class": "tags-row"}).findAll("a")
-    tag_rating: Tag = sub_page.find("div", attrs={"class": "rating"}).find("span")
-    tag_info: ResultSet = sub_page.find("section", attrs={"class": "info text"}).findAll("div")
-    tag_category1: Tag = tag_info[1].find("span", attrs={"class": "category-name"})
-    tag_category2: Tag = tag_info[1].find("span", attrs={"class": "type-name"})
+    tag_date: Tag = sub_page.find("span", class_="popup_date")
+    tag_tags: ResultSet = sub_page.find("section", class_="tags-row").findAll("a")
+    tag_rating: Tag = sub_page.find("div", class_="rating").find("span")
+    tag_info: ResultSet = sub_page.find("section", class_="info text").findAll("div")
+    tag_category1: Tag = tag_info[1].find("span", class_= "category-name")
+    tag_category2: Tag = tag_info[1].find("span", class_="type-name")
     tag_species: Tag = tag_info[2].find("span")
     tag_gender: Tag = tag_info[3].find("span")
-    tag_description: Tag = sub_page.find("div", attrs={"class": "submission-description"})
-    tag_file_url: Tag = sub_page.find("div", attrs={"class": "download"}).find("a")
+    tag_description: Tag = sub_page.find("div", class_="submission-description")
+    tag_file_url: Tag = sub_page.find("div", class_="download").find("a")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()

@@ -15,7 +15,7 @@ root = "https://www.furaffinity.net"
 
 
 def join_url(*url_comps: str) -> str:
-    return '/'.join(map(lambda e: e.strip(" /"), url_comps))
+    return "/".join(map(lambda e: e.strip(" /"), url_comps))
 
 
 def ping() -> bool:

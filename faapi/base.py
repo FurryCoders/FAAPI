@@ -71,13 +71,13 @@ class FAAPI:
         if page is None:
             return "", "", None
 
-        username_div = page.find(name="div", attrs={"class": "username"})
+        username_div = page.find("div", class_="username")
 
         username = username_div.find("span").text.strip()
         status = username[0]
         username = username[1:]
 
-        description = page.find(name="div", attrs={"class": "userpage-profile"}).text.strip()
+        description = page.find("div", class_="userpage-profile").text.strip()
 
         return username, status, parse_page(description)
 
@@ -90,7 +90,7 @@ class FAAPI:
         if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
             return [], 0
 
-        subs = page_parsed.findAll(name="figure")
+        subs = page_parsed.findAll("figure")
 
         return list(map(SubPartial, subs)), (page + 1) if subs else 0
 
@@ -103,7 +103,7 @@ class FAAPI:
         if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
             return [], 0
 
-        subs = page_parsed.findAll(name="figure")
+        subs = page_parsed.findAll("figure")
 
         return list(map(SubPartial, subs)), (page + 1) if subs else 0
 
@@ -116,9 +116,9 @@ class FAAPI:
         if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
             return [], ""
 
-        subs = page_parsed.findAll(name="figure")
+        subs = page_parsed.findAll("figure")
 
-        button_next = page_parsed.find(name="a", attrs={"class": "button standard right"})
+        button_next = page_parsed.find("a", class_="button standard right")
         page_next: str = button_next["href"].split("/", 3)[-1] if button_next else ""
 
         return list(map(SubPartial, subs)), page_next
@@ -129,7 +129,7 @@ class FAAPI:
 
         page_parsed = self.get_parse("search", q=q, page=page, **params)
 
-        subs = page_parsed.findAll(name="figure")
+        subs = page_parsed.findAll("figure")
         if page_parsed is None:
             return [], 0, 0, 0, 0
 

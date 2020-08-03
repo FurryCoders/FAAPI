@@ -5,7 +5,7 @@ from typing import List
 
 import faapi
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     work_dir: str = path.dirname(path.abspath(__file__))
 
     # Prepare cookies

@@ -4,7 +4,7 @@ from typing import List
 
 import faapi
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     work_dir: str = path.dirname(path.abspath(__file__))
 
     # Prepare cookies
@@ -41,5 +41,5 @@ if __name__ == '__main__':
     sub_file = api.get_sub_file(sub)
 
     # Write submission file to file
-    with open(path.join(work_dir, sub.file_url.split('/')[-1]), "wb") as f:
+    with open(path.join(work_dir, sub.file_url.split("/")[-1]), "wb") as f:
         f.write(sub_file)
