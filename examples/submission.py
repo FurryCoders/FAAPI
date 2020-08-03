@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # Get submission metadata without downloading file
     #  Use 3rd argument as ID
-    sub, _ = api.get_sub(argv[3])
+    sub, _ = api.get_sub(int(argv[3]))
 
     # Access submission metadata
     print(f"id         : {sub.id}")
