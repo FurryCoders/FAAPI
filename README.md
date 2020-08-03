@@ -154,7 +154,7 @@ The main class that parses and holds submission metadata.
 * `species` species \*
 * `gender` gender \*
 * `rating` rating \*
-* `desc` the description as an HTML formatted string
+* `description` the description as an HTML formatted string
 * `file_url` the url to the submission file
 
 \* these are extracted exactly as they appear on the submission page
