@@ -156,3 +156,10 @@ If no `sub_page` is passed then the object fields will remain at their default -
 
 * `parse_page()`<br>
 Parses the stored submissions page for metadata.
+
+## Examples
+
+To see examples of the various functionalities of the module, use the scripts located in the examples folder.
+These can be run directly, provided the requirements are met.
+
+See the specific scripts for more details.
