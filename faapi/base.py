@@ -33,7 +33,7 @@ class FAAPI:
         if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
             if self.raise_for_delay:
                 raise Exception(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
-            sleep(delay_diff)
+            sleep(self.crawl_delay - delay_diff)
         self.last_get = perf_counter()
 
     def get(self, url: str, **params):
