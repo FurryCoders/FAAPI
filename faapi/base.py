@@ -1,6 +1,7 @@
 from re import search as re_search
 from time import perf_counter
 from time import sleep
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -20,8 +21,8 @@ from .sub import SubPartial
 
 
 class FAAPI:
-    def __init__(self, cookies: List[dict] = None):
-        self.cookies = [] if cookies is None else cookies
+    def __init__(self, cookies: List[Dict[str, Any]] = None):
+        self.cookies: List[Dict[str, Any]] = [] if cookies is None else cookies
         self.session: CloudflareScraper = make_session(self.cookies)
         self.robots: Dict[str, List[str]] = get_robots()
         self.crawl_delay: float = float(self.robots["Crawl-delay"][0]) if self.robots.get("Crawl-delay", 0) else 1.0
