@@ -67,6 +67,15 @@ To access session cookies, consult the manual of the browser used to login.
 
 This is the main object that handles all the calls to scrape pages and get submissions.
 
+It holds 6 different fields:
+
+* `cookies: List[dict] = []` cookies passed at init
+* `session: CloudflareScraper` cfscrape session used for get requests
+* `robots: Dict[str, List[str]]` robots.txt values
+* `crawl_delay: float` crawl delay from robots.txt, else 1
+* `last_get: float` time of last get (not UNIX time, uses `time.perf_counter` for more precision)
+* `raise_for_delay: bool = False` if set to `True`, raises an exception if a get call is made before enough time has passed
+
 ### Init
 
 `__init__(cookies: List[dict] = None)`
@@ -104,7 +113,8 @@ As `gallery()` and `scraps()` it downloads a user's favorites page. Because of h
 *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
 
 * `search(q: str = '', page: int = 0, **params) -> Tuple[List[SubPartial], int, int, int, int]`<br>
-Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page, the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 1, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.
+Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page, the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 1, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
+*Note:* as of 2020-08-01 the "/search" path is disallowed by FA's robots.txt.
 
 ## SubPartial
 
