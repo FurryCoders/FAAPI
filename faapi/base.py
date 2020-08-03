@@ -122,7 +122,7 @@ class FAAPI:
 
         page_parsed = self.get_parse("search", q=q, page=page, **params)
 
-        subs = page_parsed.find(name="figure")
+        subs = page_parsed.findAll(name="figure")
         if page_parsed is None:
             return [], 0, 0, 0, 0
 
@@ -130,7 +130,7 @@ class FAAPI:
         for div in query_stats("div"):
             div.decompose()
 
-        a, b, tot = re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups()
+        a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups())
         page_next = (page + 1) if b < tot else 0
 
         return list(map(SubPartial, subs)), page_next, a, b, tot
