@@ -111,8 +111,8 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        button_next = page_parsed.find(name="a", limit=1, attrs={"class": "button standard right"})
-        page_next: str = button_next["href"].split("/", 3)[-1]
+        button_next = page_parsed.find(name="a", attrs={"class": "button standard right"})
+        page_next: str = button_next["href"].split("/", 3)[-1] if button_next else ""
 
         return list(map(SubPartial, subs)), page_next
 
