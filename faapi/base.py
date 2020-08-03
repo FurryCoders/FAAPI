@@ -42,13 +42,13 @@ class FAAPI:
             if re_search(pattern.replace("*", ".*").strip("/"), path):
                 raise Exception(f"Path {path} is not allowed by robots.txt {pattern}")
 
-    def get(self, url: str, **params) -> Response:
-        self.check_path(url)
+    def get(self, path: str, **params) -> Response:
+        self.check_path(path)
         self.handle_delay()
-        return get(self.session, url, **params)
+        return get(self.session, path, **params)
 
-    def get_parse(self, url: str, **params) -> Optional[BeautifulSoup]:
-        res = self.get(url, **params)
+    def get_parse(self, path: str, **params) -> Optional[BeautifulSoup]:
+        res = self.get(path, **params)
         return page_parse(res.text) if res.ok else None
 
     def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
