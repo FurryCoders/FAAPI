@@ -13,3 +13,7 @@ apitest*
 
 # Editors folders
 .idea/
+
+# Examples
+examples/*
+!examples/*.py
