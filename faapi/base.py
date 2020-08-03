@@ -116,7 +116,7 @@ class FAAPI:
         return list(map(SubPartial.parse_figure_tag, subs)), page_next
 
     def search(self, q: str, **params) -> Tuple[List[SubPartial], int, int, int, int]:
-        page_parsed = self.get_parse("search", **params)
+        page_parsed = self.get_parse("search", q=q, **params)
 
         subs = page_parsed.find(name="figure")
         if page_parsed is None:
