@@ -16,7 +16,7 @@ from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
 from .parse import BeautifulSoup
-from .parse import page_parse
+from .parse import parse_page
 from .sub import Sub
 from .sub import SubPartial
 
@@ -49,7 +49,7 @@ class FAAPI:
 
     def get_parse(self, path: str, **params) -> Optional[BeautifulSoup]:
         res = self.get(path, **params)
-        return page_parse(res.text) if res.ok else None
+        return parse_page(res.text) if res.ok else None
 
     def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
         assert isinstance(sub_id, int) and sub_id > 0
@@ -79,7 +79,7 @@ class FAAPI:
 
         description = page.find(name="div", attrs={"class": "userpage-profile"}).text.strip()
 
-        return username, status, page_parse(description)
+        return username, status, parse_page(description)
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
         assert isinstance(user, str)
@@ -149,7 +149,7 @@ class FAAPI:
 
         if not res.ok:
             return False
-        elif not (title := page_parse(res.text).title.text):
+        elif not (title := parse_page(res.text).title.text):
             return False
         elif title.text.lower() == "system error":
             return False
@@ -165,7 +165,7 @@ class FAAPI:
 
         if not res.ok:
             return False
-        elif not (title := page_parse(res.text).title.text):
+        elif not (title := parse_page(res.text).title.text):
             return False
         elif title.text.lower() == "system error":
             return False

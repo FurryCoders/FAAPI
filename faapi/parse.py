@@ -8,7 +8,7 @@ from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
 
-def page_parse(text: str) -> BeautifulSoup:
+def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 
 
