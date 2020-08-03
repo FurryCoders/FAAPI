@@ -1,8 +1,8 @@
 # FurAffinity API
 
-[![pypi version](https://img.shields.io/pypi/v/faapi.svg)](https://pypi.org/project/faapi/)
-[![supported Python version](https://img.shields.io/pypi/pyversions/faapi.svg)](https://pypi.org/project/faapi/)
-[![license](https://img.shields.io/pypi/l/faapi.svg)](https://pypi.org/project/faapi/)
+[![pypi version](https://img.shields.io/pypi/v/faapi)](https://pypi.org/project/faapi/)
+[![supported Python version](https://img.shields.io/pypi/pyversions/faapi)](https://pypi.org/project/faapi/)
+[![license](https://img.shields.io/pypi/l/faapi)](https://pypi.org/project/faapi/)
 
 Python module to implement API-like functionality for the FurAffinity.net website
 
