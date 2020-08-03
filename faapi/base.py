@@ -44,8 +44,8 @@ class FAAPI:
         res = self.get(url, **params)
         return page_parse(res.text) if res.ok else None
 
-    def get_sub(self, sub_id: Union[int, str], get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
-        assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
+    def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
+        assert isinstance(sub_id, int) and sub_id > 0
 
         sub_page = self.get_parse(f"/view/{sub_id}")
         sub = Sub(sub_page)
