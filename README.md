@@ -37,7 +37,7 @@ with open("user_name-gallery.json", "w") as f:
     f.write(json.dumps(gallery))
 ```
 
-### Crawl Delay
+### robots.txt
 
 At init, the `FAAPI` object downloads the [robots.txt](https://www.furaffinity.net/robots.txt) file from FA to determine the `Crawl-delay` value set therein.
 If not set, a value of 1 second is used.
