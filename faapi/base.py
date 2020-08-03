@@ -84,7 +84,7 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        return list(map(SubPartial, subs)), page + 1
+        return list(map(SubPartial, subs)), (page + 1) if subs else 0
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
         assert isinstance(user, str)
@@ -97,7 +97,7 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        return list(map(SubPartial, subs)), page + 1
+        return list(map(SubPartial, subs)), (page + 1) if subs else 0
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubPartial], str]:
         assert isinstance(user, str)
