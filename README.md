@@ -174,7 +174,7 @@ If no `sub_page` is passed then the object fields will remain at their default -
 ### Methods
 
 * `parse_page()`<br>
-Parses the stored submissions page for metadata.
+Parses the stored submission page for metadata.
 
 ## Examples
 
