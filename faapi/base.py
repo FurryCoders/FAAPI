@@ -41,7 +41,7 @@ class FAAPI:
         return get(self.session, url, **params)
 
     def get_parse(self, url: str, **params) -> Optional[BeautifulSoup]:
-        res = get(self.session, url, **params)
+        res = self.get(url, **params)
         return page_parse(res.text) if res.ok else None
 
     def get_sub(self, sub_id: Union[int, str], get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
