@@ -7,6 +7,7 @@ This module requires the following pypi modules:<br>
 * [cfscrape](https://github.com/Anorov/cloudflare-scrape)
 * [lxml](https://github.com/lxml/lxml/)
 * [requests](https://github.com/requests/requests)
+* [python-dateutil](https://github.com/dateutil/dateutil/)
 
 ## Usage
 
