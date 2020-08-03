@@ -9,6 +9,7 @@ from typing import Tuple
 from typing import Union
 
 from .connection import CloudflareScraper
+from .connection import Response
 from .connection import get
 from .connection import get_binary_raw
 from .connection import get_robots
@@ -36,7 +37,7 @@ class FAAPI:
             sleep(self.crawl_delay - delay_diff)
         self.last_get = perf_counter()
 
-    def get(self, url: str, **params):
+    def get(self, url: str, **params) -> Response:
         self.handle_delay()
         return get(self.session, url, **params)
 
