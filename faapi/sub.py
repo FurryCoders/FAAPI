@@ -17,6 +17,16 @@ class SubPartial:
 
         self.parse_figure_tag(figure_tag)
 
+    def __iter__(self):
+        yield "id", self.id
+        yield "title", self.title
+        yield "author", self.author
+        yield "rating", self.rating
+        yield "type", self.type
+
+    def __repr__(self):
+        return repr(dict(self))
+
     def parse_figure_tag(self, figure_tag: Tag):
         caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
 
