@@ -138,7 +138,7 @@ This lightweight submission object is used to contain the information gathered w
 
 ### Init
 
-`__init__(figure_tag: bs4.element.Tag)`
+`__init__(sub_figure: bs4.element.Tag)`
 
 `SubPartial` init needs a figure tag taken from a parsed page. This tag is not saved in the submission object.
 
