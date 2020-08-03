@@ -56,12 +56,12 @@ class FAAPI:
         self.handle_delay()
         return get_binary_raw(self.session, sub.file_url)
 
-    def userpage(self, user: str) -> Tuple[str, str, BeautifulSoup]:
+    def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
         assert isinstance(user, str)
 
         page: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
         if page is None:
-            return "", "", ""
+            return "", "", None
 
         username_div = page.find(name="div", attrs={"class": "username"})
 
