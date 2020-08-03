@@ -46,6 +46,8 @@ To respect this value, the default behaviour of of the `FAAPI` object is to wait
 
 See under [FAAPI](#faapi) for more details on this behaviour.
 
+Furthermore, any get operation that points to a disallowed path from robots.txt will raise an exception. This check should not be circumvented and the developer of this module does not take responsibility for violations of the TOS of FurAffinity.
+
 ### Cookies
 
 To access protected pages, cookies from an active session are needed. These cookies must be given to the FAAPI object as a list of dictionaries, each containing a `name` and a `value` field. The cookies list should look like the following random example:
@@ -87,13 +89,13 @@ The cookies can be omitted and the API will still be able to access public pages
 
 ### Methods
 
-* `get(url: str, **params) -> requests.Response`<br>
+* `get(path: str, **params) -> requests.Response`<br>
 This returns a response object containing the result of the get operation on the given url with the optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 
-* `get_parse(url: str, **params) -> bs4.BeautifulSoup`<br>
+* `get_parse(path: str, **params) -> bs4.BeautifulSoup`<br>
 Similar to `get()` but returns the parsed  HTML from the normal get operation.
 
-* `get_sub(sub_id: Union[int, str], get_file: bool = False) -> Tuple[Sub, Optional[bytes]]`<br>
+* `get_sub(sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]`<br>
 Given a submission ID in either int or str format, it returns a `Sub` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
 
 * `get_sub_file(sub: Sub) -> Optional[bytes]`<br>
