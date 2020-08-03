@@ -8,7 +8,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="faapi",
-    version="2.2.0",
+    version="2.2.1",
     author="MatteoCampinoti94",
     author_email="matteo.campinoti94@gmail.com",
     description="Python module to implement API-like functionality for the FurAffinity.net website.",
