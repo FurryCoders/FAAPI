@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "faapi"
+version = "2.2.1"
+description = "Python module to implement API-like functionality for the FurAffinity.net website."
+authors = ["Matteo Campinoti <matteo.campinoti94@gmail.com>"]
+license = "EUPL-1.2"
+readme = "README.md"
+homepage = "https://gitlab.com/MatteoCampinoti94/FAAPI"
+repository = "https://gitlab.com/MatteoCampinoti94/FAAPI"
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.24.0"
+beautifulsoup4 = "^4.9.1"
+cfscrape = "^2.1.1"
+lxml = "^4.5.2"
+python-dateutil = "^2.8.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
