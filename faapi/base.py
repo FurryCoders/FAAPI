@@ -84,7 +84,7 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        return list(map(SubPartial.parse_figure_tag, subs)), page + 1
+        return list(map(SubPartial, subs)), page + 1
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
         assert isinstance(user, str)
@@ -97,7 +97,7 @@ class FAAPI:
 
         subs = page_parsed.findAll(name="figure")
 
-        return list(map(SubPartial.parse_figure_tag, subs)), page + 1
+        return list(map(SubPartial, subs)), page + 1
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubPartial], str]:
         assert isinstance(user, str)
@@ -113,7 +113,7 @@ class FAAPI:
         button_next = page_parsed.find(name="a", limit=1, attrs={"class": "button standard right"})
         page_next: str = button_next["href"].split("/", 3)[-1]
 
-        return list(map(SubPartial.parse_figure_tag, subs)), page_next
+        return list(map(SubPartial, subs)), page_next
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubPartial], int, int, int, int]:
         assert isinstance(q, str)
@@ -132,7 +132,7 @@ class FAAPI:
         a, b, tot = re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups()
         page_next = (page + 1) if b < tot else 0
 
-        return list(map(SubPartial.parse_figure_tag, subs)), page_next, a, b, tot
+        return list(map(SubPartial, subs)), page_next, a, b, tot
 
     def user_exists(self, user: str):
         assert isinstance(user, str)

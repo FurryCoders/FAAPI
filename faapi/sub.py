@@ -8,30 +8,27 @@ from dateutil.parser import parse
 
 
 class SubPartial:
-    def __init__(self):
+    def __init__(self, figure_tag: Tag):
         self.id: int = 0
         self.title: str = ""
         self.author: str = ""
         self.rating: str = ""
         self.type: str = ""
 
-    @classmethod
-    def parse_figure_tag(cls, figure_tag: Tag) -> 'SubPartial':
-        sub = SubPartial()
+        self.parse_figure_tag(figure_tag)
 
+    def parse_figure_tag(self, figure_tag: Tag):
         caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
 
-        sub.id = int(caption_links[0].strip("/").strip("/")[-1])
-        sub.title = caption_links[0].text
-        sub.author = caption_links[1].text
-        sub.rating, sub.type = re_search(r"r-(\w+)[^t]*t-(\w+)", figure_tag["class"]).groups()
-
-        return sub
+        self.id = int(caption_links[0].strip("/").strip("/")[-1])
+        self.title = caption_links[0].text
+        self.author = caption_links[1].text
+        self.rating, sub.type = re_search(r"r-(\w+)[^t]*t-(\w+)", figure_tag["class"]).groups()
 
 
 class Sub:
     def __init__(self, sub_page: BeautifulSoup = None):
-        assert isinstance(sub_page, BeautifulSoup)
+        assert sub_page is None or isinstance(sub_page, BeautifulSoup)
 
         self.sub_page = sub_page
 
