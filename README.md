@@ -2,6 +2,8 @@ Python module to implement API-like functionality for the FurAffinity.net websit
 
 ## Requirements
 
+Python 3.8+ is necessary to run this module.
+
 This module requires the following pypi modules:<br>
 * [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/)
 * [cfscrape](https://github.com/Anorov/cloudflare-scrape)
