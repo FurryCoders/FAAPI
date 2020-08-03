@@ -30,10 +30,10 @@ class SubPartial:
     def parse_figure_tag(self, figure_tag: Tag):
         caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
 
-        self.id = int(caption_links[0].strip("/").strip("/")[-1])
+        self.id = int(caption_links[0]["href"].strip("/").split("/")[-1])
         self.title = caption_links[0].text
         self.author = caption_links[1].text
-        self.rating, sub.type = re_search(r"r-(\w+)[^t]*t-(\w+)", figure_tag["class"]).groups()
+        self.rating, self.type = figure_tag["class"][0][2:], figure_tag["class"][1][2:]
 
 
 class Sub:
