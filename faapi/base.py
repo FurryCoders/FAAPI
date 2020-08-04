@@ -30,6 +30,10 @@ class FAAPI:
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
 
+    def load_cookies(self, cookies: List[Dict[str, Any]]):
+        self.cookies = cookies
+        self.session = make_session(self.cookies)
+
     def handle_delay(self):
         if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
             if self.raise_for_delay:
