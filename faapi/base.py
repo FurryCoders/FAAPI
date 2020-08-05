@@ -43,7 +43,7 @@ class FAAPI:
 
     def check_path(self, path: str):
         for pattern in self.robots.get("disallow", []):
-            if re_search(pattern.replace("*", ".*").strip("/"), path):
+            if re_search(pattern.replace("*", ".*"), "/" + path.lstrip("/")):
                 raise Exception(f"Path {path} is not allowed by robots.txt {pattern}")
 
     def get(self, path: str, **params) -> Response:
