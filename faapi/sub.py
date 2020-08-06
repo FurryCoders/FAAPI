@@ -1,4 +1,5 @@
 from typing import List
+from typing import Optional
 
 from .parse import BeautifulSoup
 from .parse import Tag
@@ -7,8 +8,8 @@ from .parse import parse_submission_page
 
 
 class SubPartial:
-    def __init__(self, sub_figure: Tag):
-        assert isinstance(sub_figure, Tag)
+    def __init__(self, sub_figure: Optional[Tag] = None):
+        assert sub_figure is None or isinstance(sub_figure, Tag)
 
         self.sub_figure = sub_figure
 
@@ -31,6 +32,9 @@ class SubPartial:
         return repr(dict(self))
 
     def parse_figure_tag(self):
+        if self.sub_figure is None:
+            return
+
         parsed: dict = parse_submission_figure(self.sub_figure)
 
         self.id: int = parsed["id"]
@@ -41,8 +45,8 @@ class SubPartial:
 
 
 class Sub:
-    def __init__(self, sub_page: BeautifulSoup):
-        assert isinstance(sub_page, BeautifulSoup)
+    def __init__(self, sub_page: Optional[BeautifulSoup] = None):
+        assert sub_page is None or isinstance(sub_page, BeautifulSoup)
 
         self.sub_page = sub_page
 
@@ -77,7 +81,9 @@ class Sub:
         return repr(dict(self))
 
     def parse_page(self):
-        if self.sub_page.find("section", attrs={"class": "notice-message"}):
+        if self.sub_page is None:
+            return
+        elif self.sub_page.find("section", attrs={"class": "notice-message"}):
             raise Exception("Error: notice-message section found")
 
         parsed: dict = parse_submission_page(self.sub_page)
