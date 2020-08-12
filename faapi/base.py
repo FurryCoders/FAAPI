@@ -21,6 +21,14 @@ from .sub import Sub
 from .sub import SubPartial
 
 
+class DisallowedPath(Exception):
+    pass
+
+
+class CrawlDelayError(Exception):
+    pass
+
+
 class FAAPI:
     def __init__(self, cookies: List[Dict[str, Any]] = None):
         self.cookies: List[Dict[str, Any]] = [] if cookies is None else cookies
@@ -37,14 +45,14 @@ class FAAPI:
     def handle_delay(self):
         if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
             if self.raise_for_delay:
-                raise Exception(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
+                raise CrawlDelayError(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
             sleep(self.crawl_delay - delay_diff)
         self.last_get = perf_counter()
 
     def check_path(self, path: str):
         for pattern in self.robots.get("disallow", []):
             if re_search(pattern.replace("*", ".*"), "/" + path.lstrip("/")):
-                raise Exception(f"Path {path} is not allowed by robots.txt {pattern}")
+                raise DisallowedPath(f"Path {path} is not allowed by robots.txt {pattern}")
 
     def get(self, path: str, **params) -> Response:
         self.check_path(path)
