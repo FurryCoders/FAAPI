@@ -149,12 +149,12 @@ This lightweight submission object is used to contain the information gathered w
 
 `__init__(sub_figure: bs4.element.Tag)`
 
-`SubPartial` init needs a figure tag taken from a parsed page. This tag is not saved in the submission object.
+`SubPartial` init needs a figure tag taken from a parsed page. The tag is saved in instance variable of the same name.
 
 ### Methods
 
-* `parse_figure_tag(figure_tag: bs4.element.Tag)`<br>
-Takes a figure tag from a parsed page and parses it for information.
+* `parse_figure_tag()`<br>
+Parses the stored submission figure tag for information.
 
 ## Sub
 
