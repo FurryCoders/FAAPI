@@ -133,6 +133,35 @@ Checks if the passed user exists - i.e. if there is a page under that name - and
 * `sub_exists(sub_id: int) -> bool`<br>
 Checks if the passed submissions exists - i.e. if there is a page with that ID - and returns a boolean result.
 
+* `journal_exists(journal_id: int) -> bool`<br>
+Checks if the passed journal exists - i.e. if there is a page under that ID - and returns a boolean result.
+
+
+## Journal
+
+This object contains information gathered when parsing a journals page or a specific journal page. It contains the following fields:
+
+* `id` journal id
+* `title` journal title
+* `date` upload date in YYYY-MM-DD format
+* `author` journal author
+* `content` journal content
+
+### Init
+
+`__init__(self, journal_section: bs4.element.Tag, journal_page: bs4.BeautifulSoup)`
+
+`Journal` can take two optional parameters: a journal section tag from a journals page and/or a parsed journal page. The tag is parsed before the page, with the second overwriting any values gathered from the first if both are passed.
+
+The two parameters are saved in instance variables of the same name.
+
+### Methods
+
+* `parse_journal_section(self)`<br>
+Parses the stored journal section tag for information.
+* `parse_journal_page(self)`<br>
+Parses the stored journal page for information.
+
 ## SubPartial
 
 This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites and search pages. It contains only the following fields:
