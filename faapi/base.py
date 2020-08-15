@@ -79,17 +79,18 @@ class FAAPI:
     def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
         assert isinstance(user, str)
 
-        page: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
-        if page is None:
+        page_parsed: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
+
+        if page_parsed is None:
             return "", "", None
 
-        username_div = page.find("div", class_="username")
+        username_div = page_parsed.find("div", class_="username")
 
         username = username_div.find("span").text.strip()
         status = username[0]
         username = username[1:]
 
-        description = page.find("div", class_="userpage-profile").text.strip()
+        description = page_parsed.find("div", class_="userpage-profile").text.strip()
 
         return username, status, parse_page(description)
 
@@ -141,9 +142,10 @@ class FAAPI:
 
         page_parsed = self.get_parse("search", q=q, page=page, **params)
 
-        subs = page_parsed.findAll("figure")
         if page_parsed is None:
             return [], 0, 0, 0, 0
+
+        subs = page_parsed.findAll("figure")
 
         query_stats = page_parsed.find("div", id="query-stats")
         for div in query_stats("div"):
