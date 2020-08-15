@@ -97,42 +97,30 @@ The cookies can be omitted and the API will still be able to access public pages
 
 * `load_cookies(cookies: List[Dict[str, Any]])`<br>
 Load new cookies in the object and remake the `CloudflareScraper` session.
-
 * `get(path: str, **params) -> requests.Response`<br>
 This returns a response object containing the result of the get operation on the given url with the optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
-
 * `get_parse(path: str, **params) -> bs4.BeautifulSoup`<br>
 Similar to `get()` but returns the parsed  HTML from the normal get operation.
-
 * `get_sub(sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]`<br>
 Given a submission ID in either int or str format, it returns a `Sub` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
-
 * `get_sub_file(sub: Sub) -> Optional[bytes]`<br>
 Given a submission object, it downloads its file and returns it as a `bytes` object.
-
 * `userpage(user: str) -> Tuple[str, str, bs4.BeautifulSoup]`<br>
 Returns the user's full display name - i.e. with capital letters and extra characters such as "_" -, the user's status - the first character found beside the user name - and the parsed profile text in HTML.
-
 * `gallery(user: str, page: int = 1) -> Tuple[List[SubPartial], int]`<br>
 Returns the list of submissions found on a specific gallery page and the number of the next page. The returned page number is set to 0 if it is the last page.
-
 * `scraps(user: str, page: int = 1) -> -> Tuple[List[SubPartial], int]`<br>
 Same as `gallery()`, but scrapes a user's scraps page instead.
-
 * `favorites(user: str, page: str = '') -> Tuple[List[SubPartial], str]`<br>
 As `gallery()` and `scraps()` it downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page value as argument is equivalent to page 1.<br>
 *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-
 * `search(q: str = '', page: int = 0, **params) -> Tuple[List[SubPartial], int, int, int, int]`<br>
 Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page, the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 1, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
 *Note:* as of 2020-08-01 the "/search" path is disallowed by FA's robots.txt.
-
 * `user_exists(user: str) -> bool`<br>
 Checks if the passed user exists - i.e. if there is a page under that name - and returns a boolean result.
-
 * `sub_exists(sub_id: int) -> bool`<br>
 Checks if the passed submissions exists - i.e. if there is a page with that ID - and returns a boolean result.
-
 * `journal_exists(journal_id: int) -> bool`<br>
 Checks if the passed journal exists - i.e. if there is a page under that ID - and returns a boolean result.
 
