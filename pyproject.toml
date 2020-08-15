@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "faapi"
-version = "2.7.0"
+version = "2.7.1"
 description = "Python module to implement API-like functionality for the FurAffinity.net website."
 authors = ["Matteo Campinoti <matteo.campinoti94@gmail.com>"]
 license = "EUPL-1.2"
