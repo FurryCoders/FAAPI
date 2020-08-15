@@ -3,6 +3,9 @@ from typing import Optional
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from faapi.parse import parse_journal_page
+from faapi.parse import parse_journal_section
+
 
 class Journal:
     def __init__(self, journal_section: Optional[Tag] = None, journal_page: Optional[BeautifulSoup] = None):
@@ -35,6 +38,21 @@ class Journal:
         if self.journal_section is None:
             return
 
+        parsed: dict = parse_journal_section(self.journal_section)
+
+        self.id = parsed["id"]
+        self.title = parsed["title"]
+        self.date = parsed["date"]
+        self.content = parsed["content"]
+
     def parse_journal_page(self):
         if self.journal_page is None:
             return
+
+        parsed: dict = parse_journal_page(self.journal_page)
+
+        self.id = parsed["id"]
+        self.title = parsed["title"]
+        self.author = parsed["author"]
+        self.date = parsed["date"]
+        self.content = parsed["content"]
