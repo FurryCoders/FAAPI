@@ -179,7 +179,7 @@ class FAAPI:
     def user_exists(self, user: str) -> bool:
         assert isinstance(user, str)
 
-        res = self.get(join_url("view", user))
+        res = self.get(join_url("user", user))
 
         if not res.ok:
             return False
