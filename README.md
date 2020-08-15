@@ -127,6 +127,12 @@ As `gallery()` and `scraps()` it downloads a user's favorites page. Because of h
 Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page, the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 1, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
 *Note:* as of 2020-08-01 the "/search" path is disallowed by FA's robots.txt.
 
+* `user_exists(user: str) -> bool`<br>
+Checks if the passed user exists - i.e. if there is a page under that name - and returns a boolean result.
+
+* `sub_exists(sub_id: int) -> bool`<br>
+Checks if the passed submissions exists - i.e. if there is a page with that ID - and returns a boolean result.
+
 ## SubPartial
 
 This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites and search pages. It contains only the following fields:
