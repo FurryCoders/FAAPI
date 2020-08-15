@@ -12,6 +12,42 @@ def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 
 
+def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
+    id_: int = int(section_tag.attrs["id"][4:])
+    title: str = section_tag.find("h2").text.strip()
+    date: str = parse_date(section_tag.find("span", class_="popup_date")["title"].strip()).strftime("%Y-%m-%d")
+    content: str = section_tag.find("div", class_="journal-content")
+
+    return {
+        "id": id_,
+        "title": title,
+        "date": date,
+        "content": content,
+    }
+
+
+def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]]:
+    tag_id: Tag = journal_page.find("meta", property="og:url")
+    tag_title: Tag = journal_page.find("h2", class_="journal-title")
+    tag_author: Tag = journal_page.find("a", class_="current")
+    tag_date: Tag = journal_page.find("span", class_="popup_date")
+    tag_body: Tag = journal_page.find("div", class_="journal-content")
+
+    id_: int = int(tag_id["content"].strip("/").split("/")[-1])
+    title: str = tag_title.text.strip()
+    author: str = tag_author["href"].strip("/").split("/")[-1]
+    date: str = parse_date(tag_date["title"].strip()).strftime("%Y-%m-%d")
+    content: str = "".join(map(str, tag_body.children)).strip()
+
+    return {
+        "id": id_,
+        "author": author,
+        "title": title,
+        "date": date,
+        "content": content,
+    }
+
+
 def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
     caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
 
@@ -42,7 +78,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_tags: ResultSet = sub_page.find("section", class_="tags-row").findAll("a")
     tag_rating: Tag = sub_page.find("div", class_="rating").find("span")
     tag_info: ResultSet = sub_page.find("section", class_="info text").findAll("div")
-    tag_category1: Tag = tag_info[1].find("span", class_= "category-name")
+    tag_category1: Tag = tag_info[1].find("span", class_="category-name")
     tag_category2: Tag = tag_info[1].find("span", class_="type-name")
     tag_species: Tag = tag_info[2].find("span")
     tag_gender: Tag = tag_info[3].find("span")
