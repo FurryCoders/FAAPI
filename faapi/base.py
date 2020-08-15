@@ -15,6 +15,7 @@ from .connection import get_binary_raw
 from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
+from .journal import Journal
 from .parse import BeautifulSoup
 from .parse import parse_page
 from .sub import Sub
@@ -76,6 +77,12 @@ class FAAPI:
         self.handle_delay()
         return get_binary_raw(self.session, sub.file_url)
 
+    def get_journal(self, journal_id: int) -> Journal:
+        assert isinstance(journal_id, int) and journal_id > 0
+
+        journal_page = self.get_parse(join_url("journal", str(journal_id)))
+        return Journal(journal_page=journal_page)
+
     def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
         assert isinstance(user, str)
 
@@ -135,6 +142,19 @@ class FAAPI:
         page_next: str = button_next["href"].split("/", 3)[-1] if button_next else ""
 
         return list(map(SubPartial, subs)), page_next
+
+    def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
+        assert isinstance(user, str)
+        assert isinstance(page, int)
+
+        page_parsed = self.get_parse(join_url("journals", user, str(page)))
+
+        journals_tags = page_parsed.findAll("section")
+        journals = list(map(Journal, journals_tags))
+        for j in journals:
+            j.author = user
+
+        return journals, (page + 1) if journals else 0
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubPartial], int, int, int, int]:
         assert isinstance(q, str)
