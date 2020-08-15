@@ -67,7 +67,7 @@ class FAAPI:
     def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
         assert isinstance(sub_id, int) and sub_id > 0
 
-        sub_page = self.get_parse(f"/view/{sub_id}")
+        sub_page = self.get_parse(join_url("view", sub_id))
         sub = Sub(sub_page)
         sub_file = self.get_sub_file(sub) if get_file else None
 
@@ -80,7 +80,7 @@ class FAAPI:
     def get_journal(self, journal_id: int) -> Journal:
         assert isinstance(journal_id, int) and journal_id > 0
 
-        journal_page = self.get_parse(join_url("journal", str(journal_id)))
+        journal_page = self.get_parse(join_url("journal", journal_id))
         return Journal(journal_page=journal_page)
 
     def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
@@ -105,7 +105,7 @@ class FAAPI:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
-        page_parsed = self.get_parse(join_url("gallery", user, str(page)))
+        page_parsed = self.get_parse(join_url("gallery", user, page))
 
         if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
             return [], 0
@@ -118,7 +118,7 @@ class FAAPI:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
-        page_parsed = self.get_parse(join_url("scraps", user, str(page)))
+        page_parsed = self.get_parse(join_url("scraps", user, page))
 
         if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
             return [], 0
@@ -147,7 +147,7 @@ class FAAPI:
         assert isinstance(user, str)
         assert isinstance(page, int)
 
-        page_parsed = self.get_parse(join_url("journals", user, str(page)))
+        page_parsed = self.get_parse(join_url("journals", user, page))
 
         journals_tags = page_parsed.findAll("section")
         journals = list(map(Journal, journals_tags))
@@ -195,7 +195,7 @@ class FAAPI:
     def sub_exists(self, sub_id: Union[int, str]):
         assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
 
-        res = self.get(join_url("view", str(sub_id)))
+        res = self.get(join_url("view", sub_id))
 
         if not res.ok:
             return False
