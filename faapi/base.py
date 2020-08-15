@@ -176,7 +176,7 @@ class FAAPI:
 
         return list(map(SubPartial, subs)), page_next, a, b, tot
 
-    def user_exists(self, user: str):
+    def user_exists(self, user: str) -> bool:
         assert isinstance(user, str)
 
         res = self.get(join_url("view", user))
@@ -192,8 +192,8 @@ class FAAPI:
         else:
             return True
 
-    def sub_exists(self, sub_id: Union[int, str]):
-        assert isinstance(sub_id, int) or (isinstance(sub_id, str) and sub_id.isdigit())
+    def sub_exists(self, sub_id: int) -> bool:
+        assert isinstance(sub_id, int) and sub_id > 0
 
         res = self.get(join_url("view", sub_id))
 
