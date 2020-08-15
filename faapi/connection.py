@@ -14,8 +14,8 @@ from requests.exceptions import ConnectionError
 root = "https://www.furaffinity.net"
 
 
-def join_url(*url_comps: str) -> str:
-    return "/".join(map(lambda e: e.strip(" /"), url_comps))
+def join_url(*url_comps: Union[str, int]) -> str:
+    return "/".join(map(lambda e: str(e).strip(" /"), url_comps))
 
 
 def ping() -> bool:
