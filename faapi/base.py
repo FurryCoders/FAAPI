@@ -205,3 +205,17 @@ class FAAPI:
             return False
         else:
             return True
+
+    def journal_exists(self, journal_id: int) -> bool:
+        assert isinstance(journal_id, int) and journal_id > 0
+
+        res = self.get(join_url("journal", journal_id))
+
+        if not res.ok:
+            return False
+        elif not (title := parse_page(res.text).title.text):
+            return False
+        elif title.text.lower() == "system error":
+            return False
+        else:
+            return True
