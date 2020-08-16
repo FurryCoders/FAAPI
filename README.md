@@ -93,10 +93,12 @@ The cookies can be omitted and the API will still be able to access public pages
 
 *Note:* Cookies must be in the format mentioned above in [#Cookies](#cookies).
 
-### Methods
+### Methods & Properties
 
 * `load_cookies(cookies: List[Dict[str, Any]])`<br>
 Load new cookies in the object and remake the `CloudflareScraper` session.
+* `connection_status -> bool`<br>
+Returns the status of the connection.
 * `get(path: str, **params) -> requests.Response`<br>
 This returns a response object containing the result of the get operation on the given url with the optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 * `get_parse(path: str, **params) -> bs4.BeautifulSoup`<br>
