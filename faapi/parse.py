@@ -16,7 +16,7 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.find("h2").text.strip()
     date: str = parse_date(section_tag.find("span", class_="popup_date")["title"].strip()).strftime("%Y-%m-%d")
-    content: str = section_tag.find("div", class_="journal-content")
+    content: str = section_tag.find("div", class_="journal-body").text.strip()
 
     return {
         "id": id_,
