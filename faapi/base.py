@@ -148,11 +148,12 @@ class FAAPI:
         assert isinstance(page, int)
 
         page_parsed = self.get_parse(join_url("journals", user, page))
+        username = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
 
         journals_tags = page_parsed.findAll("section")
         journals = list(map(Journal, journals_tags))
         for j in journals:
-            j.author = user
+            j.author = username
 
         return journals, (page + 1) if journals else 0
 
