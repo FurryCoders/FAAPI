@@ -6,7 +6,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import Union
+from requests.exceptions import ConnectionError
 
 from .connection import CloudflareScraper
 from .connection import Response
@@ -54,6 +54,13 @@ class FAAPI:
         for pattern in self.robots.get("disallow", []):
             if re_search(pattern.replace("*", ".*"), "/" + path.lstrip("/")):
                 raise DisallowedPath(f"Path {path} is not allowed by robots.txt {pattern}")
+
+    @property
+    def connection_status(self) -> bool:
+        try:
+            return self.get("/").ok
+        except ConnectionError:
+            return False
 
     def get(self, path: str, **params) -> Response:
         self.check_path(path)
