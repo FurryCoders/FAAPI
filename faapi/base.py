@@ -193,9 +193,9 @@ class FAAPI:
             return False
         elif not (title := parse_page(res.text).title.text):
             return False
-        elif title.text.lower() == "system error":
+        elif title.lower() == "system error":
             return False
-        elif title.text.lower().startswith("account disabled"):
+        elif title.lower().startswith("account disabled"):
             return False
         else:
             return True
@@ -209,7 +209,7 @@ class FAAPI:
             return False
         elif not (title := parse_page(res.text).title.text):
             return False
-        elif title.text.lower() == "system error":
+        elif title.lower() == "system error":
             return False
         else:
             return True
@@ -223,7 +223,7 @@ class FAAPI:
             return False
         elif not (title := parse_page(res.text).title.text):
             return False
-        elif title.text.lower() == "system error":
+        elif title.lower() == "system error":
             return False
         else:
             return True
