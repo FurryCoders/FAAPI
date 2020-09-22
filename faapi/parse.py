@@ -3,7 +3,6 @@ from typing import List
 from typing import Union
 
 from bs4 import BeautifulSoup
-from bs4 import ResultSet
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
@@ -49,7 +48,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
 
 
 def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
-    caption_links: ResultSet = figure_tag.find("figcaption").findAll("a")
+    caption_links: List[Tag] = figure_tag.find("figcaption").findAll("a")
 
     id_: int = int(caption_links[0]["href"].strip("/").split("/")[-1])
     title: str = caption_links[0].text
@@ -75,9 +74,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_title: Tag = tag_sub_info.find("div", class_="submission-title")
     tag_author: Tag = tag_sub_info.find("a")
     tag_date: Tag = sub_page.find("span", class_="popup_date")
-    tag_tags: ResultSet = sub_page.find("section", class_="tags-row").findAll("a")
+    tag_tags: List[Tag] = sub_page.find("section", class_="tags-row").findAll("a")
     tag_rating: Tag = sub_page.find("div", class_="rating").find("span")
-    tag_info: ResultSet = sub_page.find("section", class_="info text").findAll("div")
+    tag_info: List[Tag] = sub_page.find("section", class_="info text").findAll("div")
     tag_category1: Tag = tag_info[1].find("span", class_="category-name")
     tag_category2: Tag = tag_info[1].find("span", class_="type-name")
     tag_species: Tag = tag_info[2].find("span")
