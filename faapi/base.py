@@ -182,7 +182,7 @@ class FAAPI:
         a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups())
         page_next = (page + 1) if b < tot else 0
 
-        return list(map(SubPartial, subs)), page_next, a, b, tot
+        return list(map(SubPartial, subs)), page_next, a - 1, b - 1, tot
 
     def user_exists(self, user: str) -> bool:
         assert isinstance(user, str)
