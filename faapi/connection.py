@@ -8,8 +8,6 @@ from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
 from requests import Response
 from requests import get as get_raw
-from requests.exceptions import ConnectTimeout
-from requests.exceptions import ConnectionError
 
 root = "https://www.furaffinity.net"
 
