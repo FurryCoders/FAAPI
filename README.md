@@ -20,7 +20,7 @@ This module requires the following pypi modules:
 
 ## Usage
 
-The API is comprised of a main class `FAAPI` and two submission classes: `Sub` and `SubPartial`.
+The API is comprised of a main class `FAAPI` and two submission classes: `Submission` and `SubmissionPartial`.
 Once `FAAPI` is initialized its method can be used to crawl FA and return machine-readable objects.
 
 ```python
@@ -103,20 +103,20 @@ Returns the status of the connection.
 This returns a response object containing the result of the get operation on the given url with the optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 * `get_parse(path: str, **params) -> bs4.BeautifulSoup`<br>
 Similar to `get()` but returns the parsed  HTML from the normal get operation.
-* `get_sub(sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]`<br>
-Given a submission ID in either int or str format, it returns a `Sub` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
-* `get_sub_file(sub: Sub) -> Optional[bytes]`<br>
+* `get_sub(sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
+Given a submission ID in either int or str format, it returns a `Submission` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
+* `get_sub_file(sub: Submission) -> Optional[bytes]`<br>
 Given a submission object, it downloads its file and returns it as a `bytes` object.
 * `userpage(user: str) -> Tuple[str, str, bs4.BeautifulSoup]`<br>
 Returns the user's full display name - i.e. with capital letters and extra characters such as "_" -, the user's status - the first character found beside the user name - and the parsed profile text in HTML.
-* `gallery(user: str, page: int = 1) -> Tuple[List[SubPartial], int]`<br>
+* `gallery(user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]`<br>
 Returns the list of submissions found on a specific gallery page and the number of the next page. The returned page number is set to 0 if it is the last page.
-* `scraps(user: str, page: int = 1) -> -> Tuple[List[SubPartial], int]`<br>
+* `scraps(user: str, page: int = 1) -> -> Tuple[List[SubmissionPartial], int]`<br>
 Same as `gallery()`, but scrapes a user's scraps page instead.
-* `favorites(user: str, page: str = '') -> Tuple[List[SubPartial], str]`<br>
+* `favorites(user: str, page: str = '') -> Tuple[List[SubmissionPartial], str]`<br>
 As `gallery()` and `scraps()` it downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page value as argument is equivalent to page 1.<br>
 *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-* `search(q: str = '', page: int = 0, **params) -> Tuple[List[SubPartial], int, int, int, int]`<br>
+* `search(q: str = '', page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
 Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 0, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
 *Note:* as of 2020-08-01 the "/search" path is disallowed by FA's robots.txt.
 * `user_exists(user: str) -> bool`<br>
@@ -152,7 +152,7 @@ Parses the stored journal section tag for information.
 * `parse_journal_page(self)`<br>
 Parses the stored journal page for information.
 
-## SubPartial
+## SubmissionPartial
 
 This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites and search pages. It contains only the following fields:
 
@@ -162,20 +162,20 @@ This lightweight submission object is used to contain the information gathered w
 * `rating` submission rating [general, mature, adult]
 * `type` submission type [text, image, etc...]
 
-`SubPartial` can be directly casted to a dict object or iterated through.
+`SubmissionPartial` can be directly casted to a dict object or iterated through.
 
 ### Init
 
 `__init__(sub_figure: bs4.element.Tag)`
 
-`SubPartial` init needs a figure tag taken from a parsed page. The tag is saved in instance variable of the same name.
+`SubmissionPartial` init needs a figure tag taken from a parsed page. The tag is saved in instance variable of the same name.
 
 ### Methods
 
 * `parse_figure_tag()`<br>
 Parses the stored submission figure tag for information.
 
-## Sub
+## Submission
 
 The main class that parses and holds submission metadata.
 
@@ -193,7 +193,7 @@ The main class that parses and holds submission metadata.
 
 \* these are extracted exactly as they appear on the submission page
 
-`Sub` can be directly casted to a dict object and iterated through.
+`Submission` can be directly casted to a dict object and iterated through.
 
 ### Init
 

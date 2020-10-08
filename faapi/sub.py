@@ -7,7 +7,7 @@ from .parse import parse_submission_figure
 from .parse import parse_submission_page
 
 
-class SubPartial:
+class SubmissionPartial:
     def __init__(self, sub_figure: Optional[Tag] = None):
         assert sub_figure is None or isinstance(sub_figure, Tag)
 
@@ -44,7 +44,7 @@ class SubPartial:
         self.type: str = parsed["type"]
 
 
-class Sub:
+class Submission:
     def __init__(self, sub_page: Optional[BeautifulSoup] = None):
         assert sub_page is None or isinstance(sub_page, BeautifulSoup)
 

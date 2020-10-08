@@ -18,8 +18,8 @@ from .connection import make_session
 from .journal import Journal
 from .parse import BeautifulSoup
 from .parse import parse_page
-from .sub import Sub
-from .sub import SubPartial
+from .sub import Submission
+from .sub import SubmissionPartial
 
 
 class DisallowedPath(Exception):
@@ -71,16 +71,16 @@ class FAAPI:
         res = self.get(path, **params)
         return parse_page(res.text) if res.ok else None
 
-    def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Sub, Optional[bytes]]:
+    def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
         assert isinstance(sub_id, int) and sub_id > 0
 
         sub_page = self.get_parse(join_url("view", sub_id))
-        sub = Sub(sub_page)
+        sub = Submission(sub_page)
         sub_file = self.get_sub_file(sub) if get_file else None
 
         return sub, sub_file
 
-    def get_sub_file(self, sub: Sub) -> Optional[bytes]:
+    def get_sub_file(self, sub: Submission) -> Optional[bytes]:
         self.handle_delay()
         return get_binary_raw(self.session, sub.file_url)
 
@@ -108,7 +108,7 @@ class FAAPI:
 
         return username, status, parse_page(description)
 
-    def gallery(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
+    def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
@@ -119,9 +119,9 @@ class FAAPI:
 
         subs = page_parsed.findAll("figure")
 
-        return list(map(SubPartial, subs)), (page + 1) if subs else 0
+        return list(map(SubmissionPartial, subs)), (page + 1) if subs else 0
 
-    def scraps(self, user: str, page: int = 1) -> Tuple[List[SubPartial], int]:
+    def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         assert isinstance(user, str)
         assert isinstance(page, int) and page >= 1
 
@@ -132,9 +132,9 @@ class FAAPI:
 
         subs = page_parsed.findAll("figure")
 
-        return list(map(SubPartial, subs)), (page + 1) if subs else 0
+        return list(map(SubmissionPartial, subs)), (page + 1) if subs else 0
 
-    def favorites(self, user: str, page: str = "") -> Tuple[List[SubPartial], str]:
+    def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
         assert isinstance(user, str)
         assert isinstance(page, str)
 
@@ -148,7 +148,7 @@ class FAAPI:
         button_next = page_parsed.find("a", class_="button standard right")
         page_next: str = button_next["href"].split("/", 3)[-1] if button_next else ""
 
-        return list(map(SubPartial, subs)), page_next
+        return list(map(SubmissionPartial, subs)), page_next
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         assert isinstance(user, str)
@@ -164,7 +164,7 @@ class FAAPI:
 
         return journals, (page + 1) if journals else 0
 
-    def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubPartial], int, int, int, int]:
+    def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
         assert isinstance(q, str)
         assert isinstance(page, int)
 
@@ -182,7 +182,7 @@ class FAAPI:
         a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups())
         page_next = (page + 1) if b < tot else 0
 
-        return list(map(SubPartial, subs)), page_next, a - 1, b - 1, tot
+        return list(map(SubmissionPartial, subs)), page_next, a - 1, b - 1, tot
 
     def user_exists(self, user: str) -> bool:
         assert isinstance(user, str)
