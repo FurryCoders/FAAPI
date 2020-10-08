@@ -18,8 +18,8 @@ from .connection import make_session
 from .journal import Journal
 from .parse import BeautifulSoup
 from .parse import parse_page
-from .sub import Submission
-from .sub import SubmissionPartial
+from .submission import Submission
+from .submission import SubmissionPartial
 
 
 class DisallowedPath(Exception):
