@@ -18,16 +18,12 @@ def join_url(*url_comps: Union[str, int]) -> str:
     return "/".join(map(lambda e: str(e).strip(" /"), url_comps))
 
 
-def ping() -> bool:
-    try:
-        return get_raw(root).ok
-    except (ConnectionError, ConnectTimeout):
-        return False
+def ping():
+    get_raw(root).raise_for_status()
 
 
 def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
-    if not ping():
-        return None
+    ping()
 
     cookies = [
         {"name": cookie["name"], "value": cookie["value"]}
