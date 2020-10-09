@@ -187,23 +187,74 @@ class FAAPI:
 
         return list(map(SubmissionPartial, subs)), page_next, a - 1, b - 1, tot
 
-    def user_exists(self, user: str) -> bool:
+    def user_exists(self, user: str) -> int:
+        """
+        0 okay
+        1 account disabled
+        2 system error
+        3 unknown error
+        4 request error
+        """
+
         assert isinstance(user, str)
 
         res = self.get(join_url("user", user))
 
-        return res.ok and check_page(parse_page(res.text))
+        if not res.ok:
+            return 4
+        elif (check := check_page(parse_page(res.text))) == 0:
+            return 0
+        elif check == 3:
+            return 1
+        elif check == 4:
+            return 2
+        else:
+            return 3
 
-    def sub_exists(self, sub_id: int) -> bool:
+    def sub_exists(self, sub_id: int) -> int:
+        """
+        0 okay
+        1 account disabled
+        2 system error
+        3 unknown error
+        4 request error
+        """
+
         assert isinstance(sub_id, int) and sub_id > 0
 
         res = self.get(join_url("view", sub_id))
 
-        return res.ok and check_page(parse_page(res.text))
+        if not res.ok:
+            return 4
+        elif (check := check_page(parse_page(res.text))) == 0:
+            return 0
+        elif check == 3:
+            return 1
+        elif check == 4:
+            return 2
+        else:
+            return 3
 
-    def journal_exists(self, journal_id: int) -> bool:
+    def journal_exists(self, journal_id: int) -> int:
+        """
+        0 okay
+        1 account disabled
+        2 system error
+        3 unknown error
+        4 request error
+        """
+
         assert isinstance(journal_id, int) and journal_id > 0
 
         res = self.get(join_url("journal", journal_id))
 
-        return res.ok and check_page(parse_page(res.text))
+        if not res.ok:
+            return 4
+        elif (check := check_page(parse_page(res.text))) == 0:
+            return 0
+        elif check == 3:
+            return 1
+        elif check == 4:
+            return 2
+        else:
+            return 3
