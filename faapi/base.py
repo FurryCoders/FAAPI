@@ -7,8 +7,6 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
-from requests.exceptions import ConnectionError
-
 from .connection import CloudflareScraper
 from .connection import Response
 from .connection import get
