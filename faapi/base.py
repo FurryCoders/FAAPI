@@ -6,6 +6,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
+
 from requests.exceptions import ConnectionError
 
 from .connection import CloudflareScraper
@@ -17,6 +18,7 @@ from .connection import join_url
 from .connection import make_session
 from .journal import Journal
 from .parse import BeautifulSoup
+from .parse import check_page
 from .parse import parse_page
 from .submission import Submission
 from .submission import SubmissionPartial
@@ -95,7 +97,7 @@ class FAAPI:
 
         page_parsed: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
 
-        if page_parsed is None:
+        if not check_page(page_parsed):
             return "", "", None
 
         username_div = page_parsed.find("div", class_="username")
@@ -114,7 +116,7 @@ class FAAPI:
 
         page_parsed = self.get_parse(join_url("gallery", user, page))
 
-        if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
+        if not check_page(page_parsed):
             return [], 0
 
         subs = page_parsed.findAll("figure")
@@ -127,7 +129,7 @@ class FAAPI:
 
         page_parsed = self.get_parse(join_url("scraps", user, page))
 
-        if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
+        if not check_page(page_parsed):
             return [], 0
 
         subs = page_parsed.findAll("figure")
@@ -140,7 +142,7 @@ class FAAPI:
 
         page_parsed = self.get_parse(join_url("favorites", user, page))
 
-        if page_parsed is None or page_parsed.title.text.lower().startswith("account disabled"):
+        if not check_page(page_parsed):
             return [], ""
 
         subs = page_parsed.findAll("figure")
@@ -155,6 +157,9 @@ class FAAPI:
         assert isinstance(page, int)
 
         page_parsed = self.get_parse(join_url("journals", user, page))
+        if not check_page(page_parsed):
+            return [], 0
+
         username = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
 
         journals_tags = page_parsed.findAll("section")
@@ -170,7 +175,7 @@ class FAAPI:
 
         page_parsed = self.get_parse("search", q=q, page=page, **params)
 
-        if page_parsed is None:
+        if not check_page(page_parsed):
             return [], 0, 0, 0, 0
 
         subs = page_parsed.findAll("figure")
@@ -189,41 +194,18 @@ class FAAPI:
 
         res = self.get(join_url("user", user))
 
-        if not res.ok:
-            return False
-        elif not (title := parse_page(res.text).title.text):
-            return False
-        elif title.lower() == "system error":
-            return False
-        elif title.lower().startswith("account disabled"):
-            return False
-        else:
-            return True
+        return res.ok and check_page(parse_page(res.text))
 
     def sub_exists(self, sub_id: int) -> bool:
         assert isinstance(sub_id, int) and sub_id > 0
 
         res = self.get(join_url("view", sub_id))
 
-        if not res.ok:
-            return False
-        elif not (title := parse_page(res.text).title.text):
-            return False
-        elif title.lower() == "system error":
-            return False
-        else:
-            return True
+        return res.ok and check_page(parse_page(res.text))
 
     def journal_exists(self, journal_id: int) -> bool:
         assert isinstance(journal_id, int) and journal_id > 0
 
         res = self.get(join_url("journal", journal_id))
 
-        if not res.ok:
-            return False
-        elif not (title := parse_page(res.text).title.text):
-            return False
-        elif title.lower() == "system error":
-            return False
-        else:
-            return True
+        return res.ok and check_page(parse_page(res.text))
