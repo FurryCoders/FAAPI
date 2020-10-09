@@ -11,19 +11,28 @@ def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 
 
-def check_page(page: BeautifulSoup) -> bool:
-    if page is None:
-        return False
-    elif not (title := page.title.text.lower()):
-        return False
-    elif title.startswith("account disabled"):
-        return False
-    elif title == "system error":
-        return False
-    elif page.find("section", class_="notice-message"):
-        return False
+def check_page(page: BeautifulSoup) -> int:
+    """
+    0 if page is okay
+    1 if page is None
+    2 if page has no title
+    3 if page is from a disabled account
+    4 if page is a system error
+    5 if page has a notice-message (error)
+    """
 
-    return True
+    if page is None:
+        return 1
+    elif not (title := page.title.text.lower()):
+        return 2
+    elif title.startswith("account disabled"):
+        return 3
+    elif title == "system error":
+        return 4
+    elif page.find("section", class_="notice-message"):
+        return 5
+
+    return 0
 
 
 def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
