@@ -29,8 +29,8 @@ def check_page(page: BeautifulSoup) -> int:
         return 3
     elif title == "system error":
         return 4
-    elif page.find("section", class_="notice-message"):
-        return 5
+    elif notice := page.find("section", class_="notice-message"):
+        return 3 if (p := notice.find("p")) and "deactivated" in p.text.lower() else 5
 
     return 0
 
