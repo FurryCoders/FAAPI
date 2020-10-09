@@ -11,6 +11,21 @@ def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 
 
+def check_page(page: BeautifulSoup) -> bool:
+    if page is None:
+        return False
+    elif not (title := page.title.text.lower()):
+        return False
+    elif title.startswith("account disabled"):
+        return False
+    elif title == "system error":
+        return False
+    elif page.find("section", class_="notice-message"):
+        return False
+
+    return True
+
+
 def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.find("h2").text.strip()
@@ -26,6 +41,8 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]]:
+    check_page(journal_page)
+
     tag_id: Tag = journal_page.find("meta", property="og:url")
     tag_title: Tag = journal_page.find("h2", class_="journal-title")
     tag_author: Tag = journal_page.find("a", class_="current")
@@ -66,8 +83,7 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str]]]:
-    if sub_page.find("section", class_="notice-message"):
-        raise Exception("Error: notice-message section found")
+    check_page(sub_page)
 
     tag_id: Tag = sub_page.find("meta", property="og:url")
     tag_sub_info: Tag = sub_page.find("div", class_="submission-id-sub-container")
