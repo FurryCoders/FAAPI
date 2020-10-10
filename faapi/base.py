@@ -95,7 +95,7 @@ class FAAPI:
 
         page_parsed: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
 
-        if not check_page(page_parsed):
+        if check_page(page_parsed) != 0:
             return "", "", None
 
         username_div = page_parsed.find("div", class_="username")
@@ -114,7 +114,7 @@ class FAAPI:
 
         page_parsed = self.get_parse(join_url("gallery", user, page))
 
-        if not check_page(page_parsed):
+        if check_page(page_parsed) != 0:
             return [], 0
 
         subs = page_parsed.findAll("figure")
@@ -127,7 +127,7 @@ class FAAPI:
 
         page_parsed = self.get_parse(join_url("scraps", user, page))
 
-        if not check_page(page_parsed):
+        if check_page(page_parsed) != 0:
             return [], 0
 
         subs = page_parsed.findAll("figure")
@@ -140,7 +140,7 @@ class FAAPI:
 
         page_parsed = self.get_parse(join_url("favorites", user, page))
 
-        if not check_page(page_parsed):
+        if check_page(page_parsed) != 0:
             return [], ""
 
         subs = page_parsed.findAll("figure")
@@ -155,7 +155,8 @@ class FAAPI:
         assert isinstance(page, int)
 
         page_parsed = self.get_parse(join_url("journals", user, page))
-        if not check_page(page_parsed):
+
+        if check_page(page_parsed) != 0:
             return [], 0
 
         username = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
@@ -173,7 +174,7 @@ class FAAPI:
 
         page_parsed = self.get_parse("search", q=q, page=page, **params)
 
-        if not check_page(page_parsed):
+        if check_page(page_parsed) != 0:
             return [], 0, 0, 0, 0
 
         subs = page_parsed.findAll("figure")
