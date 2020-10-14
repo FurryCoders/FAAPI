@@ -229,3 +229,12 @@ If no `sub_page` is passed then the object fields will remain at their default -
 
 * `parse_page()`<br>
 Parses the stored submission page for metadata.
+
+
+## Issues
+
+If any problem is encountered during usage of the program, an issue can be opened on the project's pages on [GitLab](https://gitlab.com/MatteoCampinoti94/FAAPI/issues).
+
+Issues can also be used to suggest improvements and features.
+
+When opening an issue for a problem, please copy the error message and describe the operation in progress when the error occurred.
