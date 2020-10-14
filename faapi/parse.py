@@ -1,3 +1,4 @@
+from re import match
 from typing import Dict
 from typing import List
 from typing import Union
@@ -112,7 +113,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     author: str = tag_author.text.strip()
-    date: str = parse_date(tag_date["title"].strip()).strftime("%Y-%m-%d")
+    date: str = parse_date(
+        tag_date["title"].strip()
+        if match(r"^[A-Za-z]+ \d+,.*$", tag_date["title"])
+        else tag_date.text.strip()
+    ).strftime("%Y-%m-%d")
     tags: [str] = [t.text.strip() for t in tag_tags]
     category: str = tag_category1.text.strip() + "/" + tag_category2.text.strip()
     species: str = tag_species.text.strip()
