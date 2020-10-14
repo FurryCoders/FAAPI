@@ -27,7 +27,12 @@ Once `FAAPI` is initialized its method can be used to crawl FA and return machin
 import faapi
 import json
 
-api = faapi.FAAPI()
+cookies = [
+    {"name": "a", "value": "38565475-3421-3f21-7f63-3d341339737"},
+    {"name": "b", "value": "356f5962-5a60-0922-1c11-65003b703038"},
+]
+
+api = faapi.FAAPI(cookies)
 sub, sub_file = api.get_sub(12345678, get_file=True)
 
 print(sub.id, sub.title, sub.author, f"{len(sub_file)/1024:02f}KiB")
@@ -224,10 +229,3 @@ If no `sub_page` is passed then the object fields will remain at their default -
 
 * `parse_page()`<br>
 Parses the stored submission page for metadata.
-
-## Examples
-
-To see examples of the various functionalities of the module, use the scripts located in the examples folder.
-These can be run directly, provided the requirements are met.
-
-See the specific scripts for more details.
