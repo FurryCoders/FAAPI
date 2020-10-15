@@ -1,8 +1,11 @@
 # FurAffinity API
 
-[![pypi version](https://img.shields.io/pypi/v/faapi)](https://pypi.org/project/faapi/)
-[![supported Python version](https://img.shields.io/pypi/pyversions/faapi)](https://pypi.org/project/faapi/)
-[![license](https://img.shields.io/pypi/l/faapi)](https://pypi.org/project/faapi/)
+[![version_pypi](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
+[![version_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=gitlab&query=%24%5B%3A1%5D.name&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Frepository%2Ftags)](https://gitlab.com/MatteoCampinoti94/FAAPI)
+[![version_python](https://img.shields.io/pypi/pyversions/faapi?logo=Python)](https://www.python.org)
+
+[![issues_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=issues&suffix=%20open&query=%24.length&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Fissues%3Fstate%3Dopened)](https://gitlab.com/MatteoCampinoti94/FAAPI/issues)
+[![issues_github](https://img.shields.io/github/issues/matteocampinoti94/faapi?logo=github&color=blue)](https://github.com/MatteoCampinoti94/FAAPI/issues)
 
 Python module to implement API-like functionality for the FurAffinity.net website
 
