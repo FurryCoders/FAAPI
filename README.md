@@ -233,10 +233,17 @@ If no `sub_page` is passed then the object fields will remain at their default -
 * `parse_page()`<br>
 Parses the stored submission page for metadata.
 
+## Contributing
+
+Al contributions and suggestions are welcome!
+
+The only requirement is that any merge request must be sent to the GitLab project as the one on GitHub is only a mirror: [GitLab/FALocalRepo](https://gitlab.com/MatteoCampinoti94/FALocalRepo)
+
+If you have suggestions for fixes or improvements, you can open an issue with your idea, see [#Issues](#issues) for details.
 
 ## Issues
 
-If any problem is encountered during usage of the program, an issue can be opened on the project's pages on [GitLab](https://gitlab.com/MatteoCampinoti94/FAAPI/issues).
+If any problem is encountered during usage of the program, an issue can be opened on the project's pages on [GitLab](https://gitlab.com/MatteoCampinoti94/FAAPI/issues) (preferred) or [GitHub](https://github.com/MatteoCampinoti94/FAAPI/issues) (mirror repository).
 
 Issues can also be used to suggest improvements and features.
 
