@@ -74,8 +74,7 @@ class FAAPI:
     def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
         assert isinstance(sub_id, int) and sub_id > 0
 
-        sub_page = self.get_parse(join_url("view", sub_id))
-        sub = Submission(sub_page)
+        sub = Submission(self.get_parse(join_url("view", sub_id)))
         sub_file = self.get_sub_file(sub) if get_file else None
 
         return sub, sub_file
