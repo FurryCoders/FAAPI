@@ -165,18 +165,16 @@ This object contains information gathered when parsing a journals page or a spec
 
 ### Init
 
-`__init__(journal_section: bs4.element.Tag, journal_page: bs4.BeautifulSoup)`
+`__init__(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`
 
-`Journal` can take two optional parameters: a journal section tag from a journals page and/or a parsed journal page. The tag is parsed before the page, with the second overwriting any values gathered from the first if both are passed.
+`Journal` takes one optional parameters: a journal section tag from a journals page or a parsed journal page. Parsing is then performed based on the class of the passed object.
 
-The two parameters are saved in instance variables of the same name.
+The tag/page is saved as an instance variable of the same name
 
 ### Methods
 
-* `parse_journal_section()`<br>
-Parses the stored journal section tag for information.
-* `parse_journal_page()`<br>
-Parses the stored journal page for information.
+* `parse_journal()`<br>
+Parses the stored journal tag/page for information.
 
 ## SubmissionPartial
 
