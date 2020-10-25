@@ -1,4 +1,4 @@
-# FurAffinity API
+# Fur Affinity API
 
 [![version_pypi](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
 [![version_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=gitlab&query=%24%5B%3A1%5D.name&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Frepository%2Ftags)](https://gitlab.com/MatteoCampinoti94/FAAPI)
@@ -53,14 +53,13 @@ with open("user_name-gallery.json", "w") as f:
 
 ### robots.txt
 
-At init, the `FAAPI` object downloads the [robots.txt](https://www.furaffinity.net/robots.txt) file from FA to determine the `Crawl-delay` value set therein.
-If not set, a value of 1 second is used.
+At init, the `FAAPI` object downloads the [robots.txt](https://www.furaffinity.net/robots.txt) file from FA to determine the `Crawl-delay` value set therein. If not set, a value of 1 second is used.
 
 To respect this value, the default behaviour of of the `FAAPI` object is to wait when a get request is made if the last request was performed more recently then the crawl delay value.
 
 See under [FAAPI](#faapi) for more details on this behaviour.
 
-Furthermore, any get operation that points to a disallowed path from robots.txt will raise an exception. This check should not be circumvented and the developer of this module does not take responsibility for violations of the TOS of FurAffinity.
+Furthermore, any get operation that points to a disallowed path from robots.txt will raise an exception. This check should not be circumvented and the developer of this module does not take responsibility for violations of the TOS of Fur Affinity.
 
 ### Cookies
 
@@ -77,7 +76,7 @@ Only cookies `a` and `b` are needed.
 
 To access session cookies, consult the manual of the browser used to login.
 
-*Note:* it is important to not logout of the session the cookies belong, otherwise they will no longer work.
+*Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.
 
 ## FAAPI
 
@@ -112,21 +111,23 @@ This returns a response object containing the result of the get operation on the
 * `get_parse(path: str, **params) -> bs4.BeautifulSoup`<br>
 Similar to `get()` but returns the parsed  HTML from the normal get operation.
 * `get_sub(sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
-Given a submission ID in either int or str format, it returns a `Submission` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
+Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
 * `get_sub_file(sub: Submission) -> Optional[bytes]`<br>
 Given a submission object, it downloads its file and returns it as a `bytes` object.
 * `userpage(user: str) -> Tuple[str, str, bs4.BeautifulSoup]`<br>
-Returns the user's full display name - i.e. with capital letters and extra characters such as "_" -, the user's status - the first character found beside the user name - and the parsed profile text in HTML.
+Returns the user's full display name - i.e. with capital letters and extra characters such as "_" -, the user's status - the first character found beside the user name - and the parsed profile text as a parsed object.
 * `gallery(user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]`<br>
 Returns the list of submissions found on a specific gallery page and the number of the next page. The returned page number is set to 0 if it is the last page.
 * `scraps(user: str, page: int = 1) -> -> Tuple[List[SubmissionPartial], int]`<br>
-Same as `gallery()`, but scrapes a user's scraps page instead.
-* `favorites(user: str, page: str = '') -> Tuple[List[SubmissionPartial], str]`<br>
-As `gallery()` and `scraps()` it downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page value as argument is equivalent to page 1.<br>
+Returns the list of submissions found on a specific scraps page and the number of the next page. The returned page number is set to 0 if it is the last page.
+* `favorites(user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]`<br>
+Downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page value as argument is equivalent to page 1.<br>
 *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-* `search(q: str = '', page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
+* `journals(user: str, page: int = 1) -> -> Tuple[List[Journal], int]`<br>
+Returns the list of submissions found on a specific journals page and the number of the next page. The returned page number is set to 0 if it is the last page.
+* `search(q: str = "", page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
 Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 0, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
-*Note:* as of 2020-08-01 the "/search" path is disallowed by FA's robots.txt.
+*Note:* as of October 2020 the "/search" path is disallowed by Fur Affinity's robots.txt.
 * `user_exists(user: str) -> int`<br>
 Checks if the passed user exists - i.e. if there is a page under that name - and returns an int result.
     * 0 okay
@@ -160,9 +161,11 @@ This object contains information gathered when parsing a journals page or a spec
 * `author` journal author
 * `content` journal content
 
+`Journal` objects can be directly casted to a dict object or iterated through.
+
 ### Init
 
-`__init__(self, journal_section: bs4.element.Tag, journal_page: bs4.BeautifulSoup)`
+`__init__(journal_section: bs4.element.Tag, journal_page: bs4.BeautifulSoup)`
 
 `Journal` can take two optional parameters: a journal section tag from a journals page and/or a parsed journal page. The tag is parsed before the page, with the second overwriting any values gathered from the first if both are passed.
 
@@ -170,9 +173,9 @@ The two parameters are saved in instance variables of the same name.
 
 ### Methods
 
-* `parse_journal_section(self)`<br>
+* `parse_journal_section()`<br>
 Parses the stored journal section tag for information.
-* `parse_journal_page(self)`<br>
+* `parse_journal_page()`<br>
 Parses the stored journal page for information.
 
 ## SubmissionPartial
@@ -185,7 +188,7 @@ This lightweight submission object is used to contain the information gathered w
 * `rating` submission rating [general, mature, adult]
 * `type` submission type [text, image, etc...]
 
-`SubmissionPartial` can be directly casted to a dict object or iterated through.
+`SubmissionPartial` objects can be directly casted to a dict object or iterated through.
 
 ### Init
 
@@ -216,11 +219,11 @@ The main class that parses and holds submission metadata.
 
 \* these are extracted exactly as they appear on the submission page
 
-`Submission` can be directly casted to a dict object and iterated through.
+`Submission` objects can be directly casted to a dict object and iterated through.
 
 ### Init
 
-`__init__(self, sub_page: bs4.BeautifulSoup = None)`
+`__init__(sub_page: bs4.BeautifulSoup = None)`
 
 To initialise the object, An optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
 
