@@ -31,6 +31,9 @@ class SubmissionPartial:
     def __repr__(self):
         return repr(dict(self))
 
+    def __str__(self):
+        return f"{self.id} {self.author} {self.title}"
+
     def parse(self):
         if self.sub_figure is None:
             return
@@ -79,6 +82,9 @@ class Submission:
 
     def __repr__(self):
         return repr(dict(self))
+
+    def __str__(self):
+        return f"{self.id} {self.author} {self.title}"
 
     def parse(self):
         if self.sub_page is None:

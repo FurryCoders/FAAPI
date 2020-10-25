@@ -33,6 +33,9 @@ class Journal:
     def __repr__(self):
         return repr(dict(self))
 
+    def __str__(self):
+        return f"{self.id} {self.author} {self.title}"
+
     def parse(self):
         if self.journal_item is None:
             return
