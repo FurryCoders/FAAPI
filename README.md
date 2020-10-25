@@ -173,7 +173,7 @@ The tag/page is saved as an instance variable of the same name
 
 ### Methods
 
-* `parse_journal()`<br>
+* `parse()`<br>
 Parses the stored journal tag/page for information.
 
 ## SubmissionPartial
@@ -192,11 +192,11 @@ This lightweight submission object is used to contain the information gathered w
 
 `__init__(sub_figure: bs4.element.Tag)`
 
-`SubmissionPartial` init needs a figure tag taken from a parsed page. The tag is saved in instance variable of the same name.
+`SubmissionPartial` init needs a figure tag taken from a parsed page. The tag is saved as an instance variable of the same name.
 
 ### Methods
 
-* `parse_figure_tag()`<br>
+* `parse()`<br>
 Parses the stored submission figure tag for information.
 
 ## Submission
@@ -231,7 +231,7 @@ If no `sub_page` is passed then the object fields will remain at their default -
 
 ### Methods
 
-* `parse_page()`<br>
+* `parse()`<br>
 Parses the stored submission page for metadata.
 
 ## Contributing

@@ -21,7 +21,7 @@ class Journal:
         self.author: str = ""
         self.content: str = ""
 
-        self.parse_journal()
+        self.parse()
 
     def __iter__(self):
         yield "id", self.id
@@ -33,7 +33,7 @@ class Journal:
     def __repr__(self):
         return repr(dict(self))
 
-    def parse_journal(self):
+    def parse(self):
         if self.journal_item is None:
             return
 

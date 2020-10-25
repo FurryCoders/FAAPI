@@ -19,7 +19,7 @@ class SubmissionPartial:
         self.rating: str = ""
         self.type: str = ""
 
-        self.parse_figure_tag()
+        self.parse()
 
     def __iter__(self):
         yield "id", self.id
@@ -31,7 +31,7 @@ class SubmissionPartial:
     def __repr__(self):
         return repr(dict(self))
 
-    def parse_figure_tag(self):
+    def parse(self):
         if self.sub_figure is None:
             return
 
@@ -62,7 +62,7 @@ class Submission:
         self.description: str = ""
         self.file_url: str = ""
 
-        self.parse_page()
+        self.parse()
 
     def __iter__(self):
         yield "id", self.id
@@ -80,7 +80,7 @@ class Submission:
     def __repr__(self):
         return repr(dict(self))
 
-    def parse_page(self):
+    def parse(self):
         if self.sub_page is None:
             return
         elif self.sub_page.find("section", attrs={"class": "notice-message"}):
