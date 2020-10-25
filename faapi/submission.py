@@ -3,6 +3,7 @@ from typing import Optional
 
 from .parse import BeautifulSoup
 from .parse import Tag
+from .parse import check_page
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
 
@@ -89,8 +90,8 @@ class Submission:
     def parse(self):
         if self.sub_page is None:
             return
-        elif self.sub_page.find("section", attrs={"class": "notice-message"}):
-            raise Exception("Error: notice-message section found")
+        elif (err := check_page(self.sub_page)) != 0:
+            raise Exception(f"Error: submission page error {err}")
 
         parsed: dict = parse_submission_page(self.sub_page)
 
