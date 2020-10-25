@@ -87,8 +87,7 @@ class FAAPI:
     def get_journal(self, journal_id: int) -> Journal:
         assert isinstance(journal_id, int) and journal_id > 0
 
-        journal_page = self.get_parse(join_url("journal", journal_id))
-        return Journal(journal_page=journal_page)
+        return Journal(self.get_parse(join_url("journal", journal_id)))
 
     def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
         assert isinstance(user, str)
