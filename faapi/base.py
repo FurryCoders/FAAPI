@@ -72,9 +72,7 @@ class FAAPI:
         return parse_page(res.text) if res.ok else None
 
     def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
-        assert isinstance(sub_id, int) and sub_id > 0
-
-        sub = Submission(self.get_parse(join_url("view", sub_id)))
+        sub = Submission(self.get_parse(join_url("view", int(sub_id))))
         sub_file = self.get_sub_file(sub) if get_file else None
 
         return sub, sub_file
@@ -84,13 +82,9 @@ class FAAPI:
         return get_binary_raw(self.session, sub.file_url)
 
     def get_journal(self, journal_id: int) -> Journal:
-        assert isinstance(journal_id, int) and journal_id > 0
-
-        return Journal(self.get_parse(join_url("journal", journal_id)))
+        return Journal(self.get_parse(join_url("journal", int(journal_id))))
 
     def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
-        assert isinstance(user, str)
-
         page_parsed: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
 
         if check_page(page_parsed) != 0:
@@ -107,10 +101,7 @@ class FAAPI:
         return username, status, parse_page(description)
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
-        assert isinstance(user, str)
-        assert isinstance(page, int) and page >= 1
-
-        page_parsed = self.get_parse(join_url("gallery", user, page))
+        page_parsed = self.get_parse(join_url("gallery", user, int(page)))
 
         if check_page(page_parsed) != 0:
             return [], 0
@@ -120,10 +111,7 @@ class FAAPI:
         return list(map(SubmissionPartial, subs)), (page + 1) if subs else 0
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
-        assert isinstance(user, str)
-        assert isinstance(page, int) and page >= 1
-
-        page_parsed = self.get_parse(join_url("scraps", user, page))
+        page_parsed = self.get_parse(join_url("scraps", user, int(page)))
 
         if check_page(page_parsed) != 0:
             return [], 0
@@ -133,9 +121,6 @@ class FAAPI:
         return list(map(SubmissionPartial, subs)), (page + 1) if subs else 0
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
-        assert isinstance(user, str)
-        assert isinstance(page, str)
-
         page_parsed = self.get_parse(join_url("favorites", user, page))
 
         if check_page(page_parsed) != 0:
@@ -149,10 +134,7 @@ class FAAPI:
         return list(map(SubmissionPartial, subs)), page_next
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
-        assert isinstance(user, str)
-        assert isinstance(page, int)
-
-        page_parsed = self.get_parse(join_url("journals", user, page))
+        page_parsed = self.get_parse(join_url("journals", user, int(page)))
 
         if check_page(page_parsed) != 0:
             return [], 0
@@ -167,9 +149,6 @@ class FAAPI:
         return journals, (page + 1) if journals else 0
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
-        assert isinstance(q, str)
-        assert isinstance(page, int)
-
         page_parsed = self.get_parse("search", q=q, page=page, **params)
 
         if check_page(page_parsed) != 0:
@@ -195,8 +174,6 @@ class FAAPI:
         4 request error
         """
 
-        assert isinstance(user, str)
-
         res = self.get(join_url("user", user))
 
         if not res.ok:
@@ -219,8 +196,6 @@ class FAAPI:
         4 request error
         """
 
-        assert isinstance(sub_id, int) and sub_id > 0
-
         res = self.get(join_url("view", sub_id))
 
         if not res.ok:
@@ -242,8 +217,6 @@ class FAAPI:
         3 unknown error
         4 request error
         """
-
-        assert isinstance(journal_id, int) and journal_id > 0
 
         res = self.get(join_url("journal", journal_id))
 
