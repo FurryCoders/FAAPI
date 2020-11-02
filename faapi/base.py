@@ -71,15 +71,15 @@ class FAAPI:
         res = self.get(path, **params)
         return parse_page(res.text) if res.ok else None
 
-    def get_sub(self, sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
-        sub = Submission(self.get_parse(join_url("view", int(sub_id))))
-        sub_file = self.get_sub_file(sub) if get_file else None
+    def get_submission(self, submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
+        sub = Submission(self.get_parse(join_url("view", int(submission_id))))
+        sub_file = self.get_submission_file(sub) if get_file else None
 
         return sub, sub_file
 
-    def get_sub_file(self, sub: Submission) -> Optional[bytes]:
+    def get_submission_file(self, submission: Submission) -> Optional[bytes]:
         self.handle_delay()
-        return get_binary_raw(self.session, sub.file_url)
+        return get_binary_raw(self.session, submission.file_url)
 
     def get_journal(self, journal_id: int) -> Journal:
         return Journal(self.get_parse(join_url("journal", int(journal_id))))
@@ -187,7 +187,7 @@ class FAAPI:
         else:
             return 3
 
-    def sub_exists(self, sub_id: int) -> int:
+    def submission_exists(self, submission_id: int) -> int:
         """
         0 okay
         1 account disabled
@@ -196,7 +196,7 @@ class FAAPI:
         4 request error
         """
 
-        res = self.get(join_url("view", sub_id))
+        res = self.get(join_url("view", submission_id))
 
         if not res.ok:
             return 4

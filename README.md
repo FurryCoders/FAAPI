@@ -36,7 +36,7 @@ cookies = [
 ]
 
 api = faapi.FAAPI(cookies)
-sub, sub_file = api.get_sub(12345678, get_file=True)
+sub, sub_file = api.get_submission(12345678,get_file=True)
 
 print(sub.id, sub.title, sub.author, f"{len(sub_file)/1024:02f}KiB")
 
@@ -110,9 +110,9 @@ Returns the status of the connection.
 This returns a response object containing the result of the get operation on the given url with the optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 * `get_parse(path: str, **params) -> bs4.BeautifulSoup`<br>
 Similar to `get()` but returns the parsed  HTML from the normal get operation.
-* `get_sub(sub_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
+* `get_submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
 Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
-* `get_sub_file(sub: Submission) -> Optional[bytes]`<br>
+* `get_submission_file(submission: Submission) -> Optional[bytes]`<br>
 Given a submission object, it downloads its file and returns it as a `bytes` object.
 * `userpage(user: str) -> Tuple[str, str, bs4.BeautifulSoup]`<br>
 Returns the user's full display name - i.e. with capital letters and extra characters such as "_" -, the user's status - the first character found beside the user name - and the parsed profile text as a parsed object.
@@ -135,7 +135,7 @@ Checks if the passed user exists - i.e. if there is a page under that name - and
     * 2 system error
     * 3 unknown error
     * 4 request error
-* `sub_exists(sub_id: int) -> int`<br>
+* `submission_exists(submission_id: int) -> int`<br>
 Checks if the passed submissions exists - i.e. if there is a page with that ID - and returns an int result.
     * 0 okay
     * 1 account disabled
