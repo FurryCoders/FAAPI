@@ -5,6 +5,7 @@ from typing import Union
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from faapi.parse import ParsingError
 from faapi.parse import check_page
 from faapi.parse import parse_journal_page
 from faapi.parse import parse_journal_section
@@ -44,7 +45,7 @@ class Journal:
         parsed: Dict[str, Union[int, str]]
         if isinstance(self.journal_item, BeautifulSoup):
             if (err := check_page(self.journal_item)) != 0:
-                raise Exception(f"Error: journal page error {err}")
+                raise ParsingError(f"Error: journal page error {err}")
             parsed = parse_journal_page(self.journal_item)
         else:
             parsed = parse_journal_section(self.journal_item)

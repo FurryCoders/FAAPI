@@ -2,6 +2,7 @@ from typing import List
 from typing import Optional
 
 from .parse import BeautifulSoup
+from .parse import ParsingError
 from .parse import Tag
 from .parse import check_page
 from .parse import parse_submission_figure
@@ -91,7 +92,7 @@ class Submission:
         if self.sub_page is None:
             return
         elif (err := check_page(self.sub_page)) != 0:
-            raise Exception(f"Error: submission page error {err}")
+            raise ParsingError(f"Error: submission page error {err}")
 
         parsed: dict = parse_submission_page(self.sub_page)
 
