@@ -10,10 +10,10 @@ from .parse import parse_submission_page
 
 
 class SubmissionPartial:
-    def __init__(self, sub_figure: Optional[Tag] = None):
-        assert sub_figure is None or isinstance(sub_figure, Tag)
+    def __init__(self, submission_figure: Optional[Tag] = None):
+        assert submission_figure is None or isinstance(submission_figure, Tag)
 
-        self.sub_figure = sub_figure
+        self.submission_figure = submission_figure
 
         self.id: int = 0
         self.title: str = ""
@@ -37,10 +37,10 @@ class SubmissionPartial:
         return f"{self.id} {self.author} {self.title}"
 
     def parse(self):
-        if self.sub_figure is None:
+        if self.submission_figure is None:
             return
 
-        parsed: dict = parse_submission_figure(self.sub_figure)
+        parsed: dict = parse_submission_figure(self.submission_figure)
 
         self.id: int = parsed["id"]
         self.title: str = parsed["title"]
@@ -50,10 +50,10 @@ class SubmissionPartial:
 
 
 class Submission:
-    def __init__(self, sub_page: Optional[BeautifulSoup] = None):
-        assert sub_page is None or isinstance(sub_page, BeautifulSoup)
+    def __init__(self, submission_page: Optional[BeautifulSoup] = None):
+        assert submission_page is None or isinstance(submission_page, BeautifulSoup)
 
-        self.sub_page = sub_page
+        self.submission_page = submission_page
 
         self.id: int = 0
         self.title: str = ""
@@ -89,12 +89,12 @@ class Submission:
         return f"{self.id} {self.author} {self.title}"
 
     def parse(self):
-        if self.sub_page is None:
+        if self.submission_page is None:
             return
-        elif (err := check_page(self.sub_page)) != 0:
+        elif (err := check_page(self.submission_page)) != 0:
             raise ParsingError(f"Error: submission page error {err}")
 
-        parsed: dict = parse_submission_page(self.sub_page)
+        parsed: dict = parse_submission_page(self.submission_page)
 
         self.id: int = parsed["id"]
         self.title: str = parsed["title"]

@@ -190,7 +190,7 @@ This lightweight submission object is used to contain the information gathered w
 
 ### Init
 
-`__init__(sub_figure: bs4.element.Tag)`
+`__init__(submission_figure: bs4.element.Tag)`
 
 `SubmissionPartial` init needs a figure tag taken from a parsed page. The tag is saved as an instance variable of the same name.
 
@@ -221,13 +221,13 @@ The main class that parses and holds submission metadata.
 
 ### Init
 
-`__init__(sub_page: bs4.BeautifulSoup = None)`
+`__init__(submission_page: bs4.BeautifulSoup = None)`
 
 To initialise the object, An optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
 
-The `sub_page` argument is saved as an instance variable and is then parsed to obtain the other fields.
+The `submission_page` argument is saved as an instance variable and is then parsed to obtain the other fields.
 
-If no `sub_page` is passed then the object fields will remain at their default - empty - value.
+If no `submission_page` is passed then the object fields will remain at their default - empty - value.
 
 ### Methods
 
