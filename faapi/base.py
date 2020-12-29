@@ -73,7 +73,7 @@ class FAAPI:
 
     def get_submission(self, submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
         sub = Submission(self.get_parse(join_url("view", int(submission_id))))
-        sub_file = self.get_submission_file(sub) if get_file else None
+        sub_file = self.get_submission_file(sub) if get_file and sub.id else None
 
         return sub, sub_file
 
