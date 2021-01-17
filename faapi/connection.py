@@ -14,7 +14,7 @@ from requests import get as get_raw
 from .__version__ import __version__
 
 root = "https://www.furaffinity.net"
-user_agent: str = f"faapi/{__version__} Python/{python_version} {(u := uname()).system}/{u.release}"
+user_agent: str = f"faapi/{__version__} Python/{python_version()} {(u := uname()).system}/{u.release}"
 
 
 def join_url(*url_comps: Union[str, int]) -> str:
