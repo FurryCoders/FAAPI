@@ -1,3 +1,5 @@
+from platform import python_version
+from platform import uname
 from time import sleep
 from typing import Dict
 from typing import List
@@ -9,7 +11,10 @@ from cfscrape import create_scraper
 from requests import Response
 from requests import get as get_raw
 
+from .__version__ import __version__
+
 root = "https://www.furaffinity.net"
+user_agent: str = f"faapi/{__version__} Python/{python_version} {(u := uname()).system}/{u.release}"
 
 
 def join_url(*url_comps: Union[str, int]) -> str:
@@ -17,7 +22,7 @@ def join_url(*url_comps: Union[str, int]) -> str:
 
 
 def ping():
-    get_raw(root).raise_for_status()
+    get_raw(root, headers={"User-Agent": user_agent}).raise_for_status()
 
 
 def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
@@ -38,7 +43,7 @@ def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
 
 
 def get_robots() -> Dict[str, List[str]]:
-    res = get_raw(join_url(root, "robots.txt"))
+    res = get_raw(join_url(root, "robots.txt"), headers={"User-Agent": user_agent})
 
     if not res.ok:
         return {}
@@ -53,13 +58,13 @@ def get_robots() -> Dict[str, List[str]]:
 
 
 def get(session: CloudflareScraper, path: str, **params) -> Response:
-    return session.get(join_url(root, path), params=params)
+    return session.get(join_url(root, path), params=params, headers={"User-Agent": user_agent})
 
 
 def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float] = 100) -> Optional[bytes]:
     assert isinstance(speed, int) or isinstance(speed, float)
 
-    file_stream = session.get(url, stream=True)
+    file_stream = session.get(url, stream=True, headers={"User-Agent": user_agent})
 
     if not file_stream.ok:
         file_stream.close()
