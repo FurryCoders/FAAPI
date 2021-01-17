@@ -78,6 +78,10 @@ To access session cookies, consult the manual of the browser used to login.
 
 *Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.
 
+### User Agent
+
+`FAAPI` attaches a `User-Agent` header to every request. The user agent string is generated at startup in the following format: `faapi/{package version} Python/{python version} {system name}/{system release}`.
+
 ## FAAPI
 
 This is the main object that handles all the calls to scrape pages and get submissions.
