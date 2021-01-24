@@ -241,7 +241,7 @@ Parses the stored submission page for metadata.
 
 ## Contributing
 
-Al contributions and suggestions are welcome!
+All contributions and suggestions are welcome!
 
 The only requirement is that any merge request must be sent to the GitLab project as the one on GitHub is only a mirror: [GitLab/FALocalRepo](https://gitlab.com/MatteoCampinoti94/FALocalRepo)
 
