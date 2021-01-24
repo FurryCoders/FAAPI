@@ -1,4 +1,5 @@
 from re import match
+from re import search
 from typing import Dict
 from typing import List
 from typing import Union
@@ -128,6 +129,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
     description: str = "".join(map(str, tag_description.children)).strip()
+    mentions: List[str] = list(set(
+        m.group(1)
+        for a in tag_description.findAll("a")
+        if (m := search(r"/user/([^/?]*)", a.attrs.get("href"))) is not None
+    ))
     file_url: str = "https:" + tag_file_url["href"]
 
     return {
@@ -141,5 +147,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
         "gender": gender,
         "rating": rating,
         "description": description,
+        "mentions": mentions,
         "file_url": file_url,
     }

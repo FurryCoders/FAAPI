@@ -65,6 +65,7 @@ class Submission:
         self.gender: str = ""
         self.rating: str = ""
         self.description: str = ""
+        self.mentions: List[str] = []
         self.file_url: str = ""
 
         self.parse()
@@ -80,6 +81,7 @@ class Submission:
         yield "gender", self.gender
         yield "rating", self.rating
         yield "description", self.description
+        yield "mentions", self.mentions
         yield "file_url", self.file_url
 
     def __repr__(self):
@@ -106,4 +108,5 @@ class Submission:
         self.gender: str = parsed["gender"]
         self.rating: str = parsed["rating"]
         self.description: str = parsed["description"]
+        self.mentions: List[str] = parsed["mentions"]
         self.file_url: str = parsed["file_url"]
