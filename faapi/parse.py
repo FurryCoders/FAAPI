@@ -1,5 +1,6 @@
 from re import match
 from re import search
+from re import sub
 from typing import Dict
 from typing import List
 from typing import Union
@@ -129,8 +130,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
     description: str = "".join(map(str, tag_description.children)).strip()
-    mentions: List[str] = list(set(
-        m.group(1)
+    mentions: List[str] = sorted(set(
+        sub(r"[^a-z0-9.~-]", "", m.group(1).lower())
         for a in tag_description.findAll("a")
         if (m := search(r'(?:^[ ]*|furaffinity.net)/user/([\w.~-]+)', a.attrs.get("href"))) is not None
     ))
