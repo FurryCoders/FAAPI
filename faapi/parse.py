@@ -132,7 +132,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     mentions: List[str] = list(set(
         m.group(1)
         for a in tag_description.findAll("a")
-        if (m := search(r'/user/([\w.~-]+)', a.attrs.get("href"))) is not None
+        if (m := search(r'(?:^[ ]*|furaffinity.net)/user/([\w.~-]+)', a.attrs.get("href"))) is not None
     ))
     file_url: str = "https:" + tag_file_url["href"]
 
