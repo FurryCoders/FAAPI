@@ -5,10 +5,10 @@ from typing import Union
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from faapi.parse import ParsingError
-from faapi.parse import check_page
-from faapi.parse import parse_journal_page
-from faapi.parse import parse_journal_section
+from .parse import ParsingError
+from .parse import check_page
+from .parse import parse_journal_page
+from .parse import parse_journal_section
 
 
 class Journal:
