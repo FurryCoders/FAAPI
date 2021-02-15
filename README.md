@@ -164,6 +164,7 @@ This object contains information gathered when parsing a journals page or a spec
 * `date` upload date in YYYY-MM-DD format
 * `author` journal author
 * `content` journal content
+* `mentions` the users mentioned in the content (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
 
 `Journal` objects can be directly casted to a dict object or iterated through.
 
