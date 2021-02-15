@@ -5,8 +5,7 @@ from typing import Union
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from .exceptions import ParsingError
-from .parse import check_page
+from .parse import check_page_raise
 from .parse import parse_journal_page
 from .parse import parse_journal_section
 
@@ -44,8 +43,7 @@ class Journal:
 
         parsed: Dict[str, Union[int, str]]
         if isinstance(self.journal_item, BeautifulSoup):
-            if (err := check_page(self.journal_item)) != 0:
-                raise ParsingError(f"Error: journal page error {err}")
+            check_page_raise(self.journal_item)
             parsed = parse_journal_page(self.journal_item)
         else:
             parsed = parse_journal_section(self.journal_item)

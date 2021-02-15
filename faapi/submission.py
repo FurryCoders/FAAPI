@@ -5,6 +5,7 @@ from .exceptions import ParsingError
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page
+from .parse import check_page_raise
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
 
@@ -93,8 +94,8 @@ class Submission:
     def parse(self):
         if self.submission_page is None:
             return
-        elif (err := check_page(self.submission_page)) != 0:
-            raise ParsingError(f"Error: submission page error {err}")
+
+        check_page_raise(self.submission_page)
 
         parsed: dict = parse_submission_page(self.submission_page)
 
