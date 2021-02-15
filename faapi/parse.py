@@ -1,5 +1,6 @@
+from re import Pattern
+from re import compile as re_compile
 from re import match
-from re import search
 from re import sub
 from typing import Dict
 from typing import List
@@ -8,6 +9,8 @@ from typing import Union
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
+
+mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/(.+)$")
 
 
 class ParsingError(Exception):
@@ -42,17 +45,27 @@ def check_page(page: BeautifulSoup) -> int:
     return 0
 
 
+def parse_mentions(tag: Tag) -> List[str]:
+    return sorted(filter(bool, set(
+        sub(r"[^a-z0-9.~-]", "", m.group(1).lower())
+        for a in tag.findAll("a")
+        if (m := match(mentions_regexp, a.attrs.get("href"))) is not None
+    )))
+
+
 def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.find("h2").text.strip()
     date: str = parse_date(section_tag.find("span", class_="popup_date")["title"].strip()).strftime("%Y-%m-%d")
-    content: str = "".join(map(str, section_tag.find("div", class_="journal-body").children))
+    content: str = "".join(map(str, (tag_content := section_tag.find("div", class_="journal-body")).children))
+    mentions: List[str] = parse_mentions(tag_content)
 
     return {
         "id": id_,
         "title": title,
         "date": date,
         "content": content,
+        "mentions": mentions,
     }
 
 
@@ -63,13 +76,14 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
     tag_title: Tag = journal_page.find("h2", class_="journal-title")
     tag_author: Tag = journal_page.find("a", class_="current")
     tag_date: Tag = journal_page.find("span", class_="popup_date")
-    tag_body: Tag = journal_page.find("div", class_="journal-content")
+    tag_content: Tag = journal_page.find("div", class_="journal-content")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     author: str = tag_author["href"].strip("/").split("/")[-1]
     date: str = parse_date(tag_date["title"].strip()).strftime("%Y-%m-%d")
-    content: str = "".join(map(str, tag_body.children)).strip()
+    content: str = "".join(map(str, tag_content.children)).strip()
+    mentions: List[str] = parse_mentions(tag_content)
 
     return {
         "id": id_,
@@ -77,6 +91,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
         "title": title,
         "date": date,
         "content": content,
+        "mentions": mentions,
     }
 
 
@@ -130,11 +145,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
     description: str = "".join(map(str, tag_description.children)).strip()
-    mentions: List[str] = sorted(set(
-        sub(r"[^a-z0-9.~-]", "", m.group(1).lower())
-        for a in tag_description.findAll("a")
-        if (m := search(r'(?:^[ ]*|furaffinity.net)/user/([\w.~-]+)', a.attrs.get("href"))) is not None
-    ))
+    mentions: List[str] = parse_mentions(tag_description)
     file_url: str = "https:" + tag_file_url["href"]
 
     return {
