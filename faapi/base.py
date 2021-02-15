@@ -14,20 +14,14 @@ from .connection import get_binary_raw
 from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
+from .exceptions import CrawlDelayError
+from .exceptions import DisallowedPath
 from .journal import Journal
 from .parse import BeautifulSoup
 from .parse import check_page
 from .parse import parse_page
 from .submission import Submission
 from .submission import SubmissionPartial
-
-
-class DisallowedPath(Exception):
-    pass
-
-
-class CrawlDelayError(Exception):
-    pass
 
 
 class FAAPI:

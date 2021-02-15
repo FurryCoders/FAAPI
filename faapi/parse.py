@@ -13,10 +13,6 @@ from dateutil.parser import parse as parse_date
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/(.+)$")
 
 
-class ParsingError(Exception):
-    pass
-
-
 def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 

@@ -5,7 +5,7 @@ from typing import Union
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from .parse import ParsingError
+from .exceptions import ParsingError
 from .parse import check_page
 from .parse import parse_journal_page
 from .parse import parse_journal_section
