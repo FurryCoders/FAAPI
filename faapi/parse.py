@@ -10,6 +10,12 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
+from .exceptions import DisabledAccount
+from .exceptions import NoTitle
+from .exceptions import NonePage
+from .exceptions import NoticeMessage
+from .exceptions import ServerError
+
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/(.+)$")
 
 
@@ -39,6 +45,19 @@ def check_page(page: BeautifulSoup) -> int:
         return 3 if (p := notice.find("p")) and "deactivated" in p.text.lower() else 5
 
     return 0
+
+
+def check_page_raise(page: BeautifulSoup):
+    if (check := check_page(page)) == 1:
+        raise NonePage
+    elif check == 2:
+        raise NoTitle
+    elif check == 3:
+        raise DisabledAccount
+    elif check == 4:
+        raise ServerError
+    elif check == 5:
+        raise NoticeMessage
 
 
 def parse_mentions(tag: Tag) -> List[str]:
