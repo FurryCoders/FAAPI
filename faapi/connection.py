@@ -51,7 +51,7 @@ def get_robots() -> Dict[str, List[str]]:
 
     for elem in filter(lambda r: r not in ("", "#"), res.text.split("\n")):
         key, value = elem.split(":", 1)
-        robot[key] = robot.get(key, []) + [value.strip()]
+        robot[key] = [*robot.get(key, []), value.strip()]
 
     return robot
 
