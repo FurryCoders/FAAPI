@@ -219,6 +219,7 @@ The main class that parses and holds submission metadata.
 * `rating` rating \*
 * `description` the description as an HTML formatted string
 * `mentions` the users mentioned in the description (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
+* `folder` the submission folder (gallery or scraps)
 * `file_url` the url to the submission file
 
 \* these are extracted exactly as they appear on the submission page
