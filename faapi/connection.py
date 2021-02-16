@@ -45,8 +45,7 @@ def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
 def get_robots() -> Dict[str, List[str]]:
     res = get_raw(join_url(root, "robots.txt"), headers={"User-Agent": user_agent})
 
-    if not res.ok:
-        return {}
+    res.raise_for_status()
 
     robot: Dict[str, Union[int, str, List[str]]] = {}
 
