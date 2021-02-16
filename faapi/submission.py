@@ -1,10 +1,8 @@
 from typing import List
 from typing import Optional
 
-from .exceptions import ParsingError
 from .parse import BeautifulSoup
 from .parse import Tag
-from .parse import check_page
 from .parse import check_page_raise
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
