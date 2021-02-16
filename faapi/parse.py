@@ -144,6 +144,10 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_species: Tag = tag_info[2].find("span")
     tag_gender: Tag = tag_info[3].find("span")
     tag_description: Tag = sub_page.find("div", class_="submission-description")
+    tag_folder: Tag = next(filter(
+        lambda a: a["href"].startswith("/scraps/") or a["href"].startswith("/gallery/"),
+        sub_page.findAll("a", class_="button")
+    ))
     tag_file_url: Tag = sub_page.find("div", class_="download").find("a")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
@@ -161,6 +165,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     rating: str = tag_rating.text.strip()
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: List[str] = parse_mentions(tag_description)
+    folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
 
     return {
@@ -175,5 +180,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
         "rating": rating,
         "description": description,
         "mentions": mentions,
+        "folder": folder,
         "file_url": file_url,
     }
