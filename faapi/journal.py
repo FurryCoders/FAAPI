@@ -11,7 +11,7 @@ from .parse import parse_journal_section
 
 
 class Journal:
-    def __init__(self, journal_item: Optional[Union[Tag, BeautifulSoup]] = None):
+    def __init__(self, journal_item: Union[Tag, BeautifulSoup] = None):
         assert journal_item is None or isinstance(journal_item, BeautifulSoup) or isinstance(journal_item, Tag)
 
         self.journal_item: Optional[Union[Tag, BeautifulSoup]] = journal_item

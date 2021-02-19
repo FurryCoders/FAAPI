@@ -9,10 +9,10 @@ from .parse import parse_submission_page
 
 
 class SubmissionPartial:
-    def __init__(self, submission_figure: Optional[Tag] = None):
+    def __init__(self, submission_figure: Tag = None):
         assert submission_figure is None or isinstance(submission_figure, Tag)
 
-        self.submission_figure = submission_figure
+        self.submission_figure: Optional[Tag] = submission_figure
 
         self.id: int = 0
         self.title: str = ""
@@ -50,10 +50,10 @@ class SubmissionPartial:
 
 
 class Submission:
-    def __init__(self, submission_page: Optional[BeautifulSoup] = None):
+    def __init__(self, submission_page: BeautifulSoup = None):
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
 
-        self.submission_page = submission_page
+        self.submission_page: Optional[BeautifulSoup] = submission_page
 
         self.id: int = 0
         self.title: str = ""
