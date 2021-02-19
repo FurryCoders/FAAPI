@@ -38,6 +38,7 @@ class Journal:
         return f"{self.id} {self.author} {self.title}"
 
     def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
+        assert journal_item is None or isinstance(journal_item, BeautifulSoup) or isinstance(journal_item, Tag)
         self.journal_item = journal_item if journal_item is not None else self.journal_item
         if self.journal_item is None:
             return
