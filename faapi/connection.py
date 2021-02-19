@@ -10,6 +10,7 @@ from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
 from requests import Response
 from requests import get as get_raw
+from requests.exceptions import RequestException
 
 from .__version__ import __version__
 
@@ -71,5 +72,8 @@ def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float
     for chunk in file_stream.iter_content(chunk_size=1024):
         file_binary += chunk
         sleep(1 / speed) if speed > 0 else None
+
+    if (length := int(file_stream.headers.get("Content-Length", 0))) > 0 and length != len(file_binary):
+        raise RequestException(f"Incomplete content {len(file_binary)}/{length}")
 
     return file_binary
