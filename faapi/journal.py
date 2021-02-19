@@ -37,7 +37,8 @@ class Journal:
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
 
-    def parse(self):
+    def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
+        self.journal_item = journal_item if journal_item is not None else self.journal_item
         if self.journal_item is None:
             return
 

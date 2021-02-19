@@ -35,7 +35,8 @@ class SubmissionPartial:
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
 
-    def parse(self):
+    def parse(self, submission_figure: Tag = None):
+        self.submission_figure = submission_figure if submission_figure is not None else self.submission_figure
         if self.submission_figure is None:
             return
 
@@ -91,7 +92,8 @@ class Submission:
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
 
-    def parse(self):
+    def parse(self, submission_page: BeautifulSoup = None):
+        self.submission_page = submission_page if submission_page is not None else self.submission_page
         if self.submission_page is None:
             return
 
