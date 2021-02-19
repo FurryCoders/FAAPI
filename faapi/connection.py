@@ -65,11 +65,9 @@ def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float
 
     file_stream: Response = session.get(url, stream=True, headers={"User-Agent": user_agent})
 
-    if not file_stream.ok:
-        file_stream.close()
-        return None
+    file_stream.raise_for_status()
 
-    file_binary = bytes()
+    file_binary: bytes = bytes()
     for chunk in file_stream.iter_content(chunk_size=1024):
         file_binary += chunk
         sleep(1 / speed) if speed > 0 else None
