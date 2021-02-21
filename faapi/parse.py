@@ -4,6 +4,7 @@ from re import match
 from re import sub
 from typing import Dict
 from typing import List
+from typing import Tuple
 from typing import Union
 
 from bs4 import BeautifulSoup
@@ -198,3 +199,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
         "status": status,
         "profile": profile,
     }
+
+
+def parse_watchlist(watch_page: BeautifulSoup) -> List[Tuple[str, str]]:
+    tags_users: List[Tag] = watch_page.findAll("div", class_="watch-list-items")
+    return [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users]
