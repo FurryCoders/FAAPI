@@ -107,7 +107,7 @@ Returns the status of the connection.
 * `get(path: str, **params) -> requests.Response`<br>
 This returns a response object containing the result of the get operation on the given url with the optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 * `get_parse(path: str, **params) -> Optional[bs4.BeautifulSoup]`<br>
-Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET response code is not between 200 and 400, then returns `None`.
+Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error, an `HTTPError` exception is raised. If the response is not ok, then `None` is returned.
 * `get_submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
 Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
 * `get_submission_file(submission: Submission) -> Optional[bytes]`<br>
