@@ -74,7 +74,9 @@ To access session cookies, consult the manual of the browser used to login.
 
 `FAAPI` attaches a `User-Agent` header to every request. The user agent string is generated at startup in the following format: `faapi/{package version} Python/{python version} {system name}/{system release}`.
 
-## FAAPI
+## Objects
+
+### FAAPI
 
 This is the main object that handles all the calls to scrape pages and get submissions.
 
@@ -87,7 +89,7 @@ It holds 6 different fields:
 * `last_get: float` time of last get (not UNIX time, uses `time.perf_counter` for more precision)
 * `raise_for_delay: bool = False` if set to `True`, raises an exception if a get call is made before enough time has passed
 
-### Init
+#### Init
 
 `__init__(cookies: List[dict] = None)`
 
@@ -96,7 +98,7 @@ The cookies can be omitted and the API will still be able to access public pages
 
 *Note:* Cookies must be in the format mentioned above in [#Cookies](#cookies).
 
-### Methods & Properties
+#### Methods & Properties
 
 * `load_cookies(cookies: List[Dict[str, Any]])`<br>
 Load new cookies in the object and remake the `CloudflareScraper` session.
@@ -150,7 +152,7 @@ Checks if the passed journal exists - i.e. if there is a page under that ID - an
     * 3 unknown error
     * 4 request error
 
-## Journal
+### Journal
 
 This object contains information gathered when parsing a journals page or a specific journal page. It contains the following fields:
 
@@ -163,7 +165,7 @@ This object contains information gathered when parsing a journals page or a spec
 
 `Journal` objects can be directly casted to a dict object or iterated through.
 
-### Init
+#### Init
 
 `__init__(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`
 
@@ -171,12 +173,12 @@ This object contains information gathered when parsing a journals page or a spec
 
 The tag/page is saved as an instance variable of the same name
 
-### Methods
+#### Methods
 
 * `parse()`<br>
 Parses the stored journal tag/page for information.
 
-## SubmissionPartial
+### SubmissionPartial
 
 This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites and search pages. It contains only the following fields:
 
@@ -188,18 +190,18 @@ This lightweight submission object is used to contain the information gathered w
 
 `SubmissionPartial` objects can be directly casted to a dict object or iterated through.
 
-### Init
+#### Init
 
 `__init__(submission_figure: bs4.element.Tag)`
 
 `SubmissionPartial` init needs a figure tag taken from a parsed page. The tag is saved as an instance variable of the same name.
 
-### Methods
+#### Methods
 
 * `parse()`<br>
 Parses the stored submission figure tag for information.
 
-## Submission
+### Submission
 
 The main class that parses and holds submission metadata.
 
@@ -221,7 +223,7 @@ The main class that parses and holds submission metadata.
 
 `Submission` objects can be directly casted to a dict object and iterated through.
 
-### Init
+#### Init
 
 `__init__(submission_page: bs4.BeautifulSoup = None)`
 
@@ -231,12 +233,12 @@ The `submission_page` argument is saved as an instance variable and is then pars
 
 If no `submission_page` is passed then the object fields will remain at their default - empty - value.
 
-### Methods
+#### Methods
 
 * `parse()`<br>
 Parses the stored submission page for metadata.
 
-## User
+### User
 
 A small class that holds a user's full information.
 
@@ -244,7 +246,7 @@ A small class that holds a user's full information.
 * `status` user status (~, !, etc.)
 * `profile` profile text in HTML format
 
-### Init
+#### Init
 
 `__init__(user_page: bs4.BeautifulSoup = None)`
 
@@ -254,7 +256,7 @@ The `user_page` argument is saved as an instance variable and is then parsed to 
 
 If no `user_page` is passed then the object fields will remain at their default - empty - value.
 
-### Methods
+#### Methods
 
 * `parse()`<br>
   Parses the stored user page for metadata.
