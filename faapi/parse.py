@@ -183,3 +183,18 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
         "folder": folder,
         "file_url": file_url,
     }
+
+
+def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
+    tag_name: Tag = user_page.find("div", class_="username")
+    tag_profile: Tag = user_page.find("div", class_="userpage-profile")
+
+    status: str = (u := tag_name.find("span").text.strip())[0]
+    name: str = u[1:]
+    profile: str = "".join(map(str, tag_profile.children)).strip()
+
+    return {
+        "name": name,
+        "status": status,
+        "profile": profile,
+    }
