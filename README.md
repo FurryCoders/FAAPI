@@ -156,13 +156,13 @@ Checks if the passed journal exists - i.e. if there is a page under that ID - an
 
 This object contains information gathered when parsing a journals page or a specific journal page. It contains the following fields:
 
-* `id` journal id
-* `title` journal title
-* `date` upload date in YYYY-MM-DD format
-* `author` journal author
-* `content` journal content
-* `mentions` the users mentioned in the content (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
-* `journal_item` the journal tag/page used to parse the object fields
+* `id: int` journal id
+* `title: str` journal title
+* `date: str` upload date in YYYY-MM-DD format
+* `author: str` journal author
+* `content: str` journal content
+* `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
+* `journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup]` the journal tag/page used to parse the object fields
 
 `Journal` objects can be directly casted to a dict object or iterated through.
 
@@ -181,12 +181,12 @@ Parses the stored journal tag/page for information.
 
 This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites and search pages. It contains only the following fields:
 
-* `id` submission id
-* `title` submission title
-* `author` submission author
-* `rating` submission rating [general, mature, adult]
-* `type` submission type [text, image, etc...]
-* `submission_figure` the figure tag used to parse the object fields
+* `id: int` submission id
+* `title: str` submission title
+* `author: str` submission author
+* `rating: str` submission rating [general, mature, adult]
+* `type: str` submission type [text, image, etc...]
+* `submission_figure: bs4.element.Tag` the figure tag used to parse the object fields
 
 `SubmissionPartial` objects can be directly casted to a dict object or iterated through.
 
@@ -205,20 +205,20 @@ Parses the stored submission figure tag for information.
 
 The main class that parses and holds submission metadata.
 
-* `id` submission id
-* `title` submission title
-* `author` submission author
-* `date` upload date in YYYY-MM-DD format
-* `tags` tags list
-* `category` category \*
-* `species` species \*
-* `gender` gender \*
-* `rating` rating \*
-* `description` the description as an HTML formatted string
-* `mentions` the users mentioned in the description (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
-* `folder` the submission folder (gallery or scraps)
-* `file_url` the url to the submission file
-* `submission_page` the submission page used to parse the object fields
+* `id: int` submission id
+* `title: str` submission title
+* `author: str` submission author
+* `date: str` upload date in YYYY-MM-DD format
+* `tags: List[str]` tags list
+* `category: str` category \*
+* `species: str` species \*
+* `gender: str` gender \*
+* `rating: str` rating \*
+* `description: str` the description as an HTML formatted string
+* `mentions: List[str]` the users mentioned in the description (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
+* `folder: str` the submission folder (gallery or scraps)
+* `file_url: str` the url to the submission file
+* `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
 
 \* these are extracted exactly as they appear on the submission page
 
@@ -241,10 +241,10 @@ Parses the stored submission page for metadata.
 
 A small class that holds a user's full information.
 
-* `name` display name with capital letters and extra characters such as "_"
-* `status` user status (~, !, etc.)
-* `profile` profile text in HTML format
-* `user_page` the user page used to parse the object fields
+* `name: str` display name with capital letters and extra characters such as "_"
+* `status: str` user status (~, !, etc.)
+* `profile: str` profile text in HTML format
+* `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
 
 #### Init
 
