@@ -22,6 +22,7 @@ from .parse import check_page
 from .parse import parse_page
 from .submission import Submission
 from .submission import SubmissionPartial
+from .user import User
 
 
 class FAAPI:
@@ -78,21 +79,8 @@ class FAAPI:
     def get_journal(self, journal_id: int) -> Journal:
         return Journal(self.get_parse(join_url("journal", int(journal_id))))
 
-    def userpage(self, user: str) -> Tuple[str, str, Optional[BeautifulSoup]]:
-        page_parsed: Optional[BeautifulSoup] = self.get_parse(join_url("user", user))
-
-        if check_page(page_parsed) != 0:
-            return "", "", None
-
-        username_div = page_parsed.find("div", class_="username")
-
-        username = username_div.find("span").text.strip()
-        status = username[0]
-        username = username[1:]
-
-        description = page_parsed.find("div", class_="userpage-profile").text.strip()
-
-        return username, status, parse_page(description)
+    def get_user(self, user: str) -> User:
+        return User(self.get_parse(join_url("user", user)))
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         page_parsed = self.get_parse(join_url("gallery", user, int(page)))
