@@ -13,17 +13,10 @@ Python module to implement API-like functionality for the FurAffinity.net websit
 
 Python 3.8+ is necessary to run this module.
 
-This module requires the following pypi modules:
-
-* [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/)
-* [cfscrape](https://github.com/Anorov/cloudflare-scrape)
-* [lxml](https://github.com/lxml/lxml/)
-* [requests](https://github.com/requests/requests)
-* [python-dateutil](https://github.com/dateutil/dateutil/)
-
 ## Usage
 
-The API is comprised of a main class `FAAPI` and two submission classes: `Submission` and `SubmissionPartial`.
+The API is comprised of a main class `FAAPI`, two submission classes `Submission` and `SubmissionPartial`, a journal class `Journal`, and a user class `User`.
+
 Once `FAAPI` is initialized its method can be used to crawl FA and return machine-readable objects.
 
 ```python
@@ -72,11 +65,10 @@ cookies = [
 ]
 ```
 
-Only cookies `a` and `b` are needed.
-
 To access session cookies, consult the manual of the browser used to login.
 
 *Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.
+*Note:* as of 2020-02-21 only cookies `a` and `b` are needed.
 
 ### User Agent
 
@@ -118,8 +110,8 @@ Similar to `get()` but returns the parsed  HTML from the normal get operation.
 Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and a `bytes` object with the submission file if `get_file` is passed as `True`.
 * `get_submission_file(submission: Submission) -> Optional[bytes]`<br>
 Given a submission object, it downloads its file and returns it as a `bytes` object.
-* `userpage(user: str) -> Tuple[str, str, bs4.BeautifulSoup]`<br>
-Returns the user's full display name - i.e. with capital letters and extra characters such as "_" -, the user's status - the first character found beside the user name - and the parsed profile text as a parsed object.
+* `get_user(user: str) -> User`<br>
+Given a username, it returns a `User` object containing information regarding the user.
 * `gallery(user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]`<br>
 Returns the list of submissions found on a specific gallery page and the number of the next page. The returned page number is set to 0 if it is the last page.
 * `scraps(user: str, page: int = 1) -> -> Tuple[List[SubmissionPartial], int]`<br>
@@ -130,8 +122,12 @@ Downloads a user's favorites page. Because of how favorites pages work on FA, th
 * `journals(user: str, page: int = 1) -> -> Tuple[List[Journal], int]`<br>
 Returns the list of submissions found on a specific journals page and the number of the next page. The returned page number is set to 0 if it is the last page.
 * `search(q: str = "", page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
-Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 0, 47 and 437, then the the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
+Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 0, 47 and 437, then the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
 *Note:* as of October 2020 the "/search" path is disallowed by Fur Affinity's robots.txt.
+* `watchlist_to(self, user: str) -> List[User]`<br>
+Given a username, returns a list of `User` objects for each user that is watching the given user.
+* `watchlist_by(self, user: str) -> List[User]`<br>
+Given a username, returns a list of `User` objects for each user that is watched by the given user.
 * `user_exists(user: str) -> int`<br>
 Checks if the passed user exists - i.e. if there is a page under that name - and returns an int result.
     * 0 okay
@@ -153,7 +149,6 @@ Checks if the passed journal exists - i.e. if there is a page under that ID - an
     * 2 system error
     * 3 unknown error
     * 4 request error
-
 
 ## Journal
 
@@ -230,7 +225,7 @@ The main class that parses and holds submission metadata.
 
 `__init__(submission_page: bs4.BeautifulSoup = None)`
 
-To initialise the object, An optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
+To initialise the object, an optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
 
 The `submission_page` argument is saved as an instance variable and is then parsed to obtain the other fields.
 
@@ -240,6 +235,30 @@ If no `submission_page` is passed then the object fields will remain at their de
 
 * `parse()`<br>
 Parses the stored submission page for metadata.
+
+## User
+
+A small class that holds a user's full information.
+
+* `name` display name with capital letters and extra characters such as "_"
+* `status` user status (~, !, etc.)
+* `profile` profile text in HTML format
+
+### Init
+
+`__init__(user_page: bs4.BeautifulSoup = None)`
+
+To initialise the object, an optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
+
+The `user_page` argument is saved as an instance variable and is then parsed to obtain the other fields.
+
+If no `user_page` is passed then the object fields will remain at their default - empty - value.
+
+### Methods
+
+* `parse()`<br>
+  Parses the stored user page for metadata.
+
 
 ## Contributing
 
