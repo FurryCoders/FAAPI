@@ -18,7 +18,9 @@ from .exceptions import CrawlDelayError
 from .exceptions import DisallowedPath
 from .journal import Journal
 from .parse import BeautifulSoup
+from .parse import Tag
 from .parse import check_page
+from .parse import check_page_raise
 from .parse import parse_page
 from .submission import Submission
 from .submission import SubmissionPartial
@@ -63,13 +65,11 @@ class FAAPI:
         return get(self.session, path, **params)
 
     def get_parse(self, path: str, **params) -> Optional[BeautifulSoup]:
-        res = self.get(path, **params)
-        return parse_page(res.text) if res.ok else None
+        return parse_page(res.text) if (res := self.get(path, **params)).ok else None
 
     def get_submission(self, submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
-        sub = Submission(self.get_parse(join_url("view", int(submission_id))))
-        sub_file = self.get_submission_file(sub) if get_file and sub.id else None
-
+        sub: Submission = Submission(self.get_parse(join_url("view", int(submission_id))))
+        sub_file: Optional[bytes] = self.get_submission_file(sub) if get_file and sub.id else None
         return sub, sub_file
 
     def get_submission_file(self, submission: Submission) -> Optional[bytes]:
@@ -83,69 +83,35 @@ class FAAPI:
         return User(self.get_parse(join_url("user", user)))
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
-        page_parsed = self.get_parse(join_url("gallery", user, int(page)))
-
-        if check_page(page_parsed) != 0:
-            return [], 0
-
-        subs = page_parsed.findAll("figure")
-
-        return list(map(SubmissionPartial, subs)), (page + 1) if subs else 0
+        check_page_raise(page_parsed := self.get_parse(join_url("gallery", user, int(page))))
+        return list(map(SubmissionPartial, subs := page_parsed.findAll("figure"))), (page + 1) if subs else 0
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
-        page_parsed = self.get_parse(join_url("scraps", user, int(page)))
-
-        if check_page(page_parsed) != 0:
-            return [], 0
-
-        subs = page_parsed.findAll("figure")
-
-        return list(map(SubmissionPartial, subs)), (page + 1) if subs else 0
+        check_page_raise(page_parsed := self.get_parse(join_url("scraps", user, int(page))))
+        return list(map(SubmissionPartial, subs := page_parsed.findAll("figure"))), (page + 1) if subs else 0
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
-        page_parsed = self.get_parse(join_url("favorites", user, page))
-
-        if check_page(page_parsed) != 0:
-            return [], ""
-
-        subs = page_parsed.findAll("figure")
-
-        button_next = page_parsed.find("a", class_="button standard right")
-        page_next: str = button_next["href"].split("/", 3)[-1] if button_next else ""
-
-        return list(map(SubmissionPartial, subs)), page_next
+        check_page_raise(page_parsed := self.get_parse(join_url("favorites", user, page.strip())))
+        tag_next: Optional[Tag] = page_parsed.find("a", class_="button standard right")
+        next_page: str = tag_next["href"].split("/", 3)[-1] if tag_next else ""
+        return list(map(SubmissionPartial, page_parsed.findAll("figure"))), next_page
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
-        page_parsed = self.get_parse(join_url("journals", user, int(page)))
-
-        if check_page(page_parsed) != 0:
-            return [], 0
-
-        username = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
-
-        journals_tags = page_parsed.findAll("section")
-        journals = list(map(Journal, journals_tags))
+        check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
+        username: str = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
+        journals: List[Journal] = list(map(Journal, page_parsed.findAll("section")))
         for j in journals:
             j.author = username
-
         return journals, (page + 1) if journals else 0
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
-        page_parsed = self.get_parse("search", q=q, page=page, **params)
-
-        if check_page(page_parsed) != 0:
-            return [], 0, 0, 0, 0
-
-        subs = page_parsed.findAll("figure")
-
-        query_stats = page_parsed.find("div", id="query-stats")
-        for div in query_stats("div"):
+        check_page_raise(page_parsed := self.get_parse("search", q=q, page=(page := int(page)), **params))
+        tag_stats: Tag = page_parsed.find("div", id="query-stats")
+        for div in tag_stats.findAll("div"):
             div.decompose()
-
-        a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", query_stats.text.strip()).groups())
-        page_next = (page + 1) if b < tot else 0
-
-        return list(map(SubmissionPartial, subs)), page_next, a - 1, b - 1, tot
+        a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
+        next_page: int = (page + 1) if b < tot else 0
+        return list(map(SubmissionPartial, page_parsed.findAll("figure"))), next_page, a - 1, b - 1, tot
 
     def user_exists(self, user: str) -> int:
         """
@@ -156,9 +122,7 @@ class FAAPI:
         4 request error
         """
 
-        res = self.get(join_url("user", user))
-
-        if not res.ok:
+        if not (res := self.get(join_url("user", user))).ok:
             return 4
         elif (check := check_page(parse_page(res.text))) == 0:
             return 0
@@ -178,9 +142,7 @@ class FAAPI:
         4 request error
         """
 
-        res = self.get(join_url("view", submission_id))
-
-        if not res.ok:
+        if not (res := self.get(join_url("view", submission_id))).ok:
             return 4
         elif (check := check_page(parse_page(res.text))) == 0:
             return 0
@@ -200,9 +162,7 @@ class FAAPI:
         4 request error
         """
 
-        res = self.get(join_url("journal", journal_id))
-
-        if not res.ok:
+        if not (res := self.get(join_url("journal", journal_id))).ok:
             return 4
         elif (check := check_page(parse_page(res.text))) == 0:
             return 0
