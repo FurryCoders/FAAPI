@@ -22,6 +22,7 @@ from .parse import Tag
 from .parse import check_page
 from .parse import check_page_raise
 from .parse import parse_page
+from .parse import parse_watchlist
 from .submission import Submission
 from .submission import SubmissionPartial
 from .user import User
@@ -112,6 +113,24 @@ class FAAPI:
         a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
         next_page: int = (page + 1) if b < tot else 0
         return list(map(SubmissionPartial, page_parsed.findAll("figure"))), next_page, a - 1, b - 1, tot
+
+    def watchlist_to(self, user: str) -> List[User]:
+        users: List[User] = []
+        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "to", user))):
+            user: User = User()
+            user.name = u
+            user.status = s
+            users.append(user)
+        return users
+
+    def watchlist_by(self, user: str) -> List[User]:
+        users: List[User] = []
+        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "by", user))):
+            user: User = User()
+            user.name = u
+            user.status = s
+            users.append(user)
+        return users
 
     def user_exists(self, user: str) -> int:
         """
