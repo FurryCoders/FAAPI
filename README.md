@@ -174,8 +174,8 @@ This object contains information gathered when parsing a journals page or a spec
 
 #### Methods
 
-* `parse()`<br>
-Parses the stored journal tag/page for information.
+* `parse(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`<br>
+Parses the stored journal tag/page for information. If `journal_item` is passed, it overwrites the existing `journal_item` value.
 
 ### SubmissionPartial
 
@@ -198,8 +198,8 @@ This lightweight submission object is used to contain the information gathered w
 
 #### Methods
 
-* `parse()`<br>
-Parses the stored submission figure tag for information.
+* `parse(submission_figure: bs4.element.Tag)`<br>
+Parses the stored submission figure tag for information. If `submission_figure` is passed, it overwrites the existing `submission_figure` value.
 
 ### Submission
 
@@ -234,8 +234,8 @@ If no `submission_page` is passed then the object fields will remain at their de
 
 #### Methods
 
-* `parse()`<br>
-Parses the stored submission page for metadata.
+* `parse(submission_page: bs4.BeautifulSoup = None)`<br>
+Parses the stored submission page for metadata. If `submission_page` is passed, it overwrites the existing `submission_page` value.
 
 ### User
 
@@ -256,8 +256,8 @@ If no `user_page` is passed then the object fields will remain at their default 
 
 #### Methods
 
-* `parse()`<br>
-  Parses the stored user page for metadata.
+* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
 
 ## Contributing
