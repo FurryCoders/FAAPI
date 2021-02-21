@@ -162,6 +162,7 @@ This object contains information gathered when parsing a journals page or a spec
 * `author` journal author
 * `content` journal content
 * `mentions` the users mentioned in the content (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
+* `journal_item` the journal tag/page used to parse the object fields
 
 `Journal` objects can be directly casted to a dict object or iterated through.
 
@@ -170,8 +171,6 @@ This object contains information gathered when parsing a journals page or a spec
 `__init__(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`
 
 `Journal` takes one optional parameters: a journal section tag from a journals page or a parsed journal page. Parsing is then performed based on the class of the passed object.
-
-The tag/page is saved as an instance variable of the same name
 
 #### Methods
 
@@ -187,6 +186,7 @@ This lightweight submission object is used to contain the information gathered w
 * `author` submission author
 * `rating` submission rating [general, mature, adult]
 * `type` submission type [text, image, etc...]
+* `submission_figure` the figure tag used to parse the object fields
 
 `SubmissionPartial` objects can be directly casted to a dict object or iterated through.
 
@@ -194,7 +194,7 @@ This lightweight submission object is used to contain the information gathered w
 
 `__init__(submission_figure: bs4.element.Tag)`
 
-`SubmissionPartial` init needs a figure tag taken from a parsed page. The tag is saved as an instance variable of the same name.
+`SubmissionPartial` init needs a figure tag taken from a parsed page.
 
 #### Methods
 
@@ -218,6 +218,7 @@ The main class that parses and holds submission metadata.
 * `mentions` the users mentioned in the description (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
 * `folder` the submission folder (gallery or scraps)
 * `file_url` the url to the submission file
+* `submission_page` the submission page used to parse the object fields
 
 \* these are extracted exactly as they appear on the submission page
 
@@ -228,8 +229,6 @@ The main class that parses and holds submission metadata.
 `__init__(submission_page: bs4.BeautifulSoup = None)`
 
 To initialise the object, an optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
-
-The `submission_page` argument is saved as an instance variable and is then parsed to obtain the other fields.
 
 If no `submission_page` is passed then the object fields will remain at their default - empty - value.
 
@@ -245,14 +244,13 @@ A small class that holds a user's full information.
 * `name` display name with capital letters and extra characters such as "_"
 * `status` user status (~, !, etc.)
 * `profile` profile text in HTML format
+* `user_page` the user page used to parse the object fields
 
 #### Init
 
 `__init__(user_page: bs4.BeautifulSoup = None)`
 
 To initialise the object, an optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission page.
-
-The `user_page` argument is saved as an instance variable and is then parsed to obtain the other fields.
 
 If no `user_page` is passed then the object fields will remain at their default - empty - value.
 
