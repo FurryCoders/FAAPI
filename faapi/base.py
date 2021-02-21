@@ -66,7 +66,9 @@ class FAAPI:
         return get(self.session, path, **params)
 
     def get_parse(self, path: str, **params) -> Optional[BeautifulSoup]:
-        return parse_page(res.text) if (res := self.get(path, **params)).ok else None
+        response: Response = self.get(path, **params)
+        response.raise_for_status()
+        return parse_page(response.text) if response.ok else None
 
     def get_submission(self, submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
         sub: Submission = Submission(self.get_parse(join_url("view", int(submission_id))))
