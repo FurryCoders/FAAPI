@@ -1,4 +1,5 @@
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import Union
 
@@ -21,6 +22,7 @@ class Journal:
         self.date: str = ""
         self.author: str = ""
         self.content: str = ""
+        self.mentions: List[str] = []
 
         self.parse()
 
@@ -30,6 +32,7 @@ class Journal:
         yield "date", self.date
         yield "author", self.author
         yield "content", self.content
+        yield "mentions", self.mentions
 
     def __repr__(self):
         return repr(dict(self))
@@ -55,3 +58,4 @@ class Journal:
         self.author = parsed.get("author", "")
         self.date = parsed["date"]
         self.content = parsed["content"]
+        self.mentions = parsed["mentions"]
