@@ -86,8 +86,6 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]]:
-    check_page(journal_page)
-
     tag_id: Tag = journal_page.find("meta", property="og:url")
     tag_title: Tag = journal_page.find("h2", class_="journal-title")
     tag_author: Tag = journal_page.find("a", class_="current")
@@ -130,8 +128,6 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str]]]:
-    check_page(sub_page)
-
     tag_id: Tag = sub_page.find("meta", property="og:url")
     tag_sub_info: Tag = sub_page.find("div", class_="submission-id-sub-container")
     tag_title: Tag = tag_sub_info.find("div", class_="submission-title")
