@@ -95,13 +95,13 @@ class FAAPI:
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
         check_page_raise(page_parsed := self.get_parse(join_url("favorites", user, page.strip())))
-        tag_next: Optional[Tag] = page_parsed.find("a", class_="button standard right")
+        tag_next: Optional[Tag] = page_parsed.select_one("a[class~=button][class~=standard][class~=right]")
         next_page: str = tag_next["href"].split("/", 3)[-1] if tag_next else ""
         return list(map(SubmissionPartial, page_parsed.select("figure[id^='sid-']"))), next_page
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
-        username: str = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
+        username: str = page_parsed.select_one("div[class~=username] span").text.strip()[1:]
         journals: List[Journal] = list(map(Journal, page_parsed.select("section[id^='jid:']")))
         for j in journals:
             j.author = username
@@ -109,7 +109,7 @@ class FAAPI:
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
         check_page_raise(page_parsed := self.get_parse("search", q=q, page=(page := int(page)), **params))
-        tag_stats: Tag = page_parsed.find("div", id="query-stats")
+        tag_stats: Tag = page_parsed.select_one("div[id='query-stats']")
         for div in tag_stats.select("div"):
             div.decompose()
         a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
