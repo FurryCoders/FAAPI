@@ -102,7 +102,7 @@ class FAAPI:
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
         username: str = page_parsed.find("div", class_="username").find("span").text.strip()[1:]
-        journals: List[Journal] = list(map(Journal, page_parsed.findAll("section")))
+        journals: List[Journal] = list(map(Journal, page_parsed.select("section[id^='jid:']")))
         for j in journals:
             j.author = username
         return journals, (page + 1) if journals else 0
