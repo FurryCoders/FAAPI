@@ -42,7 +42,7 @@ def check_page(page: BeautifulSoup) -> int:
         return 3
     elif title == "system error":
         return 4
-    elif notice := page.find("section", class_="notice-message"):
+    elif notice := page.select_one("section[class~=notice-message]"):
         return 3 if (p := notice.find("p")) and "deactivated" in p.text.lower() else 5
 
     return 0
@@ -64,16 +64,16 @@ def check_page_raise(page: BeautifulSoup):
 def parse_mentions(tag: Tag) -> List[str]:
     return sorted(filter(bool, set(
         sub(r"[^a-z0-9.~-]", "", m.group(1).lower())
-        for a in tag.findAll("a")
+        for a in tag.select("a")
         if (m := match(mentions_regexp, a.attrs.get("href"))) is not None
     )))
 
 
 def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
     id_: int = int(section_tag.attrs["id"][4:])
-    title: str = section_tag.find("h2").text.strip()
-    date: str = parse_date(section_tag.find("span", class_="popup_date")["title"].strip()).strftime("%Y-%m-%d")
-    content: str = "".join(map(str, (tag_content := section_tag.find("div", class_="journal-body")).children))
+    title: str = section_tag.select_one("h2").text.strip()
+    date: str = parse_date(section_tag.select_one("span[class~=popup_date]")["title"].strip()).strftime("%Y-%m-%d")
+    content: str = "".join(map(str, (tag_content := section_tag.select_one("div[class~=journal-body]")).children))
     mentions: List[str] = parse_mentions(tag_content)
 
     return {
@@ -86,11 +86,11 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]]:
-    tag_id: Tag = journal_page.find("meta", property="og:url")
-    tag_title: Tag = journal_page.find("h2", class_="journal-title")
-    tag_author: Tag = journal_page.find("a", class_="current")
-    tag_date: Tag = journal_page.find("span", class_="popup_date")
-    tag_content: Tag = journal_page.find("div", class_="journal-content")
+    tag_id: Tag = journal_page.select_one("meta[property='og:url']")
+    tag_title: Tag = journal_page.select_one("h2[class~=journal-title]")
+    tag_author: Tag = journal_page.select_one("a[class~=current]")
+    tag_date: Tag = journal_page.select_one("span[class~=popup_date]")
+    tag_content: Tag = journal_page.select_one("div[class~=journal-content]")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -110,13 +110,11 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
 
 
 def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
-    caption_links: List[Tag] = figure_tag.find("figcaption").findAll("a")
-
-    id_: int = int(caption_links[0]["href"].strip("/").split("/")[-1])
-    title: str = caption_links[0].text
-    author: str = caption_links[1].text
-    rating: str = figure_tag["class"][0][2:]
-    type_: str = figure_tag["class"][1][2:]
+    id_: int = int(figure_tag.attrs["id"][4:])
+    title: str = figure_tag.select_one("figcaption a[href^='/view/']").attrs["title"]
+    author: str = figure_tag.select_one("figcaption a[href^='/user/']").attrs["title"]
+    rating: str = next(c for c in figure_tag["class"] if c.startswith("r-"))[2:]
+    type_: str = next(c for c in figure_tag["class"] if c.startswith("t-"))[2:]
 
     return {
         "id": id_,
@@ -128,24 +126,21 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str]]]:
-    tag_id: Tag = sub_page.find("meta", property="og:url")
-    tag_sub_info: Tag = sub_page.find("div", class_="submission-id-sub-container")
-    tag_title: Tag = tag_sub_info.find("div", class_="submission-title")
-    tag_author: Tag = tag_sub_info.find("a")
-    tag_date: Tag = sub_page.find("span", class_="popup_date")
-    tag_tags: List[Tag] = sub_page.find("section", class_="tags-row").findAll("a")
-    tag_rating: Tag = sub_page.find("div", class_="rating").find("span")
-    tag_info: List[Tag] = sub_page.find("section", class_="info text").findAll("div")
-    tag_category1: Tag = tag_info[1].find("span", class_="category-name")
-    tag_category2: Tag = tag_info[1].find("span", class_="type-name")
-    tag_species: Tag = tag_info[2].find("span")
-    tag_gender: Tag = tag_info[3].find("span")
-    tag_description: Tag = sub_page.find("div", class_="submission-description")
-    tag_folder: Tag = next(filter(
-        lambda a: a["href"].startswith("/scraps/") or a["href"].startswith("/gallery/"),
-        sub_page.findAll("a", class_="button")
-    ))
-    tag_file_url: Tag = sub_page.find("div", class_="download").find("a")
+    tag_id: Tag = sub_page.select_one("meta[property='og:url']")
+    tag_sub_info: Tag = sub_page.select_one("div[class~=submission-id-sub-container]")
+    tag_title: Tag = tag_sub_info.select_one("div[class~=submission-title]")
+    tag_author: Tag = tag_sub_info.select_one("a")
+    tag_date: Tag = sub_page.select_one("span[class~=popup_date]")
+    tag_tags: List[Tag] = sub_page.select("section[class~=tags-row] a")
+    tag_rating: Tag = sub_page.select_one("div[class~=rating] span")
+    tag_info: Tag = sub_page.select_one("section[class~=info][class~=text]")
+    tag_category1: Tag = tag_info.select_one("span[class~=category-name]")
+    tag_category2: Tag = tag_info.select_one("span[class~=type-name]")
+    tag_species: Tag = tag_info.select("span")[2]
+    tag_gender: Tag = tag_info.select("span")[3]
+    tag_description: Tag = sub_page.select_one("div[class~=submission-description]")
+    tag_folder: Tag = sub_page.select_one("a[class~=button][href^='/scraps/'],a[class~=button][href^='/gallery/']")
+    tag_file_url: Tag = sub_page.select_one("div[class~=download] a")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -183,8 +178,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
 
 
 def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
-    tag_name: Tag = user_page.find("div", class_="username")
-    tag_profile: Tag = user_page.find("div", class_="userpage-profile")
+    tag_name: Tag = user_page.select_one("div[class~=username]")
+    tag_profile: Tag = user_page.select_one("div[class~=userpage-profile]")
 
     status: str = (u := tag_name.find("span").text.strip())[0]
     name: str = u[1:]
@@ -198,5 +193,5 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
 
 
 def parse_watchlist(watch_page: BeautifulSoup) -> List[Tuple[str, str]]:
-    tags_users: List[Tag] = watch_page.findAll("div", class_="watch-list-items")
+    tags_users: List[Tag] = watch_page.select("div[class~=watch-list-items]")
     return [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users]
