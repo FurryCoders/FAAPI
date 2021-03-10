@@ -87,17 +87,17 @@ class FAAPI:
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("gallery", user, int(page))))
-        return list(map(SubmissionPartial, subs := page_parsed.select("figure"))), (page + 1) if subs else 0
+        return list(map(SubmissionPartial, s := page_parsed.select("figure[id^='sid-']"))), (page + 1) if s else 0
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("scraps", user, int(page))))
-        return list(map(SubmissionPartial, subs := page_parsed.select("figure"))), (page + 1) if subs else 0
+        return list(map(SubmissionPartial, s := page_parsed.select("figure[id^='sid-']"))), (page + 1) if s else 0
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
         check_page_raise(page_parsed := self.get_parse(join_url("favorites", user, page.strip())))
         tag_next: Optional[Tag] = page_parsed.find("a", class_="button standard right")
         next_page: str = tag_next["href"].split("/", 3)[-1] if tag_next else ""
-        return list(map(SubmissionPartial, page_parsed.select("figure"))), next_page
+        return list(map(SubmissionPartial, page_parsed.select("figure[id^='sid-']"))), next_page
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
@@ -114,7 +114,7 @@ class FAAPI:
             div.decompose()
         a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
         next_page: int = (page + 1) if b < tot else 0
-        return list(map(SubmissionPartial, page_parsed.select("figure"))), next_page, a - 1, b - 1, tot
+        return list(map(SubmissionPartial, page_parsed.select("figure[id^='sid-']"))), next_page, a - 1, b - 1, tot
 
     def watchlist_to(self, user: str) -> List[User]:
         users: List[User] = []
