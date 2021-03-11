@@ -14,6 +14,7 @@ class User:
         self.name: str = ""
         self.status: str = ""
         self.profile: str = ""
+        self.user_icon_url: str = ""
 
         self.parse()
 
@@ -21,6 +22,7 @@ class User:
         yield "name", self.name
         yield "status", self.status
         yield "profile", self.profile
+        yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -41,3 +43,4 @@ class User:
         self.name: str = parsed["name"]
         self.status: str = parsed["status"]
         self.profile: str = parsed["profile"]
+        self.user_icon_url: str = parsed["user_icon_url"]
