@@ -91,6 +91,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
     tag_author: Tag = journal_page.select_one("a.current")
     tag_date: Tag = journal_page.select_one("span.popup_date")
     tag_content: Tag = journal_page.select_one("div.journal-content")
+    tag_user_icon_url: Tag = journal_page.select_one("img.user-nav-avatar")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -98,6 +99,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
     date: str = parse_date(tag_date["title"].strip()).strftime("%Y-%m-%d")
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: List[str] = parse_mentions(tag_content)
+    user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
         "id": id_,
@@ -106,6 +108,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
         "date": date,
         "content": content,
         "mentions": mentions,
+        "user_icon_url": user_icon_url,
     }
 
 
@@ -115,6 +118,7 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
     author: str = figure_tag.select_one("figcaption a[href^='/user/']").attrs["title"]
     rating: str = next(c for c in figure_tag["class"] if c.startswith("r-"))[2:]
     type_: str = next(c for c in figure_tag["class"] if c.startswith("t-"))[2:]
+    thumbnail_url: str = "https:" + figure_tag.select_one("img").attrs("src")
 
     return {
         "id": id_,
@@ -122,6 +126,7 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
         "author": author,
         "rating": rating,
         "type": type_,
+        "thumbnail_url": thumbnail_url,
     }
 
 
@@ -141,6 +146,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_description: Tag = sub_page.select_one("div.submission-description")
     tag_folder: Tag = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Tag = sub_page.select_one("div.download a")
+    tag_thumbnail_url: Tag = sub_page.select_one("img#submissionImg")
+    tag_user_icon_url: Tag = sub_page.select_one("img.submission-user-icon")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -159,6 +166,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     mentions: List[str] = parse_mentions(tag_description)
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
+    thumbnail_url: str = "https:" + tag_thumbnail_url["data-preview-src"]
+    user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
         "id": id_,
@@ -174,21 +183,26 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
         "mentions": mentions,
         "folder": folder,
         "file_url": file_url,
+        "thumbnail_url": thumbnail_url,
+        "user_icon_url": user_icon_url,
     }
 
 
 def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     tag_name: Tag = user_page.select_one("div.username")
     tag_profile: Tag = user_page.select_one("div.userpage-profile")
+    tag_user_icon_url: Tag = user_page.select_one("img.user-nav-avatar")
 
     status: str = (u := tag_name.find("span").text.strip())[0]
     name: str = u[1:]
     profile: str = "".join(map(str, tag_profile.children)).strip()
+    user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
         "name": name,
         "status": status,
         "profile": profile,
+        "user_icon_url": user_icon_url,
     }
 
 
