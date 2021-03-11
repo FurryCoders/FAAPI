@@ -118,7 +118,7 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
     author: str = figure_tag.select_one("figcaption a[href^='/user/']").attrs["title"]
     rating: str = next(c for c in figure_tag["class"] if c.startswith("r-"))[2:]
     type_: str = next(c for c in figure_tag["class"] if c.startswith("t-"))[2:]
-    thumbnail_url: str = "https:" + figure_tag.select_one("img").attrs("src")
+    thumbnail_url: str = "https:" + figure_tag.select_one("img").attrs["src"]
 
     return {
         "id": id_,
