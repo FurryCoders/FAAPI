@@ -23,6 +23,7 @@ class Journal:
         self.author: str = ""
         self.content: str = ""
         self.mentions: List[str] = []
+        self.user_icon_url: str = ""
 
         self.parse()
 
@@ -33,6 +34,7 @@ class Journal:
         yield "author", self.author
         yield "content", self.content
         yield "mentions", self.mentions
+        yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -59,3 +61,4 @@ class Journal:
         self.date = parsed["date"]
         self.content = parsed["content"]
         self.mentions = parsed["mentions"]
+        self.user_icon_url: str = parsed["user_icon_url"]

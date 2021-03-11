@@ -19,6 +19,7 @@ class SubmissionPartial:
         self.author: str = ""
         self.rating: str = ""
         self.type: str = ""
+        self.thumbnail_url: str = ""
 
         self.parse()
 
@@ -28,6 +29,7 @@ class SubmissionPartial:
         yield "author", self.author
         yield "rating", self.rating
         yield "type", self.type
+        yield "thumbnail_url", self.thumbnail_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -48,6 +50,7 @@ class SubmissionPartial:
         self.author: str = parsed["author"]
         self.rating: str = parsed["rating"]
         self.type: str = parsed["type"]
+        self.thumbnail_url: str = parsed["thumbnail_url"]
 
 
 class Submission:
@@ -69,6 +72,8 @@ class Submission:
         self.mentions: List[str] = []
         self.folder: str = ""
         self.file_url: str = ""
+        self.thumbnail_url: str = ""
+        self.user_icon_url: str = ""
 
         self.parse()
 
@@ -86,6 +91,8 @@ class Submission:
         yield "mentions", self.mentions
         yield "folder", self.folder
         yield "file_url", self.file_url
+        yield "thumbnail_url", self.thumbnail_url
+        yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -116,3 +123,5 @@ class Submission:
         self.mentions: List[str] = parsed["mentions"]
         self.folder: str = parsed["folder"]
         self.file_url: str = parsed["file_url"]
+        self.thumbnail_url: str = parsed["thumbnail_url"]
+        self.user_icon_url: str = parsed["user_icon_url"]
