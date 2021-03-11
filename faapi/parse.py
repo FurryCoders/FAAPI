@@ -141,8 +141,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_info: Tag = sub_page.select_one("section.info.text")
     tag_category1: Tag = tag_info.select_one("span.category-name")
     tag_category2: Tag = tag_info.select_one("span.type-name")
-    tag_species: Tag = tag_info.select("span")[2]
-    tag_gender: Tag = tag_info.select("span")[3]
+    tag_species: Tag = (info_spans := tag_info.select("span"))[2]
+    tag_gender: Tag = info_spans[3]
     tag_description: Tag = sub_page.select_one("div.submission-description")
     tag_folder: Tag = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Tag = sub_page.select_one("div.download a")
