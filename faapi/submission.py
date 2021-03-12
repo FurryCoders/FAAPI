@@ -68,6 +68,7 @@ class Submission:
         self.species: str = ""
         self.gender: str = ""
         self.rating: str = ""
+        self.type: str = ""
         self.description: str = ""
         self.mentions: List[str] = []
         self.folder: str = ""
@@ -87,6 +88,7 @@ class Submission:
         yield "species", self.species
         yield "gender", self.gender
         yield "rating", self.rating
+        yield "type", self.type
         yield "description", self.description
         yield "mentions", self.mentions
         yield "folder", self.folder
@@ -119,6 +121,7 @@ class Submission:
         self.species: str = parsed["species"]
         self.gender: str = parsed["gender"]
         self.rating: str = parsed["rating"]
+        self.type: str = parsed["type"]
         self.description: str = parsed["description"]
         self.mentions: List[str] = parsed["mentions"]
         self.folder: str = parsed["folder"]
