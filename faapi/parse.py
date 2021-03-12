@@ -138,6 +138,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_date: Tag = sub_page.select_one("span.popup_date")
     tag_tags: List[Tag] = sub_page.select("section.tags-row a")
     tag_rating: Tag = sub_page.select_one("div.rating span")
+    tag_type: Tag = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_info: Tag = sub_page.select_one("section.info.text")
     tag_category1: Tag = tag_info.select_one("span.category-name")
     tag_category2: Tag = tag_info.select_one("span.type-name")
@@ -162,6 +163,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     species: str = tag_species.text.strip()
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
+    type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: List[str] = parse_mentions(tag_description)
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
@@ -179,6 +181,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
         "species": species,
         "gender": gender,
         "rating": rating,
+        "type": type_,
         "description": description,
         "mentions": mentions,
         "folder": folder,
