@@ -168,7 +168,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     mentions: List[str] = parse_mentions(tag_description)
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
-    thumbnail_url: str = "https:" + tag_thumbnail_url["data-preview-src"]
+    thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
     user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
