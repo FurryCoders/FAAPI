@@ -36,6 +36,7 @@ def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
     ]
 
     session: CloudflareScraper = create_scraper()
+    session.headers["User-Agent"] = user_agent
 
     for cookie in cookies:
         session.cookies.set(cookie["name"], cookie["value"])
@@ -58,13 +59,13 @@ def get_robots() -> Dict[str, List[str]]:
 
 
 def get(session: CloudflareScraper, path: str, **params) -> Response:
-    return session.get(join_url(root, path), params=params, headers={"User-Agent": user_agent})
+    return session.get(join_url(root, path), params=params)
 
 
 def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float] = 100) -> Optional[bytes]:
     assert isinstance(speed, int) or isinstance(speed, float)
 
-    file_stream: Response = session.get(url, stream=True, headers={"User-Agent": user_agent})
+    file_stream: Response = session.get(url, stream=True)
 
     file_stream.raise_for_status()
 
