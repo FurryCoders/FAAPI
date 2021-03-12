@@ -162,7 +162,7 @@ This object contains information gathered when parsing a journals page or a spec
 * `author: str` journal author
 * `content: str` journal content
 * `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
-* `user_icon_url: str` the url to the user icon
+* `user_icon_url: str` the url to the user icon (cannot be parsed when downloading via `FAAPI.get_journals`)
 * `journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup]` the journal tag/page used to parse the object fields
 
 `Journal` objects can be directly casted to a dict object or iterated through.
