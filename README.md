@@ -216,6 +216,7 @@ The main class that parses and holds submission metadata.
 * `species: str` species \*
 * `gender: str` gender \*
 * `rating: str` rating \*
+* `type: str` submission type [text, image, etc...]
 * `description: str` the description as an HTML formatted string
 * `mentions: List[str]` the users mentioned in the description (if they were mentioned as links, e.g. :iconusername:, @username, etc.)
 * `folder: str` the submission folder (gallery or scraps)
