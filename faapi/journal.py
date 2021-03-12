@@ -61,4 +61,4 @@ class Journal:
         self.date = parsed["date"]
         self.content = parsed["content"]
         self.mentions = parsed["mentions"]
-        self.user_icon_url: str = parsed["user_icon_url"]
+        self.user_icon_url: str = parsed.get("user_icon_url", "")
