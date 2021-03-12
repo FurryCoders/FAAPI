@@ -34,14 +34,14 @@ sub, sub_file = api.get_submission(12345678,get_file=True)
 print(sub.id, sub.title, sub.author, f"{len(sub_file)/1024:02f}KiB")
 
 with open(f"{sub.id}.json", "w") as f:
-    f.write(json.dumps(sub))
+    f.write(json.dumps(dict(sub)))
 
 with open(sub.file_url.split("/")[-1], "wb") as f:
     f.write(sub_file)
 
 gallery, _ = api.gallery("user_name", 1)
 with open("user_name-gallery.json", "w") as f:
-    f.write(json.dumps(gallery))
+    f.write(json.dumps(list(map(dict, gallery))))
 ```
 
 ### robots.txt
