@@ -62,11 +62,11 @@ def check_page_raise(page: BeautifulSoup):
 
 
 def parse_mentions(tag: Tag) -> List[str]:
-    return sorted(filter(bool, set(
+    return sorted(set(ms := list(filter(bool, (
         sub(r"[^a-z0-9.~-]", "", m.group(1).lower())
         for a in tag.select("a")
         if (m := match(mentions_regexp, a.attrs.get("href"))) is not None
-    )))
+    )))), key=ms.index)
 
 
 def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
