@@ -17,7 +17,7 @@ from .exceptions import NonePage
 from .exceptions import NoticeMessage
 from .exceptions import ServerError
 
-mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/(.+)$")
+mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/(.+)/?$")
 
 
 def parse_page(text: str) -> BeautifulSoup:
