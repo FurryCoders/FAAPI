@@ -125,7 +125,7 @@ Downloads a user's favorites page. Because of how favorites pages work on FA, th
 Returns the list of submissions found on a specific journals page and the number of the next page. The returned page number is set to 0 if it is the last page.
 * `search(q: str = "", page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
 Parses FA search given the query (and optional other params) and returns the submissions found and the next page together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the the last three returned integers are 0, 47 and 437, then the page contains submissions 1 through 48 of a search that has found a total of 437 submissions.<br>
-*Note:* as of October 2020 the "/search" path is disallowed by Fur Affinity's robots.txt.
+*Note:* as of April 2021 the "/search" path is disallowed by Fur Affinity's robots.txt.
 * `watchlist_to(self, user: str) -> List[User]`<br>
 Given a username, returns a list of `User` objects for each user that is watching the given user.
 * `watchlist_by(self, user: str) -> List[User]`<br>
