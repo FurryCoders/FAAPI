@@ -26,6 +26,7 @@ from .parse import parse_user_favorites
 from .parse import parse_user_journals
 from .parse import parse_user_submissions
 from .parse import parse_watchlist
+from .parse import username_url
 from .submission import Submission
 from .submission import SubmissionPartial
 from .user import User
@@ -86,31 +87,31 @@ class FAAPI:
         return Journal(self.get_parse(join_url("journal", int(journal_id))))
 
     def get_user(self, user: str) -> User:
-        return User(self.get_parse(join_url("user", user)))
+        return User(self.get_parse(join_url("user", username_url(user))))
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
-        check_page_raise(page_parsed := self.get_parse(join_url("gallery", user, int(page))))
+        check_page_raise(page_parsed := self.get_parse(join_url("gallery", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.user_page = info_parsed["user_status"], info_parsed["user_icon_url"]
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
-        check_page_raise(page_parsed := self.get_parse(join_url("scraps", user, int(page))))
+        check_page_raise(page_parsed := self.get_parse(join_url("scraps", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.user_page = info_parsed["user_status"], info_parsed["user_icon_url"]
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
-        check_page_raise(page_parsed := self.get_parse(join_url("favorites", user, page.strip())))
+        check_page_raise(page_parsed := self.get_parse(join_url("favorites", username_url(user), page.strip())))
         info_parsed: Dict[str, Any] = parse_user_favorites(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.user_page = info_parsed["user_status"], info_parsed["user_icon_url"]
         return submissions, info_parsed["next_page"]
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
-        check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
+        check_page_raise(page_parsed := self.get_parse(join_url("journals", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_journals(page_parsed)
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
             j.author.name, j.author.status, j.author.user_icon_url = \
@@ -125,7 +126,7 @@ class FAAPI:
 
     def watchlist_to(self, user: str) -> List[User]:
         users: List[User] = []
-        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "to", user))):
+        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "to", username_url(user)))):
             user: User = User()
             user.name = u
             user.status = s
@@ -134,7 +135,7 @@ class FAAPI:
 
     def watchlist_by(self, user: str) -> List[User]:
         users: List[User] = []
-        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "by", user))):
+        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "by", username_url(user)))):
             user: User = User()
             user.name = u
             user.status = s
@@ -150,7 +151,7 @@ class FAAPI:
         4 request error
         """
 
-        if not (res := self.get(join_url("user", user))).ok:
+        if not (res := self.get(join_url("user", username_url(user)))).ok:
             return 4
         elif (check := check_page(parse_page(res.text))) == 0:
             return 0
