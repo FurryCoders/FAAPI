@@ -1,4 +1,4 @@
-from re import search as re_search
+from re import search
 from time import perf_counter
 from time import sleep
 from typing import Any
@@ -54,7 +54,7 @@ class FAAPI:
 
     def check_path(self, path: str):
         for pattern in self.robots.get("disallow", []):
-            if re_search(fr"^{pattern.replace('*', '.*')}", "/" + path.lstrip("/")):
+            if search(fr"^{pattern.replace('*', '.*')}", "/" + path.lstrip("/")):
                 raise DisallowedPath(f"Path {path} is not allowed by robots.txt {pattern}")
 
     @property
