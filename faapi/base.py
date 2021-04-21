@@ -87,17 +87,35 @@ class FAAPI:
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("gallery", user, int(page))))
-        return list(map(SubmissionPartial, s := page_parsed.select("figure[id^='sid-']"))), (page + 1) if s else 0
+        user_status: str = page_parsed.select_one("div[class~=username] span").text.strip()[0]
+        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
+        submissions_figures: list[Tag] = page_parsed.select("figure[id^='sid-']")
+        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, submissions_figures))
+        for s in submissions:
+            s.author.status, s.author.user_page = user_status, user_icon_url
+        return submissions, (page + 1) if submissions else 0
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("scraps", user, int(page))))
-        return list(map(SubmissionPartial, s := page_parsed.select("figure[id^='sid-']"))), (page + 1) if s else 0
+        user_status: str = page_parsed.select_one("div[class~=username] span").text.strip()[0]
+        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
+        submissions_figures: list[Tag] = page_parsed.select("figure[id^='sid-']")
+        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, submissions_figures))
+        for s in submissions:
+            s.author.status, s.author.user_page = user_status, user_icon_url
+        return submissions, (page + 1) if submissions else 0
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
         check_page_raise(page_parsed := self.get_parse(join_url("favorites", user, page.strip())))
+        user_status: str = page_parsed.select_one("div[class~=username] span").text.strip()[0]
+        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
+        submissions_figures: list[Tag] = page_parsed.select("figure[id^='sid-']")
+        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, submissions_figures))
+        for s in submissions:
+            s.author.status, s.author.user_page = user_status, user_icon_url
         tag_next: Optional[Tag] = page_parsed.select_one("a[class~=button][class~=standard][class~=right]")
         next_page: str = tag_next["href"].split("/", 3)[-1] if tag_next else ""
-        return list(map(SubmissionPartial, page_parsed.select("figure[id^='sid-']"))), next_page
+        return submissions, next_page
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
