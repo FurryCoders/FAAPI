@@ -61,9 +61,13 @@ def check_page_raise(page: BeautifulSoup):
         raise NoticeMessage
 
 
+def username_url(username: str) -> str:
+    return sub(r"[^a-z0-9.~-]", "", username.lower())
+
+
 def parse_mentions(tag: Tag) -> List[str]:
     return sorted(set(ms := list(filter(bool, (
-        sub(r"[^a-z0-9.~-]", "", m.group(1).lower())
+        username_url(m.group(1).lower())
         for a in tag.select("a")
         if (m := match(mentions_regexp, a.attrs.get("href"))) is not None
     )))), key=ms.index)
