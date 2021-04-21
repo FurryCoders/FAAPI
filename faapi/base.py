@@ -18,10 +18,13 @@ from .exceptions import CrawlDelayError
 from .exceptions import DisallowedPath
 from .journal import Journal
 from .parse import BeautifulSoup
-from .parse import Tag
 from .parse import check_page
 from .parse import check_page_raise
 from .parse import parse_page
+from .parse import parse_search_submissions
+from .parse import parse_user_favorites
+from .parse import parse_user_journals
+from .parse import parse_user_submissions
 from .parse import parse_watchlist
 from .submission import Submission
 from .submission import SubmissionPartial
@@ -87,53 +90,38 @@ class FAAPI:
 
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("gallery", user, int(page))))
-        user_status: str = page_parsed.select_one("div[class~=username] span").text.strip()[0]
-        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
-        submissions_figures: list[Tag] = page_parsed.select("figure[id^='sid-']")
-        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, submissions_figures))
-        for s in submissions:
-            s.author.status, s.author.user_page = user_status, user_icon_url
-        return submissions, (page + 1) if submissions else 0
+        info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
+        for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
+            s.author.status, s.author.user_page = info_parsed["user_status"], info_parsed["user_icon_url"]
+        return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("scraps", user, int(page))))
-        user_status: str = page_parsed.select_one("div[class~=username] span").text.strip()[0]
-        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
-        submissions_figures: list[Tag] = page_parsed.select("figure[id^='sid-']")
-        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, submissions_figures))
-        for s in submissions:
-            s.author.status, s.author.user_page = user_status, user_icon_url
-        return submissions, (page + 1) if submissions else 0
+        info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
+        for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
+            s.author.status, s.author.user_page = info_parsed["user_status"], info_parsed["user_icon_url"]
+        return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
         check_page_raise(page_parsed := self.get_parse(join_url("favorites", user, page.strip())))
-        user_status: str = page_parsed.select_one("div[class~=username] span").text.strip()[0]
-        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
-        submissions_figures: list[Tag] = page_parsed.select("figure[id^='sid-']")
-        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, submissions_figures))
-        for s in submissions:
-            s.author.status, s.author.user_page = user_status, user_icon_url
-        tag_next: Optional[Tag] = page_parsed.select_one("a[class~=button][class~=standard][class~=right]")
-        next_page: str = tag_next["href"].split("/", 3)[-1] if tag_next else ""
-        return submissions, next_page
+        info_parsed: Dict[str, Any] = parse_user_favorites(page_parsed)
+        for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
+            s.author.status, s.author.user_page = info_parsed["user_status"], info_parsed["user_icon_url"]
+        return submissions, info_parsed["next_page"]
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
-        username: str = page_parsed.select_one("div[class~=username] span").text.strip()
-        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
-        journals: List[Journal] = list(map(Journal, page_parsed.select("section[id^='jid:']")))
-        for j in journals:
-            j.author.name, j.author.status, j.author.user_icon_url = username[1:], username[0], user_icon_url
-        return journals, (page + 1) if journals else 0
+        info_parsed: Dict[str, Any] = parse_user_journals(page_parsed)
+        for j in (journals := list(map(Journal, info_parsed["sections"]))):
+            j.author.name, j.author.status, j.author.user_icon_url = \
+                info_parsed["user_name"], info_parsed["user_status"], info_parsed["user_icon_url"]
+        return journals, (page + 1) * (not info_parsed["last_page"])
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
         check_page_raise(page_parsed := self.get_parse("search", q=q, page=(page := int(page)), **params))
-        tag_stats: Tag = page_parsed.select_one("div[id='query-stats']")
-        for div in tag_stats.select("div"):
-            div.decompose()
-        a, b, tot = map(int, re_search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
-        next_page: int = (page + 1) if b < tot else 0
-        return list(map(SubmissionPartial, page_parsed.select("figure[id^='sid-']"))), next_page, a - 1, b - 1, tot
+        info_parsed: Dict[str, Any] = parse_search_submissions(page_parsed)
+        return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
+                (info_parsed["from"] or 1) - 1, (info_parsed["to"] or 1) - 1, info_parsed["total"])
 
     def watchlist_to(self, user: str) -> List[User]:
         users: List[User] = []
