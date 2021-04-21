@@ -101,10 +101,11 @@ class FAAPI:
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", user, int(page))))
-        username: str = page_parsed.select_one("div[class~=username] span").text.strip()[1:]
+        username: str = page_parsed.select_one("div[class~=username] span").text.strip()
+        user_icon_url: str = "https:" + page_parsed.select_one("img.user-nav-avatar")["src"]
         journals: List[Journal] = list(map(Journal, page_parsed.select("section[id^='jid:']")))
         for j in journals:
-            j.author = username
+            j.author.name, j.author.status, j.author.user_icon_url = username[1:], username[0], user_icon_url
         return journals, (page + 1) if journals else 0
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
