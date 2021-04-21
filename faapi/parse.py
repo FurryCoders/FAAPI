@@ -1,9 +1,11 @@
 from re import Pattern
 from re import compile as re_compile
 from re import match
+from re import search
 from re import sub
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Tuple
 from typing import Union
 
@@ -210,6 +212,66 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
         "status": status,
         "profile": profile,
         "user_icon_url": user_icon_url,
+    }
+
+
+def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, str]:
+    user: str = folder_page.select_one("div[class~=username] span").text.strip()
+    user_icon_url: str = "https:" + folder_page.select_one("img.user-nav-avatar")["src"]
+
+    return {
+        "user_name": user[1:],
+        "user_status": user[0],
+        "user_icon_url": user_icon_url,
+    }
+
+
+def parse_user_submissions(submissions_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
+    user_info: Dict[str, str] = parse_user_folder(submissions_page)
+    figures: list[Tag] = submissions_page.select("figure[id^='sid-']")
+
+    return {
+        **user_info,
+        "figures": figures,
+        "last_page": not figures,
+    }
+
+
+def parse_user_favorites(favorites_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
+    parsed_submissions = parse_user_journals(favorites_page)
+    tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
+    next_page: str = tag_next_page["href"].split("/", 3)[-1] if tag_next_page else ""
+
+    return {
+        **parsed_submissions,
+        "next_page": next_page,
+    }
+
+
+def parse_user_journals(journals_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
+    user_info: Dict[str, str] = parse_user_folder(journals_page)
+    sections: list[Tag] = journals_page.select("section[id^='jid:']")
+
+    return {
+        **user_info,
+        "sections": sections,
+        "last_page": not sections,
+    }
+
+
+def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Union[List[Tag], bool]]:
+    tag_stats: Tag = search_page.select_one("div[id='query-stats']")
+    for div in tag_stats.select("div"):
+        div.decompose()
+    a, b, tot = map(int, search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
+    figures: List[Tag] = search_page.select("figure[id^='sid-']")
+
+    return {
+        "from": a,
+        "to": b,
+        "total": tot,
+        "figures": figures,
+        "last_page": b >= tot
     }
 
 
