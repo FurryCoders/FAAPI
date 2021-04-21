@@ -40,7 +40,7 @@ class SubmissionPartial:
 
     def parse(self, submission_figure: Tag = None):
         assert submission_figure is None or isinstance(submission_figure, Tag)
-        self.submission_figure = submission_figure if submission_figure is not None else self.submission_figure
+        self.submission_figure = submission_figure or self.submission_figure
         if self.submission_figure is None:
             return
 
@@ -103,7 +103,7 @@ class Submission:
 
     def parse(self, submission_page: BeautifulSoup = None):
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
-        self.submission_page = submission_page if submission_page is not None else self.submission_page
+        self.submission_page = submission_page or self.submission_page
         if self.submission_page is None:
             return
 

@@ -37,7 +37,7 @@ class User:
 
     def parse(self, user_page: BeautifulSoup = None):
         assert user_page is None or isinstance(user_page, BeautifulSoup)
-        self.user_page = user_page if user_page is not None else self.user_page
+        self.user_page = user_page or self.user_page
         if self.user_page is None:
             return
 

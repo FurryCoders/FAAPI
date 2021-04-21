@@ -30,7 +30,7 @@ from .user import User
 
 class FAAPI:
     def __init__(self, cookies: List[Dict[str, Any]] = None):
-        self.cookies: List[Dict[str, Any]] = [] if cookies is None else cookies
+        self.cookies: List[Dict[str, Any]] = cookies or []
         self.session: CloudflareScraper = make_session(self.cookies)
         self.robots: Dict[str, List[str]] = get_robots()
         self.crawl_delay: float = float(self.robots.get("Crawl-delay", [1.0])[0])

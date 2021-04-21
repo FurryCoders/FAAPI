@@ -43,7 +43,7 @@ class Journal:
 
     def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
-        self.journal_item = journal_item if journal_item is not None else self.journal_item
+        self.journal_item = journal_item or self.journal_item
         if self.journal_item is None:
             return
 
