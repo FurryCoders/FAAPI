@@ -62,7 +62,8 @@ class Journal:
 
         self.id = parsed["id"]
         self.title = parsed["title"]
-        self.author.name = parsed.get("author", "")
+        self.author.name = parsed.get("user_name", "")
+        self.author.status = parsed.get("user_status", "")
         self.author.user_icon_url = parsed.get("user_icon_url", "")
         self.date = parsed["date"]
         self.content = parsed["content"]

@@ -92,29 +92,25 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
 
 
 def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]]:
+    user_info: Dict[str, str] = parse_user_folder(journal_page)
     tag_id: Tag = journal_page.select_one("meta[property='og:url']")
     tag_title: Tag = journal_page.select_one("h2.journal-title")
-    tag_author: Tag = journal_page.select_one("a.current")
     tag_date: Tag = journal_page.select_one("span.popup_date")
     tag_content: Tag = journal_page.select_one("div.journal-content")
-    tag_user_icon_url: Tag = journal_page.select_one("img.user-nav-avatar")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    author: str = tag_author["href"].strip("/").split("/")[-1]
     date: str = parse_date(tag_date["title"].strip()).strftime("%Y-%m-%d")
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: List[str] = parse_mentions(tag_content)
-    user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
+        **user_info,
         "id": id_,
-        "author": author,
         "title": title,
         "date": date,
         "content": content,
         "mentions": mentions,
-        "user_icon_url": user_icon_url,
     }
 
 
