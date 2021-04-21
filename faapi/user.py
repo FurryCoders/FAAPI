@@ -3,6 +3,7 @@ from typing import Optional
 from .parse import BeautifulSoup
 from .parse import check_page_raise
 from .parse import parse_user_page
+from .parse import username_url
 
 
 class User:
@@ -29,6 +30,10 @@ class User:
 
     def __str__(self):
         return self.status + self.name
+
+    @property
+    def name_url(self):
+        return username_url(self.name.lower())
 
     def parse(self, user_page: BeautifulSoup = None):
         assert user_page is None or isinstance(user_page, BeautifulSoup)
