@@ -1,6 +1,8 @@
 from typing import List
 from typing import Optional
 
+from .connection import join_url
+from .connection import root
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
@@ -37,6 +39,10 @@ class SubmissionPartial:
 
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
+
+    @property
+    def url(self):
+        return join_url(root, "view", self.id)
 
     def parse(self, submission_figure: Tag = None):
         assert submission_figure is None or isinstance(submission_figure, Tag)
@@ -100,6 +106,10 @@ class Submission:
 
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
+
+    @property
+    def url(self):
+        return join_url(root, "view", self.id)
 
     def parse(self, submission_page: BeautifulSoup = None):
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)

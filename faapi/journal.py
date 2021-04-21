@@ -6,6 +6,8 @@ from typing import Union
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from .connection import join_url
+from .connection import root
 from .parse import check_page_raise
 from .parse import parse_journal_page
 from .parse import parse_journal_section
@@ -40,6 +42,10 @@ class Journal:
 
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
+
+    @property
+    def url(self):
+        return join_url(root, "journal", self.id)
 
     def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))

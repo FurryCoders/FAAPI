@@ -1,5 +1,7 @@
 from typing import Optional
 
+from .connection import join_url
+from .connection import root
 from .parse import BeautifulSoup
 from .parse import check_page_raise
 from .parse import parse_user_page
@@ -34,6 +36,10 @@ class User:
     @property
     def name_url(self):
         return username_url(self.name.lower())
+
+    @property
+    def url(self):
+        return join_url(root, "user", self.name_url)
 
     def parse(self, user_page: BeautifulSoup = None):
         assert user_page is None or isinstance(user_page, BeautifulSoup)
