@@ -215,7 +215,7 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     }
 
 
-def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, str]:
+def parse_user_folder(folder_page: BeautifulSoup) -> Dict[str, str]:
     user: str = folder_page.select_one("div[class~=username] span").text.strip()
     user_icon_url: str = "https:" + folder_page.select_one("img.user-nav-avatar")["src"]
 
@@ -228,7 +228,7 @@ def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, str]:
 
 def parse_user_submissions(submissions_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
     user_info: Dict[str, str] = parse_user_folder(submissions_page)
-    figures: list[Tag] = submissions_page.select("figure[id^='sid-']")
+    figures: List[Tag] = submissions_page.select("figure[id^='sid-']")
 
     return {
         **user_info,
@@ -250,7 +250,7 @@ def parse_user_favorites(favorites_page: BeautifulSoup) -> Dict[str, Union[str, 
 
 def parse_user_journals(journals_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
     user_info: Dict[str, str] = parse_user_folder(journals_page)
-    sections: list[Tag] = journals_page.select("section[id^='jid:']")
+    sections: List[Tag] = journals_page.select("section[id^='jid:']")
 
     return {
         **user_info,
@@ -259,7 +259,7 @@ def parse_user_journals(journals_page: BeautifulSoup) -> Dict[str, Union[str, Li
     }
 
 
-def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Union[List[Tag], bool]]:
+def parse_search_submissions(search_page: BeautifulSoup) -> Dict[str, Union[List[Tag], bool]]:
     tag_stats: Tag = search_page.select_one("div[id='query-stats']")
     for div in tag_stats.select("div"):
         div.decompose()
