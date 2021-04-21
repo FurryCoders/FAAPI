@@ -121,7 +121,7 @@ class FAAPI:
         check_page_raise(page_parsed := self.get_parse("search", q=q, page=(page := int(page)), **params))
         info_parsed: Dict[str, Any] = parse_search_submissions(page_parsed)
         return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
-                (info_parsed["from"] or 1) - 1, (info_parsed["to"] or 1) - 1, info_parsed["total"])
+                info_parsed["from"], info_parsed["to"], info_parsed["total"])
 
     def watchlist_to(self, user: str) -> List[User]:
         users: List[User] = []

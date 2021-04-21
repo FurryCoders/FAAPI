@@ -267,8 +267,8 @@ def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Union[List
     figures: List[Tag] = search_page.select("figure[id^='sid-']")
 
     return {
-        "from": a,
-        "to": b,
+        "from": (a or 1) - 1,
+        "to": (b or 1) - 1,
         "total": tot,
         "figures": figures,
         "last_page": b >= tot
