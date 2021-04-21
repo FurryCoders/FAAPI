@@ -6,6 +6,7 @@ from .parse import Tag
 from .parse import check_page_raise
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
+from .user import User
 
 
 class SubmissionPartial:
@@ -16,7 +17,7 @@ class SubmissionPartial:
 
         self.id: int = 0
         self.title: str = ""
-        self.author: str = ""
+        self.author: User = User()
         self.rating: str = ""
         self.type: str = ""
         self.thumbnail_url: str = ""
@@ -26,7 +27,7 @@ class SubmissionPartial:
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title
-        yield "author", self.author
+        yield "author", dict(self.author)
         yield "rating", self.rating
         yield "type", self.type
         yield "thumbnail_url", self.thumbnail_url
@@ -47,7 +48,7 @@ class SubmissionPartial:
 
         self.id: int = parsed["id"]
         self.title: str = parsed["title"]
-        self.author: str = parsed["author"]
+        self.author.name = parsed["author"]
         self.rating: str = parsed["rating"]
         self.type: str = parsed["type"]
         self.thumbnail_url: str = parsed["thumbnail_url"]
@@ -61,7 +62,7 @@ class Submission:
 
         self.id: int = 0
         self.title: str = ""
-        self.author: str = ""
+        self.author: User = User()
         self.date: str = ""
         self.tags: List[str] = []
         self.category: str = ""
@@ -74,14 +75,13 @@ class Submission:
         self.folder: str = ""
         self.file_url: str = ""
         self.thumbnail_url: str = ""
-        self.user_icon_url: str = ""
 
         self.parse()
 
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title
-        yield "author", self.author
+        yield "author", dict(self.author)
         yield "date", self.date
         yield "tags", self.tags
         yield "category", self.category
@@ -94,7 +94,6 @@ class Submission:
         yield "folder", self.folder
         yield "file_url", self.file_url
         yield "thumbnail_url", self.thumbnail_url
-        yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -114,7 +113,8 @@ class Submission:
 
         self.id: int = parsed["id"]
         self.title: str = parsed["title"]
-        self.author: str = parsed["author"]
+        self.author.name = parsed["author"]
+        self.author.user_icon_url = parsed["user_icon_url"]
         self.date: str = parsed["date"]
         self.tags: List[str] = parsed["tags"]
         self.category: str = parsed["category"]
@@ -127,4 +127,3 @@ class Submission:
         self.folder: str = parsed["folder"]
         self.file_url: str = parsed["file_url"]
         self.thumbnail_url: str = parsed["thumbnail_url"]
-        self.user_icon_url: str = parsed["user_icon_url"]

@@ -9,6 +9,7 @@ from bs4.element import Tag
 from .parse import check_page_raise
 from .parse import parse_journal_page
 from .parse import parse_journal_section
+from .user import User
 
 
 class Journal:
@@ -20,10 +21,9 @@ class Journal:
         self.id: int = 0
         self.title: str = ""
         self.date: str = ""
-        self.author: str = ""
+        self.author: User = User()
         self.content: str = ""
         self.mentions: List[str] = []
-        self.user_icon_url: str = ""
 
         self.parse()
 
@@ -31,10 +31,9 @@ class Journal:
         yield "id", self.id
         yield "title", self.title
         yield "date", self.date
-        yield "author", self.author
+        yield "author", dict(self.author)
         yield "content", self.content
         yield "mentions", self.mentions
-        yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -57,8 +56,8 @@ class Journal:
 
         self.id = parsed["id"]
         self.title = parsed["title"]
-        self.author = parsed.get("author", "")
+        self.author.name = parsed.get("author", "")
+        self.author.user_icon_url = parsed.get("user_icon_url", "")
         self.date = parsed["date"]
         self.content = parsed["content"]
         self.mentions = parsed["mentions"]
-        self.user_icon_url: str = parsed.get("user_icon_url", "")
