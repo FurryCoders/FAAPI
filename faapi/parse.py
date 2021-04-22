@@ -234,7 +234,7 @@ def parse_user_submissions(submissions_page: BeautifulSoup) -> Dict[str, Union[s
 
 
 def parse_user_favorites(favorites_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
-    parsed_submissions = parse_user_journals(favorites_page)
+    parsed_submissions = parse_user_submissions(favorites_page)
     tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
     next_page: str = tag_next_page["href"].split("/", 3)[-1] if tag_next_page else ""
 
