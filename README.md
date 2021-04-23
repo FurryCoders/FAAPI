@@ -114,14 +114,16 @@ omitted, and the API will still be able to access public pages.
 * `connection_status -> bool`<br>
   Returns the status of the connection.
 * `get(path: str, **params) -> requests.Response`<br>
-  This returns a response object containing the result of the get operation on the given url with the
+  This returns a response object containing the result of the get operation on the given URL with the
   optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 * `get_parse(path: str, **params) -> Optional[bs4.BeautifulSoup]`<br>
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
   an `HTTPError` exception is raised. If the response is not ok, then `None` is returned.
 * `get_submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
-  a `bytes` object with the submission file if `get_file` is passed as `True`.
+  a `bytes` object with the submission file if `get_file` is passed as `True`.<br>
+  *Note:* the author `UserPartial` object of the submission does not contain the `join_date` field as it does not appear
+  on submission pages.
 * `get_submission_file(submission: Submission) -> Optional[bytes]`<br>
   Given a submission object, it downloads its file and returns it as a `bytes` object.
 * `get_user(user: str) -> User`<br>
@@ -180,12 +182,13 @@ following fields:
 
 * `id: int` journal id
 * `title: str` journal title
-* `date: str` upload date in YYYY-MM-DD format
-* `author: User` journal author (fields are filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
-* `content: str` journal content
+* `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
+  timestamp 0)
+* `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
+* `content: str` journal content in HTML format
 * `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
-* `user_icon_url: str` the url to the user icon (cannot be parsed when downloading via `FAAPI.get_journals`)
+* `user_icon_url: str` the URL to the user icon (cannot be parsed when downloading via `FAAPI.get_journals`)
 * `journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup]` the journal tag/page used to parse the object fields
 
 `Journal` objects can be directly cast to a dict object or iterated through.
@@ -199,10 +202,11 @@ is then performed based on the class of the passed object.
 
 #### Methods
 
-* `url -> str` property method that returns the Fur Affinity URL to the
-  journal (`https://www.furaffinity.net/journal/{id}`).
-* `parse(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)` parses the stored journal tag/page for
-  information. If `journal_item` is passed, it overwrites the existing `journal_item` value.
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the journal (`https://www.furaffinity.net/journal/{id}`).
+* `parse(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`<br>
+  Parses the stored journal tag/page for information. If `journal_item` is passed, it overwrites the
+  existing `journal_item` value.
 
 ### SubmissionPartial
 
@@ -211,10 +215,10 @@ and search pages. It contains only the following fields:
 
 * `id: int` submission id
 * `title: str` submission title
-* `author: User` submission author (only the `name` field is filled)
+* `author: UserPartial` submission author (only the `name` field is filled)
 * `rating: str` submission rating [general, mature, adult]
 * `type: str` submission type [text, image, etc...]
-* `thumbnail_url: str` the url to the submission thumbnail
+* `thumbnail_url: str` the URL to the submission thumbnail
 * `submission_figure: bs4.element.Tag` the figure tag used to parse the object fields
 
 `SubmissionPartial` objects can be directly cast to a dict object or iterated through.
@@ -227,10 +231,11 @@ and search pages. It contains only the following fields:
 
 #### Methods
 
-* `url -> str` property method that returns the Fur Affinity URL to the
-  submission (`https://www.furaffinity.net/view/{id}`).
-* `parse(submission_figure: bs4.element.Tag)` parses the stored submission figure tag for information.
-  If `submission_figure` is passed, it overwrites the existing `submission_figure` value.
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the submission (`https://www.furaffinity.net/view/{id}`).
+* `parse(submission_figure: bs4.element.Tag)`<br>
+  Parses the stored submission figure tag for information. If `submission_figure` is passed, it overwrites the
+  existing `submission_figure` value.
 
 ### Submission
 
@@ -238,23 +243,22 @@ The main class that parses and holds submission metadata.
 
 * `id: int` submission id
 * `title: str` submission title
-* `author: User` submission author (only the `name` and `user_icon_url` fields are filled)
-* `date: str` upload date in YYYY-MM-DD format
+* `author: UserPartial` submission author (only the `name`, `title`, and `user_icon_url` fields are filled)
+* `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
+  timestamp 0)
 * `tags: List[str]` tags list
-* `category: str` category \*
-* `species: str` species \*
-* `gender: str` gender \*
-* `rating: str` rating \*
-* `type: str` submission type [text, image, etc...]
-* `description: str` the description as an HTML formatted string
+* `category: str` category
+* `species: str` species
+* `gender: str` gender
+* `rating: str` rating
+* `type: str` submission type (text, image, etc...)
+* `description: str` description in HTML format
 * `mentions: List[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `folder: str` the submission folder (gallery or scraps)
-* `file_url: str` the url to the submission file
-* `thumbnail_url: str` the url to the submission thumbnail
+* `file_url: str` the URL to the submission file
+* `thumbnail_url: str` the URL to the submission thumbnail
 * `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
-
-\* these are extracted exactly as they appear on the submission page
 
 `Submission` objects can be directly cast to a dict object and iterated through.
 
@@ -269,10 +273,41 @@ If no `submission_page` is passed then the object fields will remain at their de
 
 #### Methods
 
-* `url -> str` property method that returns the Fur Affinity URL to the
-  submission (`https://www.furaffinity.net/view/{id}`).
-* `parse(submission_page: bs4.BeautifulSoup = None)` parses the stored submission page for metadata.
-  If `submission_page` is passed, it overwrites the existing `submission_page` value.
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the submission (`https://www.furaffinity.net/view/{id}`).
+* `parse(submission_page: bs4.BeautifulSoup = None)`<br>
+  Parses the stored submission page for metadata. If `submission_page` is passed, it overwrites the
+  existing `submission_page` value.
+
+### UserPartial
+
+A stripped-down class that holds basic user information. It is used to hold metadata gathered when parsing a submission,
+journal, gallery, scraps, etc.
+
+* `name: str` display name with capital letters and extra characters such as "_"
+* `status: str` user status (~, !, etc.)
+* `title: str` the user title as it appears on their userpage
+* `join_date: datetime` the date the user joined (defaults to timestamp 0)
+* `user_tag: bs4.element.Tag` the user element used to parse information (placeholder, `UserPartial` is filled
+  externally)
+
+#### Init
+
+`__init__(user_tag: bs4.element.Tag = None)`
+
+To initialise the object, an optional `bs4.element.Tag` object is needed containing the user element from a user page or
+user folder.
+
+If no `user_tag` is passed then the object fields will remain at their default - empty - value.
+
+#### Methods
+
+* `name_url -> str`<br>
+  Property method that returns the URL-safe username
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
+* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+  Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
 ### User
 
@@ -280,8 +315,15 @@ A class that holds a user's main information.
 
 * `name: str` display name with capital letters and extra characters such as "_"
 * `status: str` user status (~, !, etc.)
+* `title: str` the user title as it appears on their userpage
+* `join_date: datetime` the date the user joined (defaults to timestamp 0)
 * `profile: str` profile text in HTML format
-* `user_icon_url: str` the url to the user icon
+* `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favs`, `comments_earned`
+  , `comments_made`, `journals`)
+* `info: Dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
+  etc.)
+* `contacts: Dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
+* `user_icon_url: str` the URL to the user icon
 * `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
 
 #### Init
@@ -295,11 +337,12 @@ If no `user_page` is passed then the object fields will remain at their default 
 
 #### Methods
 
-* `name_url -> str` property method that returns the URL-safe username
-* `url -> str` property method that returns the Fur Affinity URL to the
-  user (`https://www.furaffinity.net/user/{name_url}`).
-* `parse(user_page: bs4.BeautifulSoup = None)` parses the stored user page for metadata. If `user_page` is passed, it
-  overwrites the existing `user_page` value.
+* `name_url -> str`<br>
+  Property method that returns the URL-safe username
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
+* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+  Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
 ## Contributing
 
