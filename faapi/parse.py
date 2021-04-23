@@ -1,3 +1,4 @@
+from datetime import datetime
 from re import Pattern
 from re import compile as re_compile
 from re import match
@@ -78,7 +79,7 @@ def parse_mentions(tag: Tag) -> List[str]:
 def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.select_one("h2").text.strip()
-    date: str = parse_date(section_tag.select_one("span.popup_date")["title"].strip()).strftime("%Y-%m-%d")
+    date: datetime = parse_date(section_tag.select_one("span.popup_date")["title"].strip())
     content: str = "".join(map(str, (tag_content := section_tag.select_one("div.journal-body")).children))
     mentions: List[str] = parse_mentions(tag_content)
 
@@ -100,7 +101,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    date: str = parse_date(tag_date["title"].strip()).strftime("%Y-%m-%d")
+    date: datetime = parse_date(tag_date["title"].strip())
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: List[str] = parse_mentions(tag_content)
 
@@ -155,11 +156,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     author: str = tag_author.text.strip()
-    date: str = parse_date(
+    date: datetime = parse_date(
         tag_date["title"].strip()
         if match(r"^[A-Za-z]+ \d+,.*$", tag_date["title"])
         else tag_date.text.strip()
-    ).strftime("%Y-%m-%d")
+    )
     tags: [str] = [t.text.strip() for t in tag_tags]
     category: str = tag_category1.text.strip() + "/" + tag_category2.text.strip()
     species: str = tag_species.text.strip()

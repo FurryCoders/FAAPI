@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from typing import Optional
 
@@ -69,7 +70,7 @@ class Submission:
         self.id: int = 0
         self.title: str = ""
         self.author: User = User()
-        self.date: str = ""
+        self.date: datetime = datetime.now()
         self.tags: List[str] = []
         self.category: str = ""
         self.species: str = ""
@@ -125,7 +126,7 @@ class Submission:
         self.title: str = parsed["title"]
         self.author.name = parsed["author"]
         self.author.user_icon_url = parsed["user_icon_url"]
-        self.date: str = parsed["date"]
+        self.date: datetime = parsed["date"]
         self.tags: List[str] = parsed["tags"]
         self.category: str = parsed["category"]
         self.species: str = parsed["species"]

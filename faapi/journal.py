@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -22,7 +23,7 @@ class Journal:
 
         self.id: int = 0
         self.title: str = ""
-        self.date: str = ""
+        self.date: datetime = datetime.now()
         self.author: User = User()
         self.content: str = ""
         self.mentions: List[str] = []
