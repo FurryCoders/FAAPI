@@ -20,24 +20,14 @@ UserStats: Type['UserStats'] = namedtuple(
 )
 
 
-class UserPartial:
-    def __init__(self, user_tag: Tag = None):
-        assert user_tag is None or isinstance(user_tag, Tag)
-
-        self.user_tag: Optional[Tag] = user_tag
-
+class UserBase:
+    def __init__(self):
         self.name: str = ""
         self.status: str = ""
-        self.title: str = ""
-        self.join_date: datetime = datetime.fromtimestamp(0)
-        self.user_icon_url: str = ""
 
     def __iter__(self):
         yield "name", self.name
         yield "status", self.status
-        yield "title", self.title
-        yield "join_date", self.join_date.timetuple()
-        yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
         return repr(dict(self))
@@ -53,6 +43,27 @@ class UserPartial:
     def url(self):
         return join_url(root, "user", self.name_url)
 
+
+class UserPartial(UserBase):
+    def __init__(self, user_tag: Tag = None):
+        assert user_tag is None or isinstance(user_tag, Tag)
+
+        super().__init__()
+
+        self.user_tag: Optional[Tag] = user_tag
+        self.title: str = ""
+        self.join_date: datetime = datetime.fromtimestamp(0)
+        self.user_icon_url: str = ""
+
+        self.parse()
+
+    def __iter__(self):
+        yield "name", self.name
+        yield "status", self.status
+        yield "title", self.title
+        yield "join_date", self.join_date.timetuple()
+        yield "user_icon_url", self.user_icon_url
+
     def parse(self, user_tag: Tag = None):
         assert user_tag is None or isinstance(user_tag, Tag)
         self.user_tag = user_tag or self.user_tag
@@ -67,19 +78,20 @@ class UserPartial:
         self.join_date: datetime = parsed["join_date"]
 
 
-class User(UserPartial):
+class User(UserBase):
     def __init__(self, user_page: BeautifulSoup = None):
         assert user_page is None or isinstance(user_page, BeautifulSoup)
 
-        self.user_page: Optional[BeautifulSoup] = user_page
-
         super().__init__()
-        del self.user_tag
 
+        self.user_page: Optional[BeautifulSoup] = user_page
+        self.title: str = ""
+        self.join_date: datetime = datetime.fromtimestamp(0)
         self.profile: str = ""
         self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0)
         self.info: Dict[str, str] = {}
         self.contacts: Dict[str, str] = {}
+        self.user_icon_url: str = ""
 
         self.parse()
 
