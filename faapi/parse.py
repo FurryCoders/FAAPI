@@ -197,17 +197,25 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
 def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     tag_name: Tag = user_page.select_one("div.username")
     tag_profile: Tag = user_page.select_one("div.userpage-profile")
+    tag_title_join: Tag = user_page.select_one("div.userpage-flex-item.username > span")
+    tag_stats: Tag = user_page.select_one("div.userpage-section-right div.table")
     tag_user_icon_url: Tag = user_page.select_one("img.user-nav-avatar")
 
     status: str = (u := tag_name.find("span").text.strip())[0]
     name: str = u[1:]
+    title: str = "|".join((tj := tag_title_join.text.split("|"))[:-1]).strip()
+    join_date: datetime = parse_date(tj[-1].strip().split(":", 1)[1])
     profile: str = "".join(map(str, tag_profile.children)).strip()
+    stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]), filter(bool, map(str.strip, tag_stats.text.split("\n")))))
     user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
         "name": name,
         "status": status,
+        "title": title,
+        "join_date": join_date,
         "profile": profile,
+        "stats": stats,
         "user_icon_url": user_icon_url,
     }
 
