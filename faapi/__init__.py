@@ -4,3 +4,4 @@ from .journal import Journal
 from .submission import Submission
 from .submission import SubmissionPartial
 from .user import User
+from .user import UserPartial
