@@ -76,7 +76,7 @@ def parse_mentions(tag: Tag) -> List[str]:
     )))), key=ms.index)
 
 
-def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
+def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str, datetime]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.select_one("h2").text.strip()
     date: datetime = parse_date(section_tag.select_one("span.popup_date")["title"].strip())
@@ -92,7 +92,7 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str]]:
     }
 
 
-def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str]]:
+def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str, datetime]]:
     user_info: Dict[str, str] = parse_user_folder(journal_page)
     tag_id: Tag = journal_page.select_one("meta[property='og:url']")
     tag_title: Tag = journal_page.select_one("h2.journal-title")
@@ -133,7 +133,7 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
     }
 
 
-def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str]]]:
+def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str], datetime]]:
     tag_id: Tag = sub_page.select_one("meta[property='og:url']")
     tag_sub_info: Tag = sub_page.select_one("div.submission-id-sub-container")
     tag_title: Tag = tag_sub_info.select_one("div.submission-title")

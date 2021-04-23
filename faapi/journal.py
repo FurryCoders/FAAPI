@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Union
@@ -54,12 +53,11 @@ class Journal:
         if self.journal_item is None:
             return
 
-        parsed: Dict[str, Union[int, str]]
         if isinstance(self.journal_item, BeautifulSoup):
             check_page_raise(self.journal_item)
-            parsed = parse_journal_page(self.journal_item)
+            parsed: dict = parse_journal_page(self.journal_item)
         else:
-            parsed = parse_journal_section(self.journal_item)
+            parsed: dict = parse_journal_section(self.journal_item)
 
         self.id = parsed["id"]
         self.title = parsed["title"]
