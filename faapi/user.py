@@ -1,5 +1,6 @@
 from collections import namedtuple
 from datetime import datetime
+from typing import Dict
 from typing import Optional
 from typing import Type
 
@@ -28,6 +29,8 @@ class User:
         self.join_date: datetime = datetime.fromtimestamp(0)
         self.profile: str = ""
         self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0)
+        self.info: Dict[str, str] = {}
+        self.contacts: Dict[str, str] = {}
         self.user_icon_url: str = ""
 
         self.parse()
@@ -39,6 +42,8 @@ class User:
         yield "join_date", self.join_date.timetuple()
         yield "profile", self.profile
         yield "stats", self.stats
+        yield "info", self.info
+        yield "contacts", self.contacts
         yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
@@ -71,4 +76,6 @@ class User:
         self.title: str = parsed["title"]
         self.join_date: datetime = parsed["join_date"]
         self.stats: UserStats = UserStats(*parsed["stats"])
+        self.info: Dict[str, str] = parsed["info"]
+        self.contacts: Dict[str, str] = parsed["contacts"]
         self.user_icon_url: str = parsed["user_icon_url"]
