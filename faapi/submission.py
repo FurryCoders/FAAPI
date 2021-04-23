@@ -67,26 +67,20 @@ class Submission(SubmissionPartial):
 
         self.submission_page: Optional[BeautifulSoup] = submission_page
 
-        self.id: int = 0
-        self.title: str = ""
-        self.author: UserPartial = UserPartial()
+        super().__init__()
+        del self.submission_figure
+
         self.date: datetime = datetime.fromtimestamp(0)
         self.tags: List[str] = []
         self.category: str = ""
         self.species: str = ""
         self.gender: str = ""
-        self.rating: str = ""
-        self.type: str = ""
         self.description: str = ""
         self.mentions: List[str] = []
         self.folder: str = ""
         self.file_url: str = ""
-        self.thumbnail_url: str = ""
 
         self.parse()
-
-        super().__init__()
-        del self.submission_figure
 
     def __iter__(self):
         yield "id", self.id

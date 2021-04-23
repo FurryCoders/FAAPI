@@ -73,20 +73,15 @@ class User(UserPartial):
 
         self.user_page: Optional[BeautifulSoup] = user_page
 
-        self.name: str = ""
-        self.status: str = ""
-        self.title: str = ""
-        self.join_date: datetime = datetime.fromtimestamp(0)
+        super().__init__()
+        del self.user_tag
+
         self.profile: str = ""
         self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0)
         self.info: Dict[str, str] = {}
         self.contacts: Dict[str, str] = {}
-        self.user_icon_url: str = ""
 
         self.parse()
-
-        super().__init__()
-        del self.user_tag
 
     def __iter__(self):
         yield "name", self.name
