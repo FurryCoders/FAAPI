@@ -83,6 +83,8 @@ class Submission(SubmissionBase):
         self.category: str = ""
         self.species: str = ""
         self.gender: str = ""
+        self.rating: str = ""
+        self.type: str = ""
         self.description: str = ""
         self.mentions: List[str] = []
         self.folder: str = ""
