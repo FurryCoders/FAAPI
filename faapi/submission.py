@@ -61,7 +61,7 @@ class SubmissionPartial:
         self.thumbnail_url: str = parsed["thumbnail_url"]
 
 
-class Submission:
+class Submission(SubmissionPartial):
     def __init__(self, submission_page: BeautifulSoup = None):
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
 
@@ -85,6 +85,9 @@ class Submission:
 
         self.parse()
 
+        super().__init__()
+        del self.submission_figure
+
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title
@@ -101,16 +104,6 @@ class Submission:
         yield "folder", self.folder
         yield "file_url", self.file_url
         yield "thumbnail_url", self.thumbnail_url
-
-    def __repr__(self):
-        return repr(dict(self))
-
-    def __str__(self):
-        return f"{self.id} {self.author} {self.title}"
-
-    @property
-    def url(self):
-        return join_url(root, "view", self.id)
 
     def parse(self, submission_page: BeautifulSoup = None):
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
