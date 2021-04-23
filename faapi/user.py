@@ -1,4 +1,7 @@
+from collections import namedtuple
+from datetime import datetime
 from typing import Optional
+from typing import Type
 
 from .connection import join_url
 from .connection import root
@@ -6,6 +9,11 @@ from .parse import BeautifulSoup
 from .parse import check_page_raise
 from .parse import parse_user_page
 from .parse import username_url
+
+UserStats: Type['UserStats'] = namedtuple(
+    "UserStats",
+    ["views", "submissions", "favs", "comments_earned", "comments_made", "journals"]
+)
 
 
 class User:
@@ -16,7 +24,10 @@ class User:
 
         self.name: str = ""
         self.status: str = ""
+        self.title: str = ""
+        self.join_date: datetime = datetime.fromtimestamp(0)
         self.profile: str = ""
+        self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0)
         self.user_icon_url: str = ""
 
         self.parse()
@@ -24,7 +35,10 @@ class User:
     def __iter__(self):
         yield "name", self.name
         yield "status", self.status
+        yield "title", self.title
+        yield "join_date", self.join_date.timetuple()
         yield "profile", self.profile
+        yield "stats", self.stats
         yield "user_icon_url", self.user_icon_url
 
     def __repr__(self):
@@ -54,4 +68,7 @@ class User:
         self.name: str = parsed["name"]
         self.status: str = parsed["status"]
         self.profile: str = parsed["profile"]
+        self.title: str = parsed["title"]
+        self.join_date: datetime = parsed["join_date"]
+        self.stats: UserStats = UserStats(*parsed["stats"])
         self.user_icon_url: str = parsed["user_icon_url"]
