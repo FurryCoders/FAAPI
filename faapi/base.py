@@ -93,14 +93,20 @@ class FAAPI:
         check_page_raise(page_parsed := self.get_parse(join_url("gallery", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
-            s.author.status, s.author.user_icon_url = info_parsed["user_status"], info_parsed["user_icon_url"]
+            s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
+                info_parsed["user_status"], info_parsed["user_title"],
+                info_parsed["user_join_date"], info_parsed["user_icon_url"]
+            ]
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("scraps", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
-            s.author.status, s.author.user_icon_url = info_parsed["user_status"], info_parsed["user_icon_url"]
+            s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
+                info_parsed["user_status"], info_parsed["user_title"],
+                info_parsed["user_join_date"], info_parsed["user_icon_url"]
+            ]
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
@@ -113,8 +119,11 @@ class FAAPI:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_journals(page_parsed)
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
-            j.author.name, j.author.status, j.author.user_icon_url = \
-                info_parsed["user_name"], info_parsed["user_status"], info_parsed["user_icon_url"]
+            j.author.name, j.author.status, j.author.title, j.author.join_date, j.author.user_icon_url = [
+                info_parsed["user_name"], info_parsed["user_status"],
+                info_parsed["user_title"], info_parsed["user_join_date"],
+                info_parsed["user_icon_url"]
+            ]
         return journals, (page + 1) * (not info_parsed["last_page"])
 
     def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
