@@ -106,8 +106,7 @@ class FAAPI:
     def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
         check_page_raise(page_parsed := self.get_parse(join_url("favorites", username_url(user), page.strip())))
         info_parsed: Dict[str, Any] = parse_user_favorites(page_parsed)
-        for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
-            s.author.status, s.author.user_icon_url = info_parsed["user_status"], info_parsed["user_icon_url"]
+        submissions: List[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
         return submissions, info_parsed["next_page"]
 
     def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
