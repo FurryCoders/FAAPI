@@ -70,7 +70,7 @@ class Submission:
         self.id: int = 0
         self.title: str = ""
         self.author: User = User()
-        self.date: datetime = datetime.now()
+        self.date: datetime = datetime.fromtimestamp(0)
         self.tags: List[str] = []
         self.category: str = ""
         self.species: str = ""

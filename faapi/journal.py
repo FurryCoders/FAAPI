@@ -22,7 +22,7 @@ class Journal:
 
         self.id: int = 0
         self.title: str = ""
-        self.date: datetime = datetime.now()
+        self.date: datetime = datetime.fromtimestamp(0)
         self.author: User = User()
         self.content: str = ""
         self.mentions: List[str] = []
