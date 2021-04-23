@@ -11,6 +11,7 @@ from typing import Tuple
 from typing import Union
 
 from bs4 import BeautifulSoup
+from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
@@ -133,11 +134,29 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
     }
 
 
+def parse_submission_author(author_tag: Tag) -> Dict[str, str]:
+    tag_author: Tag = author_tag.select_one("div.submission-id-sub-container")
+    tag_author_name: Tag = tag_author.select_one("a > strong")
+    tag_author_icon: Tag = author_tag.select_one("img.submission-user-icon")
+
+    author_name: str = tag_author_name.text.strip()
+    author_title: str = "|".join([*filter(
+        lambda c: isinstance(c, NavigableString) and c.strip(),
+        tag_author.children)][-1].split("|")[:-1]).strip()
+    author_icon_url: str = "https:" + tag_author_icon["src"]
+
+    return {
+        "author": author_name,
+        "author_title": author_title,
+        "author_icon_url": author_icon_url,
+    }
+
+
 def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str], datetime]]:
     tag_id: Tag = sub_page.select_one("meta[property='og:url']")
     tag_sub_info: Tag = sub_page.select_one("div.submission-id-sub-container")
     tag_title: Tag = tag_sub_info.select_one("div.submission-title")
-    tag_author: Tag = tag_sub_info.select_one("a")
+    tag_author: Tag = sub_page.select_one("div.submission-id-container")
     tag_date: Tag = sub_page.select_one("span.popup_date")
     tag_tags: List[Tag] = sub_page.select("section.tags-row a")
     tag_rating: Tag = sub_page.select_one("div.rating span")
@@ -151,11 +170,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     tag_folder: Tag = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Tag = sub_page.select_one("div.download a")
     tag_thumbnail_url: Tag = sub_page.select_one("img#submissionImg")
-    tag_user_icon_url: Tag = sub_page.select_one("img.submission-user-icon")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    author: str = tag_author.text.strip()
     date: datetime = parse_date(
         tag_date["title"].strip()
         if match(r"^[A-Za-z]+ \d+,.*$", tag_date["title"])
@@ -172,12 +189,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
     thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
-    user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
         "id": id_,
         "title": title,
-        "author": author,
+        **parse_submission_author(tag_author),
         "date": date,
         "tags": tags,
         "category": category,
@@ -190,7 +206,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
         "folder": folder,
         "file_url": file_url,
         "thumbnail_url": thumbnail_url,
-        "user_icon_url": user_icon_url,
     }
 
 
@@ -233,14 +248,24 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     }
 
 
-def parse_user_folder(folder_page: BeautifulSoup) -> Dict[str, str]:
-    user: str = folder_page.select_one("div[class~=username] span").text.strip()
-    user_icon_url: str = "https:" + folder_page.select_one("img.user-nav-avatar")["src"]
+def parse_user_tag(user_tag: Tag) -> Dict[str, str]:
+    status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
+    name: str = u[0][1:]
+    title: str = "|".join((tj := u[1].split("|"))[:-1]).strip()
+    join_date: datetime = parse_date(tj[-1].strip().split(":", 1)[1])
 
     return {
-        "user_name": user[1:],
-        "user_status": user[0],
-        "user_icon_url": user_icon_url,
+        "user_name": name,
+        "user_status": status,
+        "user_title": title,
+        "user_join_date": join_date,
+    }
+
+
+def parse_user_folder(folder_page: BeautifulSoup) -> Dict[str, str]:
+    return {
+        **parse_user_tag(folder_page.select_one("div.userpage-flex-item.username")),
+        "user_icon_url": "https:" + folder_page.select_one("img.user-nav-avatar")["src"],
     }
 
 
