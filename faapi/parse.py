@@ -199,6 +199,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     tag_profile: Tag = user_page.select_one("div.userpage-profile")
     tag_title_join: Tag = user_page.select_one("div.userpage-flex-item.username > span")
     tag_stats: Tag = user_page.select_one("div.userpage-section-right div.table")
+    tag_info: Tag = user_page.select_one("div#userpage-contact-item")
+    tag_contacts: Tag = user_page.select_one("div#userpage-contact")
     tag_user_icon_url: Tag = user_page.select_one("img.user-nav-avatar")
 
     status: str = (u := tag_name.find("span").text.strip())[0]
@@ -208,6 +210,14 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     profile: str = "".join(map(str, tag_profile.children)).strip()
     stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
                                        filter(bool, map(str.strip, tag_stats.text.split("\n")))))
+    info: Dict[str, str] = {
+        tb.select_one("div").text.strip(): [*filter(bool, map(str.strip, tb.text.split("\n")))][-1]
+        for tb in tag_info.select("div.table-row")
+    }
+    contacts: Dict[str, str] = {
+        pc.select_one("span").text.strip(): pc.select_one("a")["href"]
+        for pc in tag_contacts.select("div.user-contact-user-info")
+    }
     user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
@@ -217,6 +227,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
         "join_date": join_date,
         "profile": profile,
         "stats": stats,
+        "info": info,
+        "contacts": contacts,
         "user_icon_url": user_icon_url,
     }
 
