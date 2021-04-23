@@ -94,7 +94,7 @@ class User(UserPartial):
         yield "title", self.title
         yield "join_date", self.join_date.timetuple()
         yield "profile", self.profile
-        yield "stats", self.stats
+        yield "stats", self.stats._asdict()
         yield "info", self.info
         yield "contacts", self.contacts
         yield "user_icon_url", self.user_icon_url
