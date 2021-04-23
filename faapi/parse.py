@@ -206,7 +206,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     title: str = "|".join((tj := tag_title_join.text.split("|"))[:-1]).strip()
     join_date: datetime = parse_date(tj[-1].strip().split(":", 1)[1])
     profile: str = "".join(map(str, tag_profile.children)).strip()
-    stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]), filter(bool, map(str.strip, tag_stats.text.split("\n")))))
+    stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
+                                       filter(bool, map(str.strip, tag_stats.text.split("\n")))))
     user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
