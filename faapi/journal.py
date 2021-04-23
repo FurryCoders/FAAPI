@@ -11,7 +11,7 @@ from .connection import root
 from .parse import check_page_raise
 from .parse import parse_journal_page
 from .parse import parse_journal_section
-from .user import User
+from .user import UserPartial
 
 
 class Journal:
@@ -23,7 +23,7 @@ class Journal:
         self.id: int = 0
         self.title: str = ""
         self.date: datetime = datetime.fromtimestamp(0)
-        self.author: User = User()
+        self.author: UserPartial = UserPartial()
         self.content: str = ""
         self.mentions: List[str] = []
 

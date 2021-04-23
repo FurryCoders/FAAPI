@@ -9,7 +9,7 @@ from .parse import Tag
 from .parse import check_page_raise
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
-from .user import User
+from .user import UserPartial
 
 
 class SubmissionPartial:
@@ -20,7 +20,7 @@ class SubmissionPartial:
 
         self.id: int = 0
         self.title: str = ""
-        self.author: User = User()
+        self.author: UserPartial = UserPartial()
         self.rating: str = ""
         self.type: str = ""
         self.thumbnail_url: str = ""
@@ -69,7 +69,7 @@ class Submission(SubmissionPartial):
 
         self.id: int = 0
         self.title: str = ""
-        self.author: User = User()
+        self.author: UserPartial = UserPartial()
         self.date: datetime = datetime.fromtimestamp(0)
         self.tags: List[str] = []
         self.category: str = ""
@@ -118,7 +118,8 @@ class Submission(SubmissionPartial):
         self.id: int = parsed["id"]
         self.title: str = parsed["title"]
         self.author.name = parsed["author"]
-        self.author.user_icon_url = parsed["user_icon_url"]
+        self.author.title = parsed["author_title"]
+        self.author.user_icon_url = parsed["author_icon_url"]
         self.date: datetime = parsed["date"]
         self.tags: List[str] = parsed["tags"]
         self.category: str = parsed["category"]
