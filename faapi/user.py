@@ -65,7 +65,6 @@ class UserPartial:
         self.status: str = parsed["status"]
         self.title: str = parsed["title"]
         self.join_date: datetime = parsed["join_date"]
-        self.user_icon_url: str = parsed["user_icon_url"]
 
 
 class User(UserPartial):
