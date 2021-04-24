@@ -230,7 +230,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
         for tb in tag_info.select("div.table-row")
     }
     contacts: Dict[str, str] = {
-        pc.select_one("span").text.strip(): pc.select_one("a")["href"]
+        pc.select_one("span").text.strip(): a["href"] if (a := pc.select_one("a")) else
+        [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
         for pc in tag_contacts.select("div.user-contact-user-info")
     }
     user_icon_url: str = "https:" + tag_user_icon_url["src"]
