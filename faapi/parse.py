@@ -140,9 +140,11 @@ def parse_submission_author(author_tag: Tag) -> Dict[str, str]:
     tag_author_icon: Tag = author_tag.select_one("img.submission-user-icon")
 
     author_name: str = tag_author_name.text.strip()
-    author_title: str = "|".join([*filter(
-        lambda c: isinstance(c, NavigableString) and c.strip(),
-        tag_author.children)][-1].split("|")[:-1]).strip()
+    author_title: str = [*filter(bool, [child.strip()
+                                        for child in tag_author.children
+                                        if isinstance(child, NavigableString)][3:])][-1]
+    author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
+    author_title = author_title.strip("\xA0 ")  # NBSP
     author_icon_url: str = "https:" + tag_author_icon["src"]
 
     return {
@@ -212,7 +214,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
 def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     tag_name: Tag = user_page.select_one("div.username")
     tag_profile: Tag = user_page.select_one("div.userpage-profile")
-    tag_title_join: Tag = user_page.select_one("div.userpage-flex-item.username > span")
+    tag_title_join_date: Tag = user_page.select_one("div.userpage-flex-item.username > span")
     tag_stats: Tag = user_page.select_one("div.userpage-section-right div.table")
     tag_info: Tag = user_page.select_one("div#userpage-contact-item")
     tag_contacts: Tag = user_page.select_one("div#userpage-contact")
@@ -220,20 +222,23 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
 
     status: str = (u := tag_name.find("span").text.strip())[0]
     name: str = u[1:]
-    title: str = "|".join((tj := tag_title_join.text.split("|"))[:-1]).strip()
-    join_date: datetime = parse_date(tj[-1].strip().split(":", 1)[1])
+    title: str = (ttd := tag_title_join_date.text.rsplit("|", 1))[0].strip()
+    join_date: datetime = parse_date(ttd[1].strip().split(":", 1)[1])
     profile: str = "".join(map(str, tag_profile.children)).strip()
     stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
                                        filter(bool, map(str.strip, tag_stats.text.split("\n")))))
     info: Dict[str, str] = {
-        tb.select_one("div").text.strip(): [*filter(bool, map(str.strip, tb.text.split("\n")))][-1]
+        tb.select_one("div").text.strip(): [*filter(bool, [c.strip()
+                                                           for c in tb.children
+                                                           if isinstance(c, NavigableString)])][-1]
         for tb in tag_info.select("div.table-row")
-    }
+        if "profile-empty" not in tb.attrs.get("class", [])
+    } if tag_info is not None else {}
     contacts: Dict[str, str] = {
         pc.select_one("span").text.strip(): a["href"] if (a := pc.select_one("a")) else
         [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
         for pc in tag_contacts.select("div.user-contact-user-info")
-    }
+    } if tag_contacts is not None else {}
     user_icon_url: str = "https:" + tag_user_icon_url["src"]
 
     return {
@@ -252,8 +257,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
 def parse_user_tag(user_tag: Tag) -> Dict[str, str]:
     status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
     name: str = u[0][1:]
-    title: str = "|".join((tj := u[1].split("|"))[:-1]).strip()
-    join_date: datetime = parse_date(tj[-1].strip().split(":", 1)[1])
+    title: str = (ttd := u[1].rsplit("|", 1))[0].strip()
+    join_date: datetime = parse_date(ttd[1].strip().split(":", 1)[1])
 
     return {
         "user_name": name,
