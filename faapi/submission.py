@@ -89,6 +89,7 @@ class Submission(SubmissionBase):
         self.mentions: List[str] = []
         self.folder: str = ""
         self.file_url: str = ""
+        self.thumbnail_url: str = ""
 
         self.parse()
 
