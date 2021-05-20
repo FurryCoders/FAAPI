@@ -140,9 +140,9 @@ def parse_submission_author(author_tag: Tag) -> Dict[str, str]:
     tag_author_icon: Tag = author_tag.select_one("img.submission-user-icon")
 
     author_name: str = tag_author_name.text.strip()
-    author_title: str = [*filter(bool, [child.strip()
-                                        for child in tag_author.children
-                                        if isinstance(child, NavigableString)][3:])][-1]
+    author_title: str = ([*filter(bool, [child.strip()
+                                         for child in tag_author.children
+                                         if isinstance(child, NavigableString)][3:])] or [""])[-1]
     author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
     author_title = author_title.strip("\xA0 ")  # NBSP
     author_icon_url: str = "https:" + tag_author_icon["src"]
@@ -222,8 +222,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
 
     status: str = (u := tag_name.find("span").text.strip())[0]
     name: str = u[1:]
-    title: str = (ttd := tag_title_join_date.text.rsplit("|", 1))[0].strip()
-    join_date: datetime = parse_date(ttd[1].strip().split(":", 1)[1])
+    title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
+    join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
     profile: str = "".join(map(str, tag_profile.children)).strip()
     stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
                                        filter(bool, map(str.strip, tag_stats.text.split("\n")))))
@@ -257,8 +257,8 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
 def parse_user_tag(user_tag: Tag) -> Dict[str, str]:
     status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
     name: str = u[0][1:]
-    title: str = (ttd := u[1].rsplit("|", 1))[0].strip()
-    join_date: datetime = parse_date(ttd[1].strip().split(":", 1)[1])
+    title: str = ttd[0].strip() if len(ttd := u[1].rsplit("|", 1)) > 1 else ""
+    join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
 
     return {
         "user_name": name,
