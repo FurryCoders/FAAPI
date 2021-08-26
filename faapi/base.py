@@ -89,6 +89,7 @@ class FAAPI:
     def get_user(self, user: str) -> User:
         return User(self.get_parse(join_url("user", username_url(user))))
 
+    # noinspection DuplicatedCode
     def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("gallery", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
@@ -99,6 +100,7 @@ class FAAPI:
             ]
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
+    # noinspection DuplicatedCode
     def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("scraps", username_url(user), int(page))))
         info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
