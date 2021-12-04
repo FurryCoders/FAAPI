@@ -2,10 +2,7 @@ from re import search
 from time import perf_counter
 from time import sleep
 from typing import Any
-from typing import Dict
-from typing import List
 from typing import Optional
-from typing import Tuple
 
 from .connection import CloudflareScraper
 from .connection import Response
@@ -33,15 +30,15 @@ from .user import User
 
 
 class FAAPI:
-    def __init__(self, cookies: List[Dict[str, Any]] = None):
-        self.cookies: List[Dict[str, Any]] = cookies or []
+    def __init__(self, cookies: list[dict[str, Any]] = None):
+        self.cookies: list[dict[str, Any]] = cookies or []
         self.session: CloudflareScraper = make_session(self.cookies)
-        self.robots: Dict[str, List[str]] = get_robots()
+        self.robots: dict[str, list[str]] = get_robots()
         self.crawl_delay: float = float(self.robots.get("Crawl-delay", [1.0])[0])
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
 
-    def load_cookies(self, cookies: List[Dict[str, Any]]):
+    def load_cookies(self, cookies: list[dict[str, Any]]):
         self.cookies = cookies
         self.session = make_session(self.cookies)
 
@@ -74,7 +71,7 @@ class FAAPI:
         response.raise_for_status()
         return parse_page(response.text) if response.ok else None
 
-    def get_submission(self, submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]:
+    def get_submission(self, submission_id: int, get_file: bool = False) -> tuple[Submission, Optional[bytes]]:
         sub: Submission = Submission(self.get_parse(join_url("view", int(submission_id))))
         sub_file: Optional[bytes] = self.get_submission_file(sub) if get_file and sub.id else None
         return sub, sub_file
@@ -90,9 +87,9 @@ class FAAPI:
         return User(self.get_parse(join_url("user", username_url(user))))
 
     # noinspection DuplicatedCode
-    def gallery(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
+    def gallery(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("gallery", username_url(user), int(page))))
-        info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
+        info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
                 info_parsed["user_status"], info_parsed["user_title"],
@@ -101,9 +98,9 @@ class FAAPI:
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     # noinspection DuplicatedCode
-    def scraps(self, user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]:
+    def scraps(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("scraps", username_url(user), int(page))))
-        info_parsed: Dict[str, Any] = parse_user_submissions(page_parsed)
+        info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
                 info_parsed["user_status"], info_parsed["user_title"],
@@ -111,15 +108,15 @@ class FAAPI:
             ]
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
-    def favorites(self, user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]:
+    def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], str]:
         check_page_raise(page_parsed := self.get_parse(join_url("favorites", username_url(user), page.strip())))
-        info_parsed: Dict[str, Any] = parse_user_favorites(page_parsed)
-        submissions: List[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
+        info_parsed: dict[str, Any] = parse_user_favorites(page_parsed)
+        submissions: list[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
         return submissions, info_parsed["next_page"]
 
-    def journals(self, user: str, page: int = 1) -> Tuple[List[Journal], int]:
+    def journals(self, user: str, page: int = 1) -> tuple[list[Journal], int]:
         check_page_raise(page_parsed := self.get_parse(join_url("journals", username_url(user), int(page))))
-        info_parsed: Dict[str, Any] = parse_user_journals(page_parsed)
+        info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
             j.author.name, j.author.status, j.author.title, j.author.join_date, j.author.user_icon_url = [
                 info_parsed["user_name"], info_parsed["user_status"],
@@ -128,14 +125,14 @@ class FAAPI:
             ]
         return journals, (page + 1) * (not info_parsed["last_page"])
 
-    def search(self, q: str, page: int = 1, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]:
+    def search(self, q: str, page: int = 1, **params) -> tuple[list[SubmissionPartial], int, int, int, int]:
         check_page_raise(page_parsed := self.get_parse("search", q=q, page=(page := int(page)), **params))
-        info_parsed: Dict[str, Any] = parse_search_submissions(page_parsed)
+        info_parsed: dict[str, Any] = parse_search_submissions(page_parsed)
         return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
                 info_parsed["from"], info_parsed["to"], info_parsed["total"])
 
-    def watchlist_to(self, user: str) -> List[User]:
-        users: List[User] = []
+    def watchlist_to(self, user: str) -> list[User]:
+        users: list[User] = []
         for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "to", username_url(user)))):
             user: User = User()
             user.name = u
@@ -143,8 +140,8 @@ class FAAPI:
             users.append(user)
         return users
 
-    def watchlist_by(self, user: str) -> List[User]:
-        users: List[User] = []
+    def watchlist_by(self, user: str) -> list[User]:
+        users: list[User] = []
         for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "by", username_url(user)))):
             user: User = User()
             user.name = u

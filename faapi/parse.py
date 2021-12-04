@@ -4,10 +4,7 @@ from re import compile as re_compile
 from re import match
 from re import search
 from re import sub
-from typing import Dict
-from typing import List
 from typing import Optional
-from typing import Tuple
 from typing import Union
 
 from bs4 import BeautifulSoup
@@ -69,7 +66,7 @@ def username_url(username: str) -> str:
     return sub(r"[^a-z0-9.~-]", "", username.lower())
 
 
-def parse_mentions(tag: Tag) -> List[str]:
+def parse_mentions(tag: Tag) -> list[str]:
     return sorted(set(ms := list(filter(bool, (
         username_url(m.group(1).lower())
         for a in tag.select("a")
@@ -77,12 +74,12 @@ def parse_mentions(tag: Tag) -> List[str]:
     )))), key=ms.index)
 
 
-def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str, datetime]]:
+def parse_journal_section(section_tag: Tag) -> dict[str, Union[int, str, datetime]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.select_one("h2").text.strip()
     date: datetime = parse_date(section_tag.select_one("span.popup_date")["title"].strip())
     content: str = "".join(map(str, (tag_content := section_tag.select_one("div.journal-body")).children))
-    mentions: List[str] = parse_mentions(tag_content)
+    mentions: list[str] = parse_mentions(tag_content)
 
     return {
         "id": id_,
@@ -93,8 +90,8 @@ def parse_journal_section(section_tag: Tag) -> Dict[str, Union[int, str, datetim
     }
 
 
-def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str, datetime]]:
-    user_info: Dict[str, str] = parse_user_folder(journal_page)
+def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Union[int, str, datetime]]:
+    user_info: dict[str, str] = parse_user_folder(journal_page)
     tag_id: Tag = journal_page.select_one("meta[property='og:url']")
     tag_title: Tag = journal_page.select_one("h2.journal-title")
     tag_date: Tag = journal_page.select_one("span.popup_date")
@@ -104,7 +101,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str,
     title: str = tag_title.text.strip()
     date: datetime = parse_date(tag_date["title"].strip())
     content: str = "".join(map(str, tag_content.children)).strip()
-    mentions: List[str] = parse_mentions(tag_content)
+    mentions: list[str] = parse_mentions(tag_content)
 
     return {
         **user_info,
@@ -116,7 +113,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> Dict[str, Union[int, str,
     }
 
 
-def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
+def parse_submission_figure(figure_tag: Tag) -> dict[str, Union[int, str]]:
     id_: int = int(figure_tag.attrs["id"][4:])
     title: str = figure_tag.select_one("figcaption a[href^='/view/']").attrs["title"]
     author: str = figure_tag.select_one("figcaption a[href^='/user/']").attrs["title"]
@@ -134,7 +131,7 @@ def parse_submission_figure(figure_tag: Tag) -> Dict[str, Union[int, str]]:
     }
 
 
-def parse_submission_author(author_tag: Tag) -> Dict[str, str]:
+def parse_submission_author(author_tag: Tag) -> dict[str, str]:
     tag_author: Tag = author_tag.select_one("div.submission-id-sub-container")
     tag_author_name: Tag = tag_author.select_one("a > strong")
     tag_author_icon: Tag = author_tag.select_one("img.submission-user-icon")
@@ -154,13 +151,13 @@ def parse_submission_author(author_tag: Tag) -> Dict[str, str]:
     }
 
 
-def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, List[str], datetime]]:
+def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, list[str], datetime]]:
     tag_id: Tag = sub_page.select_one("meta[property='og:url']")
     tag_sub_info: Tag = sub_page.select_one("div.submission-id-sub-container")
     tag_title: Tag = tag_sub_info.select_one("div.submission-title")
     tag_author: Tag = sub_page.select_one("div.submission-id-container")
     tag_date: Tag = sub_page.select_one("span.popup_date")
-    tag_tags: List[Tag] = sub_page.select("section.tags-row a")
+    tag_tags: list[Tag] = sub_page.select("section.tags-row a")
     tag_rating: Tag = sub_page.select_one("div.rating span")
     tag_type: Tag = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_info: Tag = sub_page.select_one("section.info.text")
@@ -187,7 +184,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     rating: str = tag_rating.text.strip()
     type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
-    mentions: List[str] = parse_mentions(tag_description)
+    mentions: list[str] = parse_mentions(tag_description)
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
     thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
@@ -211,7 +208,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> Dict[str, Union[int, str, 
     }
 
 
-def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
+def parse_user_page(user_page: BeautifulSoup) -> dict[str, str]:
     tag_name: Tag = user_page.select_one("div.username")
     tag_profile: Tag = user_page.select_one("div.userpage-profile")
     tag_title_join_date: Tag = user_page.select_one("div.userpage-flex-item.username > span")
@@ -227,14 +224,14 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     profile: str = "".join(map(str, tag_profile.children)).strip()
     stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
                                        filter(bool, map(str.strip, tag_stats.text.split("\n")))))
-    info: Dict[str, str] = {
+    info: dict[str, str] = {
         tb.select_one("div").text.strip(): [*filter(bool, [c.strip()
                                                            for c in tb.children
                                                            if isinstance(c, NavigableString)])][-1]
         for tb in tag_info.select("div.table-row")
         if "profile-empty" not in tb.attrs.get("class", [])
     } if tag_info is not None else {}
-    contacts: Dict[str, str] = {
+    contacts: dict[str, str] = {
         pc.select_one("span").text.strip(): a["href"] if (a := pc.select_one("a")) else
         [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
         for pc in tag_contacts.select("div.user-contact-user-info")
@@ -254,7 +251,7 @@ def parse_user_page(user_page: BeautifulSoup) -> Dict[str, str]:
     }
 
 
-def parse_user_tag(user_tag: Tag) -> Dict[str, str]:
+def parse_user_tag(user_tag: Tag) -> dict[str, str]:
     status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
     name: str = u[0][1:]
     title: str = ttd[0].strip() if len(ttd := u[1].rsplit("|", 1)) > 1 else ""
@@ -268,16 +265,16 @@ def parse_user_tag(user_tag: Tag) -> Dict[str, str]:
     }
 
 
-def parse_user_folder(folder_page: BeautifulSoup) -> Dict[str, str]:
+def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, str]:
     return {
         **parse_user_tag(folder_page.select_one("div.userpage-flex-item.username")),
         "user_icon_url": "https:" + folder_page.select_one("img.user-nav-avatar")["src"],
     }
 
 
-def parse_user_submissions(submissions_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
-    user_info: Dict[str, str] = parse_user_folder(submissions_page)
-    figures: List[Tag] = submissions_page.select("figure[id^='sid-']")
+def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Union[str, list[Tag], bool]]:
+    user_info: dict[str, str] = parse_user_folder(submissions_page)
+    figures: list[Tag] = submissions_page.select("figure[id^='sid-']")
 
     return {
         **user_info,
@@ -286,7 +283,7 @@ def parse_user_submissions(submissions_page: BeautifulSoup) -> Dict[str, Union[s
     }
 
 
-def parse_user_favorites(favorites_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
+def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Union[str, list[Tag], bool]]:
     parsed_submissions = parse_user_submissions(favorites_page)
     tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
     next_page: str = tag_next_page["href"].split("/", 3)[-1] if tag_next_page else ""
@@ -297,9 +294,9 @@ def parse_user_favorites(favorites_page: BeautifulSoup) -> Dict[str, Union[str, 
     }
 
 
-def parse_user_journals(journals_page: BeautifulSoup) -> Dict[str, Union[str, List[Tag], bool]]:
-    user_info: Dict[str, str] = parse_user_folder(journals_page)
-    sections: List[Tag] = journals_page.select("section[id^='jid:']")
+def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Union[str, list[Tag], bool]]:
+    user_info: dict[str, str] = parse_user_folder(journals_page)
+    sections: list[Tag] = journals_page.select("section[id^='jid:']")
 
     return {
         **user_info,
@@ -308,12 +305,12 @@ def parse_user_journals(journals_page: BeautifulSoup) -> Dict[str, Union[str, Li
     }
 
 
-def parse_search_submissions(search_page: BeautifulSoup) -> Dict[str, Union[List[Tag], bool]]:
+def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Union[list[Tag], bool]]:
     tag_stats: Tag = search_page.select_one("div[id='query-stats']")
     for div in tag_stats.select("div"):
         div.decompose()
     a, b, tot = map(int, search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
-    figures: List[Tag] = search_page.select("figure[id^='sid-']")
+    figures: list[Tag] = search_page.select("figure[id^='sid-']")
 
     return {
         "from": (a or 1) - 1,
@@ -324,6 +321,6 @@ def parse_search_submissions(search_page: BeautifulSoup) -> Dict[str, Union[List
     }
 
 
-def parse_watchlist(watch_page: BeautifulSoup) -> List[Tuple[str, str]]:
-    tags_users: List[Tag] = watch_page.select("div.watch-list-items")
+def parse_watchlist(watch_page: BeautifulSoup) -> list[tuple[str, str]]:
+    tags_users: list[Tag] = watch_page.select("div.watch-list-items")
     return [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users]

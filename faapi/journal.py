@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 from typing import Optional
 from typing import Union
 
@@ -25,7 +24,7 @@ class Journal:
         self.date: datetime = datetime.fromtimestamp(0)
         self.author: UserPartial = UserPartial()
         self.content: str = ""
-        self.mentions: List[str] = []
+        self.mentions: list[str] = []
 
         self.parse()
 

@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 from typing import Optional
 
 from .connection import join_url
@@ -79,14 +78,14 @@ class Submission(SubmissionBase):
 
         self.submission_page: Optional[BeautifulSoup] = submission_page
         self.date: datetime = datetime.fromtimestamp(0)
-        self.tags: List[str] = []
+        self.tags: list[str] = []
         self.category: str = ""
         self.species: str = ""
         self.gender: str = ""
         self.rating: str = ""
         self.type: str = ""
         self.description: str = ""
-        self.mentions: List[str] = []
+        self.mentions: list[str] = []
         self.folder: str = ""
         self.file_url: str = ""
         self.thumbnail_url: str = ""
@@ -126,14 +125,14 @@ class Submission(SubmissionBase):
         self.author.title = parsed["author_title"]
         self.author.user_icon_url = parsed["author_icon_url"]
         self.date: datetime = parsed["date"]
-        self.tags: List[str] = parsed["tags"]
+        self.tags: list[str] = parsed["tags"]
         self.category: str = parsed["category"]
         self.species: str = parsed["species"]
         self.gender: str = parsed["gender"]
         self.rating: str = parsed["rating"]
         self.type: str = parsed["type"]
         self.description: str = parsed["description"]
-        self.mentions: List[str] = parsed["mentions"]
+        self.mentions: list[str] = parsed["mentions"]
         self.folder: str = parsed["folder"]
         self.file_url: str = parsed["file_url"]
         self.thumbnail_url: str = parsed["thumbnail_url"]

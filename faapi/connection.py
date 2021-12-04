@@ -1,8 +1,6 @@
 from platform import python_version
 from platform import uname
 from time import sleep
-from typing import Dict
-from typing import List
 from typing import Optional
 from typing import Union
 
@@ -26,10 +24,10 @@ def ping():
     get_raw(root, headers={"User-Agent": user_agent}).raise_for_status()
 
 
-def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
+def make_session(cookies: list[dict]) -> Optional[CloudflareScraper]:
     ping()
 
-    cookies: List[Dict[str, str]] = [
+    cookies: list[dict[str, str]] = [
         {"name": cookie["name"], "value": cookie["value"]}
         for cookie in cookies
         if "name" in cookie and "value" in cookie
@@ -44,12 +42,12 @@ def make_session(cookies: List[dict]) -> Optional[CloudflareScraper]:
     return session
 
 
-def get_robots() -> Dict[str, List[str]]:
+def get_robots() -> dict[str, list[str]]:
     res: Response = get_raw(join_url(root, "robots.txt"), headers={"User-Agent": user_agent})
 
     res.raise_for_status()
 
-    robot: Dict[str, Union[int, str, List[str]]] = {}
+    robot: dict[str, Union[int, str, list[str]]] = {}
 
     for elem in filter(lambda r: r not in ("", "#"), res.text.split("\n")):
         key, value = elem.split(":", 1)
