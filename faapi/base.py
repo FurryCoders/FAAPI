@@ -27,6 +27,7 @@ from .parse import username_url
 from .submission import Submission
 from .submission import SubmissionPartial
 from .user import User
+from .user import UserPartial
 
 
 class FAAPI:
@@ -131,23 +132,25 @@ class FAAPI:
         return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
                 info_parsed["from"], info_parsed["to"], info_parsed["total"])
 
-    def watchlist_to(self, user: str) -> list[User]:
-        users: list[User] = []
-        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "to", username_url(user)))):
-            user: User = User()
+    def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
+        users: list[UserPartial] = []
+        us, np = parse_watchlist(self.get_parse(join_url("watchlist", "to", username_url(user), page)))
+        for s, u in us:
+            user: UserPartial = UserPartial()
             user.name = u
             user.status = s
             users.append(user)
-        return users
+        return users, (page + 1) if np else 0
 
-    def watchlist_by(self, user: str) -> list[User]:
-        users: list[User] = []
-        for s, u in parse_watchlist(self.get_parse(join_url("watchlist", "by", username_url(user)))):
-            user: User = User()
+    def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
+        users: list[UserPartial] = []
+        us, np = parse_watchlist(self.get_parse(join_url("watchlist", "by", username_url(user), page)))
+        for s, u in us:
+            user: UserPartial = UserPartial()
             user.name = u
             user.status = s
             users.append(user)
-        return users
+        return users, (page + 1) if np else 0
 
     def user_exists(self, user: str) -> int:
         """

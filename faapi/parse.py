@@ -19,6 +19,7 @@ from .exceptions import NoticeMessage
 from .exceptions import ServerError
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/([^/#]+).*$")
+watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
 
 
 def parse_page(text: str) -> BeautifulSoup:
@@ -321,6 +322,10 @@ def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Union[list
     }
 
 
-def parse_watchlist(watch_page: BeautifulSoup) -> list[tuple[str, str]]:
+def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], bool]:
     tags_users: list[Tag] = watch_page.select("div.watch-list-items")
-    return [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users]
+    tag_next: Tag = watch_page.select_one("section div.floatright form[method=get]")
+    return (
+        [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users],
+        watchlist_next_regexp.match(tag_next["action"]) is not None
+    )
