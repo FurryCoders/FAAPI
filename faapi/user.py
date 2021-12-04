@@ -60,7 +60,7 @@ class UserPartial(UserBase):
         yield "name", self.name
         yield "status", self.status
         yield "title", self.title
-        yield "join_date", self.join_date.timetuple()
+        yield "join_date", self.join_date
         yield "user_icon_url", self.user_icon_url
 
     def parse(self, user_tag: Tag = None):
@@ -98,7 +98,7 @@ class User(UserBase):
         yield "name", self.name
         yield "status", self.status
         yield "title", self.title
-        yield "join_date", self.join_date.timetuple()
+        yield "join_date", self.join_date
         yield "profile", self.profile
         yield "stats", self.stats._asdict()
         yield "info", self.info

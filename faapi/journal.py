@@ -31,7 +31,7 @@ class Journal:
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title
-        yield "date", self.date.timetuple()
+        yield "date", self.date
         yield "author", dict(self.author)
         yield "content", self.content
         yield "mentions", self.mentions

@@ -96,7 +96,7 @@ class Submission(SubmissionBase):
         yield "id", self.id
         yield "title", self.title
         yield "author", dict(self.author)
-        yield "date", self.date.timetuple()
+        yield "date", self.date
         yield "tags", self.tags
         yield "category", self.category
         yield "species", self.species
