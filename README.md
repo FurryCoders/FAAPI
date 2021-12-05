@@ -75,7 +75,7 @@ cookies = [
 To access session cookies, consult the manual of the browser used to log in.
 
 *Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.
-*Note:* as of 2021-04-21 only cookies `a` and `b` are needed.
+*Note:* as of 2021-12-05 only cookies `a` and `b` are needed.
 
 ### User Agent
 
