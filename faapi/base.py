@@ -67,13 +67,13 @@ class FAAPI:
         self.handle_delay()
         return get(self.session, path, **params)
 
-    def get_parse(self, path: str, **params) -> Optional[BeautifulSoup]:
+    def get_parsed(self, path: str, **params) -> Optional[BeautifulSoup]:
         response: Response = self.get(path, **params)
         response.raise_for_status()
         return parse_page(response.text) if response.ok else None
 
     def submission(self, submission_id: int, get_file: bool = False) -> tuple[Submission, Optional[bytes]]:
-        sub: Submission = Submission(self.get_parse(join_url("view", int(submission_id))))
+        sub: Submission = Submission(self.get_parsed(join_url("view", int(submission_id))))
         sub_file: Optional[bytes] = self.submission_file(sub) if get_file and sub.id else None
         return sub, sub_file
 
@@ -82,14 +82,14 @@ class FAAPI:
         return get_binary_raw(self.session, submission.file_url)
 
     def journal(self, journal_id: int) -> Journal:
-        return Journal(self.get_parse(join_url("journal", int(journal_id))))
+        return Journal(self.get_parsed(join_url("journal", int(journal_id))))
 
     def user(self, user: str) -> User:
-        return User(self.get_parse(join_url("user", username_url(user))))
+        return User(self.get_parsed(join_url("user", username_url(user))))
 
     # noinspection DuplicatedCode
     def gallery(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
-        check_page_raise(page_parsed := self.get_parse(join_url("gallery", username_url(user), int(page))))
+        check_page_raise(page_parsed := self.get_parsed(join_url("gallery", username_url(user), int(page))))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
@@ -100,7 +100,7 @@ class FAAPI:
 
     # noinspection DuplicatedCode
     def scraps(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
-        check_page_raise(page_parsed := self.get_parse(join_url("scraps", username_url(user), int(page))))
+        check_page_raise(page_parsed := self.get_parsed(join_url("scraps", username_url(user), int(page))))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
@@ -110,13 +110,13 @@ class FAAPI:
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], str]:
-        check_page_raise(page_parsed := self.get_parse(join_url("favorites", username_url(user), page.strip())))
+        check_page_raise(page_parsed := self.get_parsed(join_url("favorites", username_url(user), page.strip())))
         info_parsed: dict[str, Any] = parse_user_favorites(page_parsed)
         submissions: list[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
         return submissions, info_parsed["next_page"]
 
     def journals(self, user: str, page: int = 1) -> tuple[list[Journal], int]:
-        check_page_raise(page_parsed := self.get_parse(join_url("journals", username_url(user), int(page))))
+        check_page_raise(page_parsed := self.get_parsed(join_url("journals", username_url(user), int(page))))
         info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
             j.author.name, j.author.status, j.author.title, j.author.join_date, j.author.user_icon_url = [
@@ -127,14 +127,14 @@ class FAAPI:
         return journals, (page + 1) * (not info_parsed["last_page"])
 
     def search(self, q: str, page: int = 1, **params) -> tuple[list[SubmissionPartial], int, int, int, int]:
-        check_page_raise(page_parsed := self.get_parse("search", q=q, page=(page := int(page)), **params))
+        check_page_raise(page_parsed := self.get_parsed("search", q=q, page=(page := int(page)), **params))
         info_parsed: dict[str, Any] = parse_search_submissions(page_parsed)
         return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
                 info_parsed["from"], info_parsed["to"], info_parsed["total"])
 
     def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
         users: list[UserPartial] = []
-        us, np = parse_watchlist(self.get_parse(join_url("watchlist", "to", username_url(user), page)))
+        us, np = parse_watchlist(self.get_parsed(join_url("watchlist", "to", username_url(user), page)))
         for s, u in us:
             user: UserPartial = UserPartial()
             user.name = u
@@ -144,7 +144,7 @@ class FAAPI:
 
     def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
         users: list[UserPartial] = []
-        us, np = parse_watchlist(self.get_parse(join_url("watchlist", "by", username_url(user), page)))
+        us, np = parse_watchlist(self.get_parsed(join_url("watchlist", "by", username_url(user), page)))
         for s, u in us:
             user: UserPartial = UserPartial()
             user.name = u
