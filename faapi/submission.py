@@ -89,6 +89,8 @@ class Submission(SubmissionBase):
         self.folder: str = ""
         self.file_url: str = ""
         self.thumbnail_url: str = ""
+        self.prev: Optional[int] = None
+        self.next: Optional[int] = None
 
         self.parse()
 
@@ -108,6 +110,8 @@ class Submission(SubmissionBase):
         yield "folder", self.folder
         yield "file_url", self.file_url
         yield "thumbnail_url", self.thumbnail_url
+        yield "prev", self.prev
+        yield "next", self.next
 
     def parse(self, submission_page: BeautifulSoup = None):
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
@@ -136,3 +140,5 @@ class Submission(SubmissionBase):
         self.folder: str = parsed["folder"]
         self.file_url: str = parsed["file_url"]
         self.thumbnail_url: str = parsed["thumbnail_url"]
+        self.prev: int = parsed["previous"]
+        self.next: int = parsed["next"]

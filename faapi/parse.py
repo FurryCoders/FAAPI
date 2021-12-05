@@ -170,6 +170,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
     tag_folder: Tag = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Tag = sub_page.select_one("div.download a")
     tag_thumbnail_url: Tag = sub_page.select_one("img#submissionImg")
+    tag_prev: Tag = sub_page.select_one("div.submission-content div.favorite-nav a:nth-child(1)")
+    tag_next: Tag = sub_page.select_one("div.submission-content div.favorite-nav a:last-child")
 
     id_: int = int(tag_id["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -189,6 +191,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
     thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
+    prev_sub: Optional[int] = int(tag_prev["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
+    next_sub: Optional[int] = int(tag_next["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next"  else None
 
     return {
         "id": id_,
@@ -206,6 +210,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
         "folder": folder,
         "file_url": file_url,
         "thumbnail_url": thumbnail_url,
+        "prev": prev_sub,
+        "next": next_sub,
     }
 
 
