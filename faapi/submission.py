@@ -140,5 +140,5 @@ class Submission(SubmissionBase):
         self.folder: str = parsed["folder"]
         self.file_url: str = parsed["file_url"]
         self.thumbnail_url: str = parsed["thumbnail_url"]
-        self.prev: int = parsed["previous"]
+        self.prev: int = parsed["prev"]
         self.next: int = parsed["next"]
