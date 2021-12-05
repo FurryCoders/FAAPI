@@ -126,6 +126,8 @@ omitted, and the API will still be able to access public pages.
   on submission pages.
 * `submission_file(submission: Submission) -> Optional[bytes]`<br>
   Given a submission object, it downloads its file and returns it as a `bytes` object.
+* `journal(journal_id: int) -> Journal`<br>
+  Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
 * `user(user: str) -> User`<br>
   Given a username, it returns a `User` object containing information regarding the user.
 * `gallery(user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]`<br>
