@@ -11,7 +11,7 @@ Python module to implement API-like functionality for the FurAffinity.net websit
 
 ## Requirements
 
-Python 3.8+ is necessary to run this module.
+Python 3.9+ is necessary to run this module.
 
 ## Usage
 
