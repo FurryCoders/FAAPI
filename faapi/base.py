@@ -72,19 +72,19 @@ class FAAPI:
         response.raise_for_status()
         return parse_page(response.text) if response.ok else None
 
-    def get_submission(self, submission_id: int, get_file: bool = False) -> tuple[Submission, Optional[bytes]]:
+    def submission(self, submission_id: int, get_file: bool = False) -> tuple[Submission, Optional[bytes]]:
         sub: Submission = Submission(self.get_parse(join_url("view", int(submission_id))))
-        sub_file: Optional[bytes] = self.get_submission_file(sub) if get_file and sub.id else None
+        sub_file: Optional[bytes] = self.submission_file(sub) if get_file and sub.id else None
         return sub, sub_file
 
-    def get_submission_file(self, submission: Submission) -> Optional[bytes]:
+    def submission_file(self, submission: Submission) -> Optional[bytes]:
         self.handle_delay()
         return get_binary_raw(self.session, submission.file_url)
 
-    def get_journal(self, journal_id: int) -> Journal:
+    def journal(self, journal_id: int) -> Journal:
         return Journal(self.get_parse(join_url("journal", int(journal_id))))
 
-    def get_user(self, user: str) -> User:
+    def user(self, user: str) -> User:
         return User(self.get_parse(join_url("user", username_url(user))))
 
     # noinspection DuplicatedCode
