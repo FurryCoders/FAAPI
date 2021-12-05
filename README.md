@@ -22,7 +22,7 @@ Once `FAAPI` is initialized its method can be used to crawl FA and return machin
 
 ```python
 import faapi
-import json
+import orjson
 
 cookies = [
     {"name": "a", "value": "38565475-3421-3f21-7f63-3d341339737"},
@@ -30,19 +30,19 @@ cookies = [
 ]
 
 api = faapi.FAAPI(cookies)
-sub, sub_file = api.get_submission(12345678, get_file=True)
+sub, sub_file = api.submission(12345678, get_file=True)
 
 print(sub.id, sub.title, sub.author, f"{len(sub_file) / 1024:02f}KiB")
 
-with open(f"{sub.id}.json", "w") as f:
-    f.write(json.dumps(dict(sub)))
+with open(f"{sub.id}.json", "wb") as f:
+    f.write(orjson.dumps(dict(sub)))
 
 with open(sub.file_url.split("/")[-1], "wb") as f:
     f.write(sub_file)
 
 gallery, _ = api.gallery("user_name", 1)
-with open("user_name-gallery.json", "w") as f:
-    f.write(json.dumps(list(map(dict, gallery))))
+with open("user_name-gallery.json", "wb") as f:
+    f.write(orjson.dumps(list(map(dict, gallery))))
 ```
 
 ### robots.txt
@@ -116,17 +116,17 @@ omitted, and the API will still be able to access public pages.
 * `get(path: str, **params) -> requests.Response`<br>
   This returns a response object containing the result of the get operation on the given URL with the
   optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
-* `get_parse(path: str, **params) -> Optional[bs4.BeautifulSoup]`<br>
+* `get_parsed(path: str, **params) -> Optional[bs4.BeautifulSoup]`<br>
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
   an `HTTPError` exception is raised. If the response is not ok, then `None` is returned.
-* `get_submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
+* `submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
   a `bytes` object with the submission file if `get_file` is passed as `True`.<br>
   *Note:* the author `UserPartial` object of the submission does not contain the `join_date` field as it does not appear
   on submission pages.
-* `get_submission_file(submission: Submission) -> Optional[bytes]`<br>
+* `submission_file(submission: Submission) -> Optional[bytes]`<br>
   Given a submission object, it downloads its file and returns it as a `bytes` object.
-* `get_user(user: str) -> User`<br>
+* `user(user: str) -> User`<br>
   Given a username, it returns a `User` object containing information regarding the user.
 * `gallery(user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]`<br>
   Returns the list of submissions found on a specific gallery page, and the number of the next page. The returned page
@@ -259,6 +259,8 @@ The main class that parses and holds submission metadata.
 * `file_url: str` the URL to the submission file
 * `thumbnail_url: str` the URL to the submission thumbnail
 * `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
+* `prev: int` the ID of the previous submission (if any)
+* `next: int` the ID of the next submission (if any)
 
 `Submission` objects can be directly cast to a dict object and iterated through.
 
