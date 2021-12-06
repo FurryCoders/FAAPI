@@ -191,8 +191,10 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
     folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
     file_url: str = "https:" + tag_file_url["href"]
     thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
-    prev_sub: Optional[int] = int(tag_prev["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
-    next_sub: Optional[int] = int(tag_next["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next"  else None
+    prev_sub: Optional[int] = int(
+        tag_prev["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
+    next_sub: Optional[int] = int(
+        tag_next["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
 
     return {
         "id": id_,
@@ -231,13 +233,15 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, str]:
     profile: str = "".join(map(str, tag_profile.children)).strip()
     stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
                                        filter(bool, map(str.strip, tag_stats.text.split("\n")))))
-    info: dict[str, str] = {
-        tb.select_one("div").text.strip(): [*filter(bool, [c.strip()
-                                                           for c in tb.children
-                                                           if isinstance(c, NavigableString)])][-1]
-        for tb in tag_info.select("div.table-row")
-        if "profile-empty" not in tb.attrs.get("class", [])
-    } if tag_info is not None else {}
+
+    info: dict[str, str] = {}
+    if tag_info is not None:
+        for tb in tag_info.select("div.table-row"):
+            if "profile-empty" in tb.attrs.get("class", []):
+                continue
+            elif not (val := [*filter(bool, [c.strip() for c in tb.children if isinstance(c, NavigableString)])][-1:]):
+                continue
+            info[tb.select_one("div").text.strip()] = val[0]
     contacts: dict[str, str] = {
         pc.select_one("span").text.strip(): a["href"] if (a := pc.select_one("a")) else
         [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
