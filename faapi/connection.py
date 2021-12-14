@@ -1,4 +1,5 @@
 from http.cookiejar import Cookie
+from http.cookiejar import CookieJar
 from platform import python_version
 from platform import uname
 from time import sleep
@@ -22,7 +23,7 @@ def join_url(*url_comps: Union[str, int]) -> str:
     return "/".join(map(lambda e: str(e).strip(" /"), url_comps))
 
 
-def make_session(cookies: Union[list[dict[str, str]], RequestsCookieJar]) -> CloudflareScraper:
+def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareScraper:
     session: CloudflareScraper = create_scraper()
     session.headers["User-Agent"] = user_agent
 

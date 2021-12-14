@@ -1,11 +1,10 @@
+from http.cookiejar import CookieJar
 from re import search
 from time import perf_counter
 from time import sleep
 from typing import Any
 from typing import Optional
 from typing import Union
-
-from requests.cookies import RequestsCookieJar
 
 from .connection import CloudflareScraper
 from .connection import Response
@@ -35,14 +34,14 @@ from .user import UserPartial
 
 
 class FAAPI:
-    def __init__(self, cookies: Union[list[dict[str, str]], RequestsCookieJar] = None):
+    def __init__(self, cookies: Union[list[dict[str, str]], CookieJar] = None):
         self.session: CloudflareScraper = make_session(cookies or [])
         self.robots: dict[str, list[str]] = get_robots()
         self.crawl_delay: float = float(self.robots.get("Crawl-delay", [1.0])[0])
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
 
-    def load_cookies(self, cookies: Union[list[dict[str, str]], RequestsCookieJar]):
+    def load_cookies(self, cookies: Union[list[dict[str, str]], CookieJar]):
         self.session = make_session(cookies)
 
     def handle_delay(self):
