@@ -26,7 +26,7 @@ def ping():
     get_raw(root, headers={"User-Agent": user_agent}).raise_for_status()
 
 
-def make_session(cookies: Union[list[dict[str, str]], RequestsCookieJar]) -> Optional[CloudflareScraper]:
+def make_session(cookies: Union[list[dict[str, str]], RequestsCookieJar]) -> CloudflareScraper:
     ping()
 
     session: CloudflareScraper = create_scraper()
