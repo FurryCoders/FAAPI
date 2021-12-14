@@ -75,6 +75,10 @@ def parse_mentions(tag: Tag) -> list[str]:
     )))), key=ms.index)
 
 
+def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
+    return avatar.attrs["alt"] if (avatar := page.select_one("img.loggedin_user_avatar")) else None
+
+
 def parse_journal_section(section_tag: Tag) -> dict[str, Union[int, str, datetime]]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.select_one("h2").text.strip()
