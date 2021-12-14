@@ -20,6 +20,7 @@ from .journal import Journal
 from .parse import BeautifulSoup
 from .parse import check_page
 from .parse import check_page_raise
+from .parse import parse_loggedin_user
 from .parse import parse_page
 from .parse import parse_search_submissions
 from .parse import parse_user_favorites
@@ -72,6 +73,9 @@ class FAAPI:
         response: Response = self.get(path, **params)
         response.raise_for_status()
         return parse_page(response.text) if response.ok else None
+
+    def me(self) -> Optional[User]:
+        return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
 
     def submission(self, submission_id: int, get_file: bool = False) -> tuple[Submission, Optional[bytes]]:
         sub: Submission = Submission(self.get_parsed(join_url("view", int(submission_id))))
