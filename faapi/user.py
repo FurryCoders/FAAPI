@@ -29,7 +29,7 @@ class UserBase:
         yield "status", self.status
 
     def __repr__(self):
-        return repr(dict(self))
+        return self.__str__()
 
     def __str__(self):
         return self.status + self.name
