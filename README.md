@@ -21,13 +21,13 @@ class `Journal`, and a user class `User`.
 Once `FAAPI` is initialized its method can be used to crawl FA and return machine-readable objects.
 
 ```python
+from requests.cookies import RequestsCookieJar
 import faapi
 import orjson
 
-cookies = [
-    {"name": "a", "value": "38565475-3421-3f21-7f63-3d341339737"},
-    {"name": "b", "value": "356f5962-5a60-0922-1c11-65003b703038"},
-]
+cookies = RequestsCookieJar()
+cookies.set("a", "38565475-3421-3f21-7f63-3d341339737")
+cookies.set("b", "356f5962-5a60-0922-1c11-65003b703038")
 
 api = faapi.FAAPI(cookies)
 sub, sub_file = api.submission(12345678, get_file=True)
@@ -61,15 +61,24 @@ Fur Affinity.
 
 ### Cookies
 
-To access protected pages, cookies from an active session are needed. These cookies must be given to the FAAPI object as
-a list of dictionaries, each containing a `name` and a `value` field. The cookies list should look like the following
-random example:
+To access protected pages, cookies from an active session are needed. These cookies can be given to the FAAPI object as
+a list of dictionaries - each containing a `name` and a `value` field -, or as a `http.cookiejar.CookieJar`
+object (`requests.cookies.RequestsCookieJar` and other objects inheriting from `CookieJar` are also supported). The
+cookies list should look like the following example:
 
 ```python
 cookies = [
-    {"name": "a", "value": "38565475-3421-3f21-7f63-3d341339737"},
+    {"name": "a", "value": "38565475-3421-3f21-7f63-3d3413397537"},
     {"name": "b", "value": "356f5962-5a60-0922-1c11-65003b703038"},
 ]
+```
+
+```python
+from requests.cookies import RequestsCookieJar
+
+cookies = RequestsCookieJar()
+cookies.set("a", "38565475-3421-3f21-7f63-3d3413397537")
+cookies.set("b", "356f5962-5a60-0922-1c11-65003b703038")
 ```
 
 To access session cookies, consult the manual of the browser used to log in.
@@ -90,7 +99,6 @@ This is the main object that handles all the calls to scrape pages and get submi
 
 It holds 6 different fields:
 
-* `cookies: List[dict] = []` cookies passed at init
 * `session: CloudflareScraper` `cfscrape` session used for get requests
 * `robots: Dict[str, List[str]]` robots.txt values
 * `crawl_delay: float` crawl delay from robots.txt, else 1
@@ -100,7 +108,7 @@ It holds 6 different fields:
 
 #### Init
 
-`__init__(cookies: List[dict] = None)`
+`__init__(cookies: List[dict] | CookieJar = None)`
 
 The class init has a single optional argument `cookies` necessary to read logged-in-only pages. The cookies can be
 omitted, and the API will still be able to access public pages.
@@ -109,16 +117,22 @@ omitted, and the API will still be able to access public pages.
 
 #### Methods & Properties
 
-* `load_cookies(cookies: List[Dict[str, Any]])`<br>
-  Load new cookies in the object and remake the `CloudflareScraper` session.
+* `load_cookies(cookies: List[dict] | CookieJar)`<br>
+  Load new cookies and create a new session.<br>
+  *Note:* This method removes any cookies currently in use, to update/add single cookies access them from the session
+  object.
 * `connection_status -> bool`<br>
   Returns the status of the connection.
+* `login_status -> bool`<br>
+  Returns the login status.
 * `get(path: str, **params) -> requests.Response`<br>
   This returns a response object containing the result of the get operation on the given URL with the
   optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
 * `get_parsed(path: str, **params) -> Optional[bs4.BeautifulSoup]`<br>
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
   an `HTTPError` exception is raised. If the response is not ok, then `None` is returned.
+* `me() -> Optional[User]`<br>
+  Returns the logged-in user as a `User` object if the cookies are from a login session.
 * `submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
   a `bytes` object with the submission file if `get_file` is passed as `True`.<br>
