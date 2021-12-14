@@ -22,13 +22,7 @@ def join_url(*url_comps: Union[str, int]) -> str:
     return "/".join(map(lambda e: str(e).strip(" /"), url_comps))
 
 
-def ping():
-    get_raw(root, headers={"User-Agent": user_agent}).raise_for_status()
-
-
 def make_session(cookies: Union[list[dict[str, str]], RequestsCookieJar]) -> CloudflareScraper:
-    ping()
-
     session: CloudflareScraper = create_scraper()
     session.headers["User-Agent"] = user_agent
 
