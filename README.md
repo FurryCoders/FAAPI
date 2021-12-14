@@ -7,18 +7,18 @@
 [![issues_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=issues&suffix=%20open&query=%24.length&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Fissues%3Fstate%3Dopened)](https://gitlab.com/MatteoCampinoti94/FAAPI/issues)
 [![issues_github](https://img.shields.io/github/issues/matteocampinoti94/faapi?logo=github&color=blue)](https://github.com/MatteoCampinoti94/FAAPI/issues)
 
-Python module to implement API-like functionality for the FurAffinity.net website
+Python library to implement API-like functionality for the FurAffinity.net website
 
 ## Requirements
 
-Python 3.9+ is necessary to run this module.
+Python 3.9+ is necessary to run this library.
 
 ## Usage
 
 The API comprises a main class `FAAPI`, two submission classes `Submission` and `SubmissionPartial`, a journal
 class `Journal`, and a user class `User`.
 
-Once `FAAPI` is initialized its method can be used to crawl FA and return machine-readable objects.
+Once `FAAPI` is initialized, its methods can be used to crawl FA and return parsed objects.
 
 ```python
 from requests.cookies import RequestsCookieJar
@@ -48,7 +48,8 @@ with open("user_name-gallery.json", "wb") as f:
 ### robots.txt
 
 At init, the `FAAPI` object downloads the [robots.txt](https://www.furaffinity.net/robots.txt) file from FA to determine
-the `Crawl-delay` value set therein. If not set, a value of 1 second is used.
+the `Crawl-delay` and `disallow` values set therein. If not set in the robots.txt file, a crawl delay value of 1 second
+is used.
 
 To respect this value, the default behaviour of the `FAAPI` object is to wait when a get request is made if the last
 request was performed more recently then the crawl delay value.
@@ -56,7 +57,7 @@ request was performed more recently then the crawl delay value.
 See under [FAAPI](#faapi) for more details on this behaviour.
 
 Furthermore, any get operation that points to a disallowed path from robots.txt will raise an exception. This check
-should not be circumvented, and the developer of this module does not take responsibility for violations of the TOS of
+should not be circumvented, and the developer of this library does not take responsibility for violations of the TOS of
 Fur Affinity.
 
 ### Cookies
@@ -89,7 +90,7 @@ To access session cookies, consult the manual of the browser used to log in.
 ### User Agent
 
 `FAAPI` attaches a `User-Agent` header to every request. The user agent string is generated at startup in the following
-format: `faapi/{package version} Python/{python version} {system name}/{system release}`.
+format: `faapi/{library version} Python/{python version} {system name}/{system release}`.
 
 ## Objects
 
