@@ -3,6 +3,9 @@ from time import perf_counter
 from time import sleep
 from typing import Any
 from typing import Optional
+from typing import Union
+
+from requests.cookies import RequestsCookieJar
 
 from .connection import CloudflareScraper
 from .connection import Response
@@ -31,17 +34,15 @@ from .user import UserPartial
 
 
 class FAAPI:
-    def __init__(self, cookies: list[dict[str, Any]] = None):
-        self.cookies: list[dict[str, Any]] = cookies or []
-        self.session: CloudflareScraper = make_session(self.cookies)
+    def __init__(self, cookies: Union[list[dict[str, str]], RequestsCookieJar] = None):
+        self.session: CloudflareScraper = make_session(cookies or [])
         self.robots: dict[str, list[str]] = get_robots()
         self.crawl_delay: float = float(self.robots.get("Crawl-delay", [1.0])[0])
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
 
-    def load_cookies(self, cookies: list[dict[str, Any]]):
-        self.cookies = cookies
-        self.session = make_session(self.cookies)
+    def load_cookies(self, cookies: Union[list[dict[str, str]], RequestsCookieJar]):
+        self.session = make_session(cookies)
 
     def handle_delay(self):
         if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:

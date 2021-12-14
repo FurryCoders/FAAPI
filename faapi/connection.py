@@ -1,3 +1,4 @@
+from http.cookiejar import Cookie
 from platform import python_version
 from platform import uname
 from time import sleep
@@ -8,6 +9,7 @@ from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
 from requests import Response
 from requests import get as get_raw
+from requests.cookies import RequestsCookieJar
 from urllib3.exceptions import IncompleteRead
 
 from .__version__ import __version__
@@ -24,20 +26,17 @@ def ping():
     get_raw(root, headers={"User-Agent": user_agent}).raise_for_status()
 
 
-def make_session(cookies: list[dict]) -> Optional[CloudflareScraper]:
+def make_session(cookies: Union[list[dict[str, str]], RequestsCookieJar]) -> Optional[CloudflareScraper]:
     ping()
-
-    cookies: list[dict[str, str]] = [
-        {"name": cookie["name"], "value": cookie["value"]}
-        for cookie in cookies
-        if "name" in cookie and "value" in cookie
-    ]
 
     session: CloudflareScraper = create_scraper()
     session.headers["User-Agent"] = user_agent
 
     for cookie in cookies:
-        session.cookies.set(cookie["name"], cookie["value"])
+        if isinstance(cookie, Cookie):
+            session.cookies.set(cookie.name, cookie.value, )
+        else:
+            session.cookies.set(cookie["name"], cookie["value"])
 
     return session
 
