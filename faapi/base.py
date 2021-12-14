@@ -64,6 +64,10 @@ class FAAPI:
         except ConnectionError:
             return False
 
+    @property
+    def login_status(self) -> bool:
+        return parse_loggedin_user(self.get_parsed("login")) is not None
+
     def get(self, path: str, **params) -> Response:
         self.check_path(path)
         self.handle_delay()
