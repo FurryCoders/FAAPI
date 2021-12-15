@@ -58,9 +58,9 @@ def check_page_raise(page: BeautifulSoup):
     elif check == 3:
         raise DisabledAccount
     elif check == 4:
-        raise ServerError
+        raise ServerError(*filter(bool, d.text.split("\n"))) if (d := page.select_one("div.section-body")) else ServerError
     elif check == 5:
-        raise NoticeMessage
+        raise NoticeMessage(*filter(bool, page.select_one("section.notice-message div.section-body").text.split("\n")))
 
 
 def username_url(username: str) -> str:
