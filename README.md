@@ -1,4 +1,10 @@
+<div align="center">
+
+<img alt="logo" width="400" src="https://gitlab.com/uploads/-/system/project/avatar/7434083/logo.png">
+
 # Fur Affinity API
+
+Python library to implement API-like functionality for the FurAffinity.net website.
 
 [![version_pypi](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
 [![version_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=gitlab&query=%24%5B%3A1%5D.name&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Frepository%2Ftags)](https://gitlab.com/MatteoCampinoti94/FAAPI)
@@ -7,7 +13,7 @@
 [![issues_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=issues&suffix=%20open&query=%24.length&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Fissues%3Fstate%3Dopened)](https://gitlab.com/MatteoCampinoti94/FAAPI/issues)
 [![issues_github](https://img.shields.io/github/issues/matteocampinoti94/faapi?logo=github&color=blue)](https://github.com/MatteoCampinoti94/FAAPI/issues)
 
-Python library to implement API-like functionality for the FurAffinity.net website
+</div>
 
 ## Requirements
 
@@ -139,7 +145,7 @@ omitted, and the API will still be able to access public pages.
   a `bytes` object with the submission file if `get_file` is passed as `True`.<br>
   *Note:* the author `UserPartial` object of the submission does not contain the `join_date` field as it does not appear
   on submission pages.
-* `submission_file(submission: Submission) -> Optional[bytes]`<br>
+* `submission_file(submission: Submission) -> bytes`<br>
   Given a submission object, it downloads its file and returns it as a `bytes` object.
 * `journal(journal_id: int) -> Journal`<br>
   Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
