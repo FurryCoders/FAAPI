@@ -4,7 +4,7 @@
 
 # Fur Affinity API
 
-Python library to implement API-like functionality for the FurAffinity.net website.
+Python library to implement API-like functionality for the [Fur Affinity](https://furaffinity.net) website.
 
 [![version_pypi](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
 [![version_gitlab](https://img.shields.io/gitlab/v/tag/MatteoCampinoti94/faapi?label=version&sort=date&logo=gitlab&color=FCA121)](https://gitlab.com/MatteoCampinoti94/faapi)
