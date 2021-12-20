@@ -54,10 +54,7 @@ def get(session: CloudflareScraper, path: str, **params) -> Response:
 
 
 def get_binary_raw(session: CloudflareScraper, url: str, speed: Union[int, float] = 100) -> Optional[bytes]:
-    assert isinstance(speed, int) or isinstance(speed, float)
-
     file_stream: Response = session.get(url, stream=True)
-
     file_stream.raise_for_status()
 
     file_binary: bytes = bytes()
