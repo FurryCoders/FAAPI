@@ -10,7 +10,6 @@ from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
 from requests import Response
 from requests import get as get_raw
-from requests.cookies import RequestsCookieJar
 from urllib3.exceptions import IncompleteRead
 
 from .__version__ import __version__
