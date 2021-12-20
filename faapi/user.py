@@ -71,10 +71,10 @@ class UserPartial(UserBase):
 
         parsed: dict = parse_user_tag(self.user_tag)
 
-        self.name: str = parsed["name"]
-        self.status: str = parsed["status"]
-        self.title: str = parsed["title"]
-        self.join_date: datetime = parsed["join_date"]
+        self.name = parsed["name"]
+        self.status = parsed["status"]
+        self.title = parsed["title"]
+        self.join_date = parsed["join_date"]
 
 
 class User(UserBase):
@@ -115,12 +115,12 @@ class User(UserBase):
 
         parsed: dict = parse_user_page(self.user_page)
 
-        self.name: str = parsed["name"]
-        self.status: str = parsed["status"]
-        self.profile: str = parsed["profile"]
-        self.title: str = parsed["title"]
-        self.join_date: datetime = parsed["join_date"]
-        self.stats: UserStats = UserStats(*parsed["stats"])
-        self.info: dict[str, str] = parsed["info"]
-        self.contacts: dict[str, str] = parsed["contacts"]
-        self.user_icon_url: str = parsed["user_icon_url"]
+        self.name = parsed["name"]
+        self.status = parsed["status"]
+        self.profile = parsed["profile"]
+        self.title = parsed["title"]
+        self.join_date = parsed["join_date"]
+        self.stats = UserStats(*parsed["stats"])
+        self.info = parsed["info"]
+        self.contacts = parsed["contacts"]
+        self.user_icon_url = parsed["user_icon_url"]

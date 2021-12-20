@@ -62,12 +62,12 @@ class SubmissionPartial(SubmissionBase):
 
         parsed: dict = parse_submission_figure(self.submission_figure)
 
-        self.id: int = parsed["id"]
-        self.title: str = parsed["title"]
+        self.id = parsed["id"]
+        self.title = parsed["title"]
         self.author.name = parsed["author"]
-        self.rating: str = parsed["rating"]
-        self.type: str = parsed["type"]
-        self.thumbnail_url: str = parsed["thumbnail_url"]
+        self.rating = parsed["rating"]
+        self.type = parsed["type"]
+        self.thumbnail_url = parsed["thumbnail_url"]
 
 
 class Submission(SubmissionBase):
@@ -123,22 +123,22 @@ class Submission(SubmissionBase):
 
         parsed: dict = parse_submission_page(self.submission_page)
 
-        self.id: int = parsed["id"]
-        self.title: str = parsed["title"]
+        self.id = parsed["id"]
+        self.title = parsed["title"]
         self.author.name = parsed["author"]
         self.author.title = parsed["author_title"]
         self.author.user_icon_url = parsed["author_icon_url"]
-        self.date: datetime = parsed["date"]
-        self.tags: list[str] = parsed["tags"]
-        self.category: str = parsed["category"]
-        self.species: str = parsed["species"]
-        self.gender: str = parsed["gender"]
-        self.rating: str = parsed["rating"]
-        self.type: str = parsed["type"]
-        self.description: str = parsed["description"]
-        self.mentions: list[str] = parsed["mentions"]
-        self.folder: str = parsed["folder"]
-        self.file_url: str = parsed["file_url"]
-        self.thumbnail_url: str = parsed["thumbnail_url"]
-        self.prev: int = parsed["prev"]
-        self.next: int = parsed["next"]
+        self.date = parsed["date"]
+        self.tags = parsed["tags"]
+        self.category = parsed["category"]
+        self.species = parsed["species"]
+        self.gender = parsed["gender"]
+        self.rating = parsed["rating"]
+        self.type = parsed["type"]
+        self.description = parsed["description"]
+        self.mentions = parsed["mentions"]
+        self.folder = parsed["folder"]
+        self.file_url = parsed["file_url"]
+        self.thumbnail_url = parsed["thumbnail_url"]
+        self.prev = parsed["prev"]
+        self.next = parsed["next"]
