@@ -9,7 +9,7 @@ from typing import Union
 from .connection import CloudflareScraper
 from .connection import Response
 from .connection import get
-from .connection import get_binary_raw
+from .connection import stream_binary
 from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
@@ -87,7 +87,7 @@ class FAAPI:
 
     def submission_file(self, submission: Submission) -> Optional[bytes]:
         self.handle_delay()
-        return get_binary_raw(self.session, submission.file_url)
+        return stream_binary(self.session, submission.file_url)
 
     def journal(self, journal_id: int) -> Journal:
         return Journal(self.get_parsed(join_url("journal", int(journal_id))))
