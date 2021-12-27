@@ -80,14 +80,15 @@ class FAAPI:
     def me(self) -> Optional[User]:
         return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
 
-    def submission(self, submission_id: int, get_file: bool = False) -> tuple[Submission, Optional[bytes]]:
+    def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: int = None
+                   ) -> tuple[Submission, Optional[bytes]]:
         sub: Submission = Submission(self.get_parsed(join_url("view", int(submission_id))))
-        sub_file: Optional[bytes] = self.submission_file(sub) if get_file and sub.id else None
+        sub_file: Optional[bytes] = self.submission_file(sub, chunk_size=chunk_size) if get_file and sub.id else None
         return sub, sub_file
 
-    def submission_file(self, submission: Submission) -> Optional[bytes]:
+    def submission_file(self, submission: Submission, *, chunk_size: int = None) -> bytes:
         self.handle_delay()
-        return stream_binary(self.session, submission.file_url)
+        return stream_binary(self.session, submission.file_url, chunk_size=chunk_size)
 
     def journal(self, journal_id: int) -> Journal:
         return Journal(self.get_parsed(join_url("journal", int(journal_id))))
