@@ -140,13 +140,15 @@ omitted, and the API will still be able to access public pages.
   an `HTTPError` exception is raised. If the response is not ok, then `None` is returned.
 * `me() -> Optional[User]`<br>
   Returns the logged-in user as a `User` object if the cookies are from a login session.
-* `submission(submission_id: int, get_file: bool = False) -> Tuple[Submission, Optional[bytes]]`<br>
+* `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> Tuple[Submission, Optional[bytes]]`<br>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
-  a `bytes` object with the submission file if `get_file` is passed as `True`.<br>
+  a `bytes` object with the submission file if `get_file` is passed as `True`. The optional `chunk_size` argument is
+  used for the request; if left to `None` or set to 0 the download is performed directly without streaming.<br>
   *Note:* the author `UserPartial` object of the submission does not contain the `join_date` field as it does not appear
   on submission pages.
-* `submission_file(submission: Submission) -> bytes`<br>
-  Given a submission object, it downloads its file and returns it as a `bytes` object.
+* `submission_file(submission: Submission, *, chunk_size: int = None) -> bytes`<br>
+  Given a submission object, it downloads its file and returns it as a `bytes` object. The optional `chunk_size` argument is
+  used for the request; if left to `None` or set to 0 the download is performed directly without streaming.
 * `journal(journal_id: int) -> Journal`<br>
   Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
 * `user(user: str) -> User`<br>
