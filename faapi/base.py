@@ -13,7 +13,6 @@ from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
 from .connection import stream_binary
-from .exceptions import CrawlDelayError
 from .exceptions import DisallowedPath
 from .exceptions import Unauthorized
 from .journal import Journal
@@ -39,7 +38,6 @@ class FAAPI:
         self.session: CloudflareScraper = make_session(cookies or [])
         self.robots: RobotFileParser = get_robots(self.session)
         self.last_get: float = time() - self.crawl_delay
-        self.raise_for_delay: bool = False
         self.raise_for_unauthorized: bool = True
 
     @property
@@ -54,10 +52,7 @@ class FAAPI:
         self.session = make_session(cookies)
 
     def handle_delay(self):
-        if (delay_diff := time() - self.last_get) < self.crawl_delay:
-            if self.raise_for_delay:
-                raise CrawlDelayError(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
-            sleep(self.crawl_delay - delay_diff)
+        sleep(self.crawl_delay - d) if (d := time() - self.last_get) < self.crawl_delay else None
         self.last_get = time()
 
     def check_path(self, path: str, *, raise_for_disallowed: bool = False) -> bool:
