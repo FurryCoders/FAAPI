@@ -135,9 +135,9 @@ omitted, and the API will still be able to access public pages.
 * `get(path: str, **params) -> requests.Response`<br>
   This returns a response object containing the result of the get operation on the given URL with the
   optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
-* `get_parsed(path: str, **params) -> Optional[bs4.BeautifulSoup]`<br>
+* `get_parsed(path: str, **params) -> bs4.BeautifulSoup`<br>
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
-  an `HTTPError` exception is raised. If the response is not ok, then `None` is returned.
+  an `HTTPError` exception is raised.
 * `me() -> Optional[User]`<br>
   Returns the logged-in user as a `User` object if the cookies are from a login session.
 * `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> Tuple[Submission, Optional[bytes]]`<br>
