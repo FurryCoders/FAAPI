@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import Optional
 from typing import Union
 
-from bs4 import BeautifulSoup
-from bs4.element import Tag
+from bs4 import BeautifulSoup  # type: ignore
+from bs4.element import Tag  # type: ignore
 
 from .connection import join_url
 from .connection import root
@@ -67,11 +67,12 @@ class Journal:
         if self.journal_item is None:
             return
 
+        parsed: dict
         if isinstance(self.journal_item, BeautifulSoup):
             check_page_raise(self.journal_item)
-            parsed: dict = parse_journal_page(self.journal_item)
+            parsed = parse_journal_page(self.journal_item)
         else:
-            parsed: dict = parse_journal_section(self.journal_item)
+            parsed = parse_journal_section(self.journal_item)
 
         self.id = parsed["id"]
         self.title = parsed["title"]

@@ -7,11 +7,11 @@ from typing import Optional
 from typing import Union
 from urllib.robotparser import RobotFileParser
 
-from cfscrape import CloudflareScraper
-from cfscrape import create_scraper
+from cfscrape import CloudflareScraper  # type: ignore
+from cfscrape import create_scraper  # type: ignore
 from requests import Response
 from requests import Session
-from urllib3.exceptions import IncompleteRead
+from urllib3.exceptions import IncompleteRead  # type: ignore
 
 from .__version__ import __version__
 

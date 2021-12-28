@@ -270,10 +270,10 @@ class FAAPI:
         us, np = parse_watchlist(
             self.get_parsed(join_url("watchlist", "to", username_url(user), page), skip_auth_check=True))
         for s, u in us:
-            user: UserPartial = UserPartial()
-            user.name = u
-            user.status = s
-            users.append(user)
+            _user: UserPartial = UserPartial()
+            _user.name = u
+            _user.status = s
+            users.append(_user)
         return users, (page + 1) if np else 0
 
     def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
@@ -287,10 +287,10 @@ class FAAPI:
         us, np = parse_watchlist(
             self.get_parsed(join_url("watchlist", "by", username_url(user), page), skip_auth_check=True))
         for s, u in us:
-            user: UserPartial = UserPartial()
-            user.name = u
-            user.status = s
-            users.append(user)
+            _user: UserPartial = UserPartial()
+            _user.name = u
+            _user.status = s
+            users.append(_user)
         return users, (page + 1) if np else 0
 
     def user_exists(self, user: str) -> int:

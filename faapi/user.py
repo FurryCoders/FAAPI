@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 from typing import Type
 
-from bs4.element import Tag
+from bs4.element import Tag  # type: ignore
 
 from .connection import join_url
 from .connection import root

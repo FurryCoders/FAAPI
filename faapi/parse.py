@@ -4,12 +4,12 @@ from re import compile as re_compile
 from re import match
 from re import search
 from re import sub
+from typing import Any
 from typing import Optional
-from typing import Union
 
-from bs4 import BeautifulSoup
-from bs4.element import NavigableString
-from bs4.element import Tag
+from bs4 import BeautifulSoup  # type: ignore
+from bs4.element import NavigableString  # type: ignore
+from bs4.element import Tag  # type: ignore
 from dateutil.parser import parse as parse_date
 
 from .exceptions import DisabledAccount
@@ -58,7 +58,7 @@ def check_page_raise(page: BeautifulSoup) -> None:
     elif check == 3:
         raise DisabledAccount
     elif check == 4:
-        raise ServerError(*filter(bool, d.text.split("\n"))) if (d := page.select_one("div.section-body")) else ServerError
+        raise ServerError(*filter(bool, d.text.split("\n")) if (d := page.select_one("div.section-body")) else ())
     elif check == 5:
         raise NoticeMessage(*filter(bool, page.select_one("section.notice-message div.section-body").text.split("\n")))
 
@@ -79,7 +79,7 @@ def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
     return avatar.attrs["alt"] if (avatar := page.select_one("img.loggedin_user_avatar")) else None
 
 
-def parse_journal_section(section_tag: Tag) -> dict[str, Union[int, str, datetime]]:
+def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     id_: int = int(section_tag.attrs["id"][4:])
     title: str = section_tag.select_one("h2").text.strip()
     date: datetime = parse_date(section_tag.select_one("span.popup_date")["title"].strip())
@@ -95,7 +95,7 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Union[int, str, datetim
     }
 
 
-def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Union[int, str, datetime]]:
+def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journal_page)
     tag_id: Tag = journal_page.select_one("meta[property='og:url']")
     tag_title: Tag = journal_page.select_one("h2.journal-title")
@@ -118,7 +118,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Union[int, str,
     }
 
 
-def parse_submission_figure(figure_tag: Tag) -> dict[str, Union[int, str]]:
+def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
     id_: int = int(figure_tag.attrs["id"][4:])
     title: str = figure_tag.select_one("figcaption a[href^='/view/']").attrs["title"]
     author: str = figure_tag.select_one("figcaption a[href^='/user/']").attrs["title"]
@@ -136,7 +136,7 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Union[int, str]]:
     }
 
 
-def parse_submission_author(author_tag: Tag) -> dict[str, str]:
+def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
     tag_author: Tag = author_tag.select_one("div.submission-id-sub-container")
     tag_author_name: Tag = tag_author.select_one("a > strong")
     tag_author_icon: Tag = author_tag.select_one("img.submission-user-icon")
@@ -156,7 +156,7 @@ def parse_submission_author(author_tag: Tag) -> dict[str, str]:
     }
 
 
-def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, list[str], datetime]]:
+def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_id: Tag = sub_page.select_one("meta[property='og:url']")
     tag_sub_info: Tag = sub_page.select_one("div.submission-id-sub-container")
     tag_title: Tag = tag_sub_info.select_one("div.submission-title")
@@ -184,7 +184,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
         if match(r"^[A-Za-z]+ \d+,.*$", tag_date["title"])
         else tag_date.text.strip()
     )
-    tags: [str] = [t.text.strip() for t in tag_tags]
+    tags: list[str] = [t.text.strip() for t in tag_tags]
     category: str = tag_category1.text.strip() + "/" + tag_category2.text.strip()
     species: str = tag_species.text.strip()
     gender: str = tag_gender.text.strip()
@@ -192,7 +192,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
     type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: list[str] = parse_mentions(tag_description)
-    folder: str = match(r"^/(scraps|gallery)/.*$", tag_folder["href"]).group(1).lower()
+    folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", tag_folder["href"])) else ""
     file_url: str = "https:" + tag_file_url["href"]
     thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
     prev_sub: Optional[int] = int(
@@ -221,7 +221,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Union[int, str, 
     }
 
 
-def parse_user_page(user_page: BeautifulSoup) -> dict[str, str]:
+def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_name: Tag = user_page.select_one("div.username")
     tag_profile: Tag = user_page.select_one("div.userpage-profile")
     tag_title_join_date: Tag = user_page.select_one("div.userpage-flex-item.username > span")
@@ -266,7 +266,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, str]:
     }
 
 
-def parse_user_tag(user_tag: Tag) -> dict[str, str]:
+def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
     status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
     name: str = u[0][1:]
     title: str = ttd[0].strip() if len(ttd := u[1].rsplit("|", 1)) > 1 else ""
@@ -280,14 +280,14 @@ def parse_user_tag(user_tag: Tag) -> dict[str, str]:
     }
 
 
-def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, str]:
+def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
     return {
         **parse_user_tag(folder_page.select_one("div.userpage-flex-item.username")),
         "user_icon_url": "https:" + folder_page.select_one("img.user-nav-avatar")["src"],
     }
 
 
-def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Union[str, list[Tag], bool]]:
+def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(submissions_page)
     figures: list[Tag] = submissions_page.select("figure[id^='sid-']")
 
@@ -298,7 +298,7 @@ def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Union[s
     }
 
 
-def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Union[str, list[Tag], bool]]:
+def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Any]:
     parsed_submissions = parse_user_submissions(favorites_page)
     tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
     next_page: str = tag_next_page["href"].split("/", 3)[-1] if tag_next_page else ""
@@ -309,7 +309,7 @@ def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Union[str, 
     }
 
 
-def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Union[str, list[Tag], bool]]:
+def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journals_page)
     sections: list[Tag] = journals_page.select("section[id^='jid:']")
 
@@ -320,11 +320,12 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Union[str, li
     }
 
 
-def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Union[list[Tag], bool]]:
+def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
     tag_stats: Tag = search_page.select_one("div[id='query-stats']")
     for div in tag_stats.select("div"):
         div.decompose()
-    a, b, tot = map(int, search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()).groups())
+    a, b, tot = map(int,
+                    s.groups() if (s := search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip())) else (0, 0, 0))
     figures: list[Tag] = search_page.select("figure[id^='sid-']")
 
     return {
