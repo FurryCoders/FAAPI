@@ -50,7 +50,7 @@ def check_page(page: BeautifulSoup) -> int:
     return 0
 
 
-def check_page_raise(page: BeautifulSoup):
+def check_page_raise(page: BeautifulSoup) -> None:
     if (check := check_page(page)) == 1:
         raise NonePage
     elif check == 2:
