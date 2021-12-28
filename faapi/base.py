@@ -9,10 +9,10 @@ from typing import Union
 from .connection import CloudflareScraper
 from .connection import Response
 from .connection import get
-from .connection import stream_binary
 from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
+from .connection import stream_binary
 from .exceptions import CrawlDelayError
 from .exceptions import DisallowedPath
 from .journal import Journal
@@ -76,7 +76,9 @@ class FAAPI:
     def get_parsed(self, path: str, **params) -> BeautifulSoup:
         response: Response = self.get(path, **params)
         response.raise_for_status()
-        return parse_page(response.text)
+        page: BeautifulSoup = parse_page(response.text)
+        check_page_raise(page)
+        return page
 
     def me(self) -> Optional[User]:
         return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
@@ -99,7 +101,7 @@ class FAAPI:
 
     # noinspection DuplicatedCode
     def gallery(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
-        check_page_raise(page_parsed := self.get_parsed(join_url("gallery", username_url(user), int(page))))
+        page_parsed: BeautifulSoup = self.get_parsed(join_url("gallery", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
@@ -110,7 +112,7 @@ class FAAPI:
 
     # noinspection DuplicatedCode
     def scraps(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
-        check_page_raise(page_parsed := self.get_parsed(join_url("scraps", username_url(user), int(page))))
+        page_parsed: BeautifulSoup = self.get_parsed(join_url("scraps", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
@@ -120,13 +122,13 @@ class FAAPI:
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], str]:
-        check_page_raise(page_parsed := self.get_parsed(join_url("favorites", username_url(user), page.strip())))
+        page_parsed: BeautifulSoup = self.get_parsed(join_url("favorites", username_url(user), page.strip()))
         info_parsed: dict[str, Any] = parse_user_favorites(page_parsed)
         submissions: list[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
         return submissions, info_parsed["next_page"]
 
     def journals(self, user: str, page: int = 1) -> tuple[list[Journal], int]:
-        check_page_raise(page_parsed := self.get_parsed(join_url("journals", username_url(user), int(page))))
+        page_parsed: BeautifulSoup = self.get_parsed(join_url("journals", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
             j.author.name, j.author.status, j.author.title, j.author.join_date, j.author.user_icon_url = [
@@ -137,7 +139,7 @@ class FAAPI:
         return journals, (page + 1) * (not info_parsed["last_page"])
 
     def search(self, q: str, page: int = 1, **params) -> tuple[list[SubmissionPartial], int, int, int, int]:
-        check_page_raise(page_parsed := self.get_parsed("search", q=q, page=(page := int(page)), **params))
+        page_parsed: BeautifulSoup = self.get_parsed("search", q=q, page=(page := int(page)), **params)
         info_parsed: dict[str, Any] = parse_search_submissions(page_parsed)
         return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
                 info_parsed["from"], info_parsed["to"], info_parsed["total"])
