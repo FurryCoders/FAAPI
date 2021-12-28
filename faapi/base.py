@@ -74,11 +74,13 @@ class FAAPI:
         self.handle_delay()
         return get(self.session, path, **params)
 
-    def get_parsed(self, path: str, *, skip_auth_check: bool = False, **params) -> BeautifulSoup:
+    def get_parsed(self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params
+                   ) -> BeautifulSoup:
         response: Response = self.get(path, **params)
         response.raise_for_status()
         page: BeautifulSoup = parse_page(response.text)
-        check_page_raise(page)
+        if not skip_page_check:
+            check_page_raise(page)
         if not skip_auth_check and self.raise_for_unauthorized and not parse_loggedin_user(page):
             raise Unauthorized("Not logged in")
         return page
