@@ -60,7 +60,7 @@ class FAAPI:
             sleep(self.crawl_delay - delay_diff)
         self.last_get = perf_counter()
 
-    def check_path(self, path: str, *, raise_for_disallowed: bool = True) -> bool:
+    def check_path(self, path: str, *, raise_for_disallowed: bool = False) -> bool:
         if not (allowed := self.robots.can_fetch(self.user_agent, path)) and raise_for_disallowed:
             raise DisallowedPath(f"Path {path} is not allowed by robots.txt")
         return allowed
@@ -77,7 +77,7 @@ class FAAPI:
         return parse_loggedin_user(self.get_parsed("login", skip_auth_check=True)) is not None
 
     def get(self, path: str, **params) -> Response:
-        self.check_path(path)
+        self.check_path(path, raise_for_disallowed=True)
         self.handle_delay()
         return get(self.session, path, **params)
 
