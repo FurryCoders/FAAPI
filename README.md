@@ -112,6 +112,8 @@ It holds 6 different fields:
 * `last_get: float` time of last get (not UNIX time, uses `time.perf_counter` for more precision)
 * `raise_for_delay: bool = False` if set to `True`, raises an exception if a get call is made before enough time has
   passed
+* `raise_for_unauthorized: bool = True` if set to `True`, raises an exception if a request is made and the resulting
+  page is not from a login session
 
 #### Init
 
@@ -135,9 +137,10 @@ omitted, and the API will still be able to access public pages.
 * `get(path: str, **params) -> requests.Response`<br>
   This returns a response object containing the result of the get operation on the given URL with the
   optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
-* `get_parsed(path: str, **params) -> bs4.BeautifulSoup`<br>
+* `get_parsed(path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params) -> bs4.BeautifulSoup`<br>
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
-  an `HTTPError` exception is raised.
+  an `HTTPError` exception is raised. If `skip_page_check` is set to `True`, the parsed page is not checked for errors (
+  e.g. non-existing submission). If `skip_auth_check` is set to `True`, the page is not checked for login status.
 * `me() -> Optional[User]`<br>
   Returns the logged-in user as a `User` object if the cookies are from a login session.
 * `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> Tuple[Submission, Optional[bytes]]`<br>
