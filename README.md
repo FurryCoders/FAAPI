@@ -107,11 +107,10 @@ This is the main object that handles all the calls to scrape pages and get submi
 It holds 6 different fields:
 
 * `session: CloudflareScraper` `cfscrape` session used for get requests
-* `robots: Dict[str, List[str]]` robots.txt values
-* `crawl_delay: float` crawl delay from robots.txt, else 1
-* `last_get: float` time of last get (not UNIX time, uses `time.perf_counter` for more precision)
-* `raise_for_delay: bool = False` if set to `True`, raises an exception if a get call is made before enough time has
-  passed
+* `robots: urllib.robotparser.RobotFileParser` robots.txt handler
+* `user_agent: str` user agent used by the session (property, cannot be set)
+* `crawl_delay: float` crawl delay from robots.txt (property, cannot be set)
+* `last_get: float` time of last get (UNIX time)
 * `raise_for_unauthorized: bool = True` if set to `True`, raises an exception if a request is made and the resulting
   page is not from a login session
 
@@ -130,6 +129,11 @@ omitted, and the API will still be able to access public pages.
   Load new cookies and create a new session.<br>
   *Note:* This method removes any cookies currently in use, to update/add single cookies access them from the session
   object.
+* `handle_delay()`<br>
+  Handles the crawl delay as set in the robots.txt
+* `check_path(path: str, *, raise_for_disallowed: bool = False) -> bool`<br>
+  Checks whether a given path is allowed by the robots.txt. If `raise_for_disallowed` is set to `True`
+  a `DisallowedPath` exception is raised on non-allowed paths.
 * `connection_status -> bool`<br>
   Returns the status of the connection.
 * `login_status -> bool`<br>
