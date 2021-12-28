@@ -147,8 +147,8 @@ omitted, and the API will still be able to access public pages.
   *Note:* the author `UserPartial` object of the submission does not contain the `join_date` field as it does not appear
   on submission pages.
 * `submission_file(submission: Submission, *, chunk_size: int = None) -> bytes`<br>
-  Given a submission object, it downloads its file and returns it as a `bytes` object. The optional `chunk_size` argument is
-  used for the request; if left to `None` or set to 0 the download is performed directly without streaming.
+  Given a submission object, it downloads its file and returns it as a `bytes` object. The optional `chunk_size`
+  argument is used for the request; if left to `None` or set to 0 the download is performed directly without streaming.
 * `journal(journal_id: int) -> Journal`<br>
   Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
 * `user(user: str) -> User`<br>
