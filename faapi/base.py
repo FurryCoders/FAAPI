@@ -67,7 +67,7 @@ class FAAPI:
 
     @property
     def login_status(self) -> bool:
-        return parse_loggedin_user(self.get_parsed("login")) is not None
+        return parse_loggedin_user(self.get_parsed("login", skip_auth_check=True)) is not None
 
     def get(self, path: str, **params) -> Response:
         self.check_path(path)
