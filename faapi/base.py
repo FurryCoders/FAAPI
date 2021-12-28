@@ -40,6 +40,7 @@ class FAAPI:
         self.crawl_delay: float = float(self.robots.get("Crawl-delay", [1.0])[0])
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
+        self.raise_for_unauthorized: bool = True
 
     def load_cookies(self, cookies: Union[list[dict[str, str]], CookieJar]):
         self.session = make_session(cookies)
@@ -72,10 +73,10 @@ class FAAPI:
         self.handle_delay()
         return get(self.session, path, **params)
 
-    def get_parsed(self, path: str, **params) -> Optional[BeautifulSoup]:
+    def get_parsed(self, path: str, **params) -> BeautifulSoup:
         response: Response = self.get(path, **params)
         response.raise_for_status()
-        return parse_page(response.text) if response.ok else None
+        return parse_page(response.text)
 
     def me(self) -> Optional[User]:
         return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
