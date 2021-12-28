@@ -8,6 +8,7 @@ Python library to implement API-like functionality for the [Fur Affinity](https:
 
 [![version_pypi](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
 [![version_gitlab](https://img.shields.io/gitlab/v/tag/MatteoCampinoti94/faapi?label=version&sort=date&logo=gitlab&color=FCA121)](https://gitlab.com/MatteoCampinoti94/faapi)
+[![pipeline status](https://gitlab.com/MatteoCampinoti94/FAAPI/badges/master/pipeline.svg)](https://gitlab.com/MatteoCampinoti94/FAAPI/-/commits/master)
 [![version_python](https://img.shields.io/pypi/pyversions/faapi?logo=Python)](https://www.python.org)
 
 [![issues_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=issues&suffix=%20open&query=%24.length&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Fissues%3Fstate%3Dopened)](https://gitlab.com/MatteoCampinoti94/FAAPI/issues)
