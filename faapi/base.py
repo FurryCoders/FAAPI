@@ -109,7 +109,9 @@ class FAAPI:
 
     def get(self, path: str, **params) -> Response:
         """
-        Fetch a path with a GET request. The path is checked against the robots.txt before the request is made, and the crawl-delay setting is enforced wth a wait time.
+        Fetch a path with a GET request.
+        The path is checked against the robots.txt before the request is made.
+        The crawl-delay setting is enforced wth a wait time.
         :param path: The path to fetch
         :param params: Query parameters for the request
         :return: A Response object from the request.

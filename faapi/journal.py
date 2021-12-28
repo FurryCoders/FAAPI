@@ -20,7 +20,7 @@ class Journal:
 
     def __init__(self, journal_item: Union[Tag, BeautifulSoup] = None):
         """
-        :param journal_item: The element from which to parse the journal, can be a Tag from a journals page or a single journal page.
+        :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
         """
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
 
@@ -60,7 +60,7 @@ class Journal:
     def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
         """
         Parse a journal Tag or page, overrides any information already present in the object.
-        :param journal_item: The element from which to parse the journal, can be a Tag from a journals page or a single journal page.
+        :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
         """
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
         self.journal_item = journal_item or self.journal_item
