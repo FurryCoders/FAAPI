@@ -48,10 +48,10 @@ def get(session: CloudflareScraper, path: str, **params) -> Response:
 
 
 def stream_binary(session: CloudflareScraper, url: str, *, chunk_size: Optional[int] = None) -> bytes:
-    stream: Response = session.get(url, stream=chunk_size is not None)
+    stream: Response = session.get(url, stream=True)
     stream.raise_for_status()
 
-    file_binary: bytes = bytes().join(stream.iter_content(chunk_size=chunk_size)) if chunk_size else stream.content
+    file_binary: bytes = bytes().join(stream.iter_content(chunk_size))
 
     if (length := int(stream.headers.get("Content-Length", 0))) > 0 and length != len(file_binary):
         raise IncompleteRead(l := len(file_binary), length - l)
