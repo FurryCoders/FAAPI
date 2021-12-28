@@ -74,7 +74,8 @@ class FAAPI:
         """
         Handles the crawl delay as set in the robots.txt
         """
-        sleep(self.crawl_delay - d) if (d := time() - self.last_get) < self.crawl_delay else None
+        if (d := time() - self.last_get) < self.crawl_delay:
+            sleep(self.crawl_delay - d)
         self.last_get = time()
 
     def check_path(self, path: str, *, raise_for_disallowed: bool = False) -> bool:
