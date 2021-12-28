@@ -15,6 +15,7 @@ from .connection import make_session
 from .connection import stream_binary
 from .exceptions import CrawlDelayError
 from .exceptions import DisallowedPath
+from .exceptions import Unauthorized
 from .journal import Journal
 from .parse import BeautifulSoup
 from .parse import check_page
@@ -73,11 +74,13 @@ class FAAPI:
         self.handle_delay()
         return get(self.session, path, **params)
 
-    def get_parsed(self, path: str, **params) -> BeautifulSoup:
+    def get_parsed(self, path: str, *, skip_auth_check: bool = False, **params) -> BeautifulSoup:
         response: Response = self.get(path, **params)
         response.raise_for_status()
         page: BeautifulSoup = parse_page(response.text)
         check_page_raise(page)
+        if not skip_auth_check and self.raise_for_unauthorized and not parse_loggedin_user(page):
+            raise Unauthorized("Not logged in")
         return page
 
     def me(self) -> Optional[User]:
@@ -146,7 +149,8 @@ class FAAPI:
 
     def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
         users: list[UserPartial] = []
-        us, np = parse_watchlist(self.get_parsed(join_url("watchlist", "to", username_url(user), page)))
+        us, np = parse_watchlist(
+            self.get_parsed(join_url("watchlist", "to", username_url(user), page), skip_auth_check=True))
         for s, u in us:
             user: UserPartial = UserPartial()
             user.name = u
@@ -156,7 +160,8 @@ class FAAPI:
 
     def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
         users: list[UserPartial] = []
-        us, np = parse_watchlist(self.get_parsed(join_url("watchlist", "by", username_url(user), page)))
+        us, np = parse_watchlist(
+            self.get_parsed(join_url("watchlist", "by", username_url(user), page), skip_auth_check=True))
         for s, u in us:
             user: UserPartial = UserPartial()
             user.name = u
