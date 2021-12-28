@@ -10,6 +10,10 @@ class ParsingError(Exception):
     pass
 
 
+class Unauthorized(Exception):
+    pass
+
+
 class NonePage(ParsingError):
     pass
 
