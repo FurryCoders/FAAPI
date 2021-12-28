@@ -1,0 +1,18 @@
+image: python:3.10
+
+before_script:
+  - python --version
+  - python -m pip install mypy flake8
+
+stages:
+  - Static Analysis
+
+mypy:
+  stage: Static Analysis
+  script:
+    - python -m mypy --install-types --non-interactive faapi
+
+flake8:
+  stage: Static Analysis
+  script:
+    - python -m flake8 --max-line-length=120 faapi/*.py
