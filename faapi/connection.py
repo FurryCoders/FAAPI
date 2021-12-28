@@ -2,7 +2,6 @@ from http.cookiejar import Cookie
 from http.cookiejar import CookieJar
 from platform import python_version
 from platform import uname
-from time import sleep
 from typing import Optional
 from typing import Union
 
