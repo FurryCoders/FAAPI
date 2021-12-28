@@ -1,6 +1,6 @@
 from http.cookiejar import CookieJar
-from time import perf_counter
 from time import sleep
+from time import time
 from typing import Any
 from typing import Optional
 from typing import Union
@@ -38,7 +38,7 @@ class FAAPI:
     def __init__(self, cookies: Union[list[dict[str, str]], CookieJar] = None):
         self.session: CloudflareScraper = make_session(cookies or [])
         self.robots: RobotFileParser = get_robots(self.session)
-        self.last_get: float = perf_counter() - self.crawl_delay
+        self.last_get: float = time() - self.crawl_delay
         self.raise_for_delay: bool = False
         self.raise_for_unauthorized: bool = True
 
@@ -54,11 +54,11 @@ class FAAPI:
         self.session = make_session(cookies)
 
     def handle_delay(self):
-        if (delay_diff := perf_counter() - self.last_get) < self.crawl_delay:
+        if (delay_diff := time() - self.last_get) < self.crawl_delay:
             if self.raise_for_delay:
                 raise CrawlDelayError(f"Crawl-delay not respected {delay_diff}<{self.crawl_delay}")
             sleep(self.crawl_delay - delay_diff)
-        self.last_get = perf_counter()
+        self.last_get = time()
 
     def check_path(self, path: str, *, raise_for_disallowed: bool = False) -> bool:
         if not (allowed := self.robots.can_fetch(self.user_agent, path)) and raise_for_disallowed:
