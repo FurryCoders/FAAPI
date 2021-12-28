@@ -1,10 +1,10 @@
 from http.cookiejar import CookieJar
-from re import search
 from time import perf_counter
 from time import sleep
 from typing import Any
 from typing import Optional
 from typing import Union
+from urllib.robotparser import RobotFileParser
 
 from .connection import CloudflareScraper
 from .connection import Response
@@ -37,11 +37,18 @@ from .user import UserPartial
 class FAAPI:
     def __init__(self, cookies: Union[list[dict[str, str]], CookieJar] = None):
         self.session: CloudflareScraper = make_session(cookies or [])
-        self.robots: dict[str, list[str]] = get_robots()
-        self.crawl_delay: float = float(self.robots.get("Crawl-delay", [1.0])[0])
+        self.robots: RobotFileParser = get_robots(self.session)
         self.last_get: float = perf_counter() - self.crawl_delay
         self.raise_for_delay: bool = False
         self.raise_for_unauthorized: bool = True
+
+    @property
+    def user_agent(self) -> str:
+        return self.session.headers["User-Agent"]
+
+    @property
+    def crawl_delay(self) -> float:
+        return float(self.robots.crawl_delay(self.user_agent) or 1)
 
     def load_cookies(self, cookies: Union[list[dict[str, str]], CookieJar]):
         self.session = make_session(cookies)
@@ -53,10 +60,10 @@ class FAAPI:
             sleep(self.crawl_delay - delay_diff)
         self.last_get = perf_counter()
 
-    def check_path(self, path: str):
-        for pattern in self.robots.get("disallow", []):
-            if search(fr"^{pattern.replace('*', '.*')}", "/" + path.lstrip("/")):
-                raise DisallowedPath(f"Path {path} is not allowed by robots.txt {pattern}")
+    def check_path(self, path: str, *, raise_for_disallowed: bool = True) -> bool:
+        if not (allowed := self.robots.can_fetch(self.user_agent, path)) and raise_for_disallowed:
+            raise DisallowedPath(f"Path {path} is not allowed by robots.txt")
+        return allowed
 
     @property
     def connection_status(self) -> bool:

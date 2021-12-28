@@ -2,13 +2,15 @@ from http.cookiejar import Cookie
 from http.cookiejar import CookieJar
 from platform import python_version
 from platform import uname
+from re import sub
 from typing import Optional
 from typing import Union
+from urllib.robotparser import RobotFileParser
 
 from cfscrape import CloudflareScraper
 from cfscrape import create_scraper
 from requests import Response
-from requests import get as get_raw
+from requests import Session
 from urllib3.exceptions import IncompleteRead
 
 from .__version__ import __version__
@@ -34,18 +36,11 @@ def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareS
     return session
 
 
-def get_robots() -> dict[str, list[str]]:
-    res: Response = get_raw(join_url(root, "robots.txt"), headers={"User-Agent": user_agent})
-
-    res.raise_for_status()
-
-    robot: dict[str, Union[int, str, list[str]]] = {}
-
-    for elem in filter(lambda r: r not in ("", "#"), res.text.split("\n")):
-        key, value = elem.split(":", 1)
-        robot[key] = [*robot.get(key, []), value.strip()]
-
-    return robot
+def get_robots(session: Session) -> RobotFileParser:
+    robots: RobotFileParser = RobotFileParser(url := join_url(root, "robots.txt"))
+    robots.parse([sub(r"^([^:\s]+:)", lambda m: m[1][0].upper() + m[1][1:], line)
+                  for line in sub(r"\n[#\n]+", "\n", session.get(url).text).splitlines()])
+    return robots
 
 
 def get(session: CloudflareScraper, path: str, **params) -> Response:
