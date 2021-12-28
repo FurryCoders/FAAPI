@@ -38,8 +38,7 @@ def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareS
 
 def get_robots(session: Session) -> RobotFileParser:
     robots: RobotFileParser = RobotFileParser(url := join_url(root, "robots.txt"))
-    robots.parse([sub(r"^([^:\s])([^:\s]+:)", lambda m: m[1].upper() + m[2].lower(), line)
-                  for line in sub(r"\n[#\n]+", "\n", session.get(url).text).splitlines()])
+    robots.parse(sub(r"\n[#\n]+", "\n", session.get(url).text).splitlines())
     return robots
 
 
