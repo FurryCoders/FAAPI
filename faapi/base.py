@@ -34,34 +34,66 @@ from .user import UserPartial
 
 
 class FAAPI:
+    """
+    This class provides the methods to access and parse Fur Affinity pages and retrieve objects.
+    """
+
     def __init__(self, cookies: Union[list[dict[str, str]], CookieJar] = None):
-        self.session: CloudflareScraper = make_session(cookies or [])
-        self.robots: RobotFileParser = get_robots(self.session)
-        self.last_get: float = time() - self.crawl_delay
-        self.raise_for_unauthorized: bool = True
+        """
+        :param cookies: The cookies for the session.
+        """
+
+        self.session: CloudflareScraper = make_session(cookies or [])  # Session used for get requests
+        self.robots: RobotFileParser = get_robots(self.session)  # robots.txt handler
+        self.last_get: float = time() - self.crawl_delay  # Time of last get (UNIX time)
+        self.raise_for_unauthorized: bool = True  # Control login checks
 
     @property
     def user_agent(self) -> str:
+        """
+        The user agent of the session
+        """
         return self.session.headers["User-Agent"]
 
     @property
     def crawl_delay(self) -> float:
+        """
+        Crawl delay from robots.txt
+        """
         return float(self.robots.crawl_delay(self.user_agent) or 1)
 
     def load_cookies(self, cookies: Union[list[dict[str, str]], CookieJar]):
+        """
+        Load new cookies and create a new session.
+
+        :param cookies: The cookies for the session.
+        """
         self.session = make_session(cookies)
 
     def handle_delay(self):
+        """
+        Handles the crawl delay as set in the robots.txt
+        """
         sleep(self.crawl_delay - d) if (d := time() - self.last_get) < self.crawl_delay else None
         self.last_get = time()
 
     def check_path(self, path: str, *, raise_for_disallowed: bool = False) -> bool:
+        """
+        Checks whether a given path is allowed by the robots.txt.
+        :param path: The path to check
+        :param raise_for_disallowed: Whether to raise an exception for a non-allowed path.
+        :return: True if the path is allowed in the robots.txt, False otherwise
+        """
         if not (allowed := self.robots.can_fetch(self.user_agent, path)) and raise_for_disallowed:
             raise DisallowedPath(f"Path {path} is not allowed by robots.txt")
         return allowed
 
     @property
     def connection_status(self) -> bool:
+        """
+        Check the status of the connection to Fur Affinity.
+        :return: True if it can connect, False otherwise
+        """
         try:
             return self.get("/").ok
         except ConnectionError:
@@ -69,15 +101,33 @@ class FAAPI:
 
     @property
     def login_status(self) -> bool:
+        """
+        Check the login status of the given cookies.
+        :return: True if the cookies belong to a login session, False otherwise.
+        """
         return parse_loggedin_user(self.get_parsed("login", skip_auth_check=True)) is not None
 
     def get(self, path: str, **params) -> Response:
+        """
+        Fetch a path with a GET request. The path is checked against the robots.txt before the request is made, and the crawl-delay setting is enforced wth a wait time.
+        :param path: The path to fetch
+        :param params: Query parameters for the request
+        :return: A Response object from the request.
+        """
         self.check_path(path, raise_for_disallowed=True)
         self.handle_delay()
         return get(self.session, path, **params)
 
     def get_parsed(self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params
                    ) -> BeautifulSoup:
+        """
+        Fetch a path with a GET request and parse it using BeautifulSoup.
+        :param path: The path to fetch
+        :param skip_page_check: Whether to skip checking the parsed page for errors
+        :param skip_auth_check: Whether to skip checking the parsed page for login status
+        :param params: Query parameters for the request
+        :return: A BeautifulSoup object containing the parsed content of the request response.
+        """
         response: Response = self.get(path, **params)
         response.raise_for_status()
         page: BeautifulSoup = parse_page(response.text)
@@ -88,26 +138,59 @@ class FAAPI:
         return page
 
     def me(self) -> Optional[User]:
+        """
+        Fetch the information of the logged-in user.
+        :return: A User object for the logged-in user, or None if the cookies are not from a login session.
+        """
         return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
 
     def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: int = None
                    ) -> tuple[Submission, Optional[bytes]]:
+        """
+        Fetch a submission and, optionally, its file.
+        :param submission_id: The ID of the submission.
+        :param get_file: Whether to download the submission file.
+        :param chunk_size: The chunk_size to be used for the download (does not override get_file).
+        :return: A Submission object and a bytes object (if the submission file is downloaded).
+        """
         sub: Submission = Submission(self.get_parsed(join_url("view", int(submission_id))))
         sub_file: Optional[bytes] = self.submission_file(sub, chunk_size=chunk_size) if get_file and sub.id else None
         return sub, sub_file
 
     def submission_file(self, submission: Submission, *, chunk_size: int = None) -> bytes:
+        """
+        Fetch a submission file from a Submission object.
+        :param submission: A Submission object.
+        :param chunk_size: The chunk_size to be used for the download.
+        :return: The submission file as a bytes object.
+        """
         self.handle_delay()
         return stream_binary(self.session, submission.file_url, chunk_size=chunk_size)
 
     def journal(self, journal_id: int) -> Journal:
+        """
+        Fetch a journal.
+        :param journal_id: The ID of the journal.
+        :return: A Journal object.
+        """
         return Journal(self.get_parsed(join_url("journal", int(journal_id))))
 
     def user(self, user: str) -> User:
+        """
+        Fetch a user.
+        :param user: The name of the user (_ characters are allowed).
+        :return: A User object.
+        """
         return User(self.get_parsed(join_url("user", username_url(user))))
 
     # noinspection DuplicatedCode
     def gallery(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
+        """
+        Fetch a user's gallery page.
+        :param user: The name of the user (_ characters are allowed).
+        :param page: The page to fetch.
+        :return: A list of SubmissionPartial objects and the next page (0 if it is the last).
+        """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("gallery", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
@@ -119,6 +202,12 @@ class FAAPI:
 
     # noinspection DuplicatedCode
     def scraps(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
+        """
+        Fetch a user's scraps page.
+        :param user: The name of the user (_ characters are allowed).
+        :param page: The page to fetch.
+        :return: A list of SubmissionPartial objects and the next page (0 if it is the last).
+        """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("scraps", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
@@ -129,12 +218,24 @@ class FAAPI:
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], str]:
+        """
+        Fetch a user's favorites page.
+        :param user: The name of the user (_ characters are allowed).
+        :param page: The page to fetch.
+        :return: A list of SubmissionPartial objects and the next page ("" if it is the last).
+        """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("favorites", username_url(user), page.strip()))
         info_parsed: dict[str, Any] = parse_user_favorites(page_parsed)
         submissions: list[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
         return submissions, info_parsed["next_page"]
 
     def journals(self, user: str, page: int = 1) -> tuple[list[Journal], int]:
+        """
+        Fetch a user's journals page.
+        :param user: The name of the user (_ characters are allowed).
+        :param page: The page to fetch.
+        :return: A list of Journal objects and the next page (0 if it is the last).
+        """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("journals", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
@@ -146,12 +247,25 @@ class FAAPI:
         return journals, (page + 1) * (not info_parsed["last_page"])
 
     def search(self, q: str, page: int = 1, **params) -> tuple[list[SubmissionPartial], int, int, int, int]:
+        """
+        Perform a search request.
+        :param q: The search query.
+        :param page: The page to fetch.
+        :param params: Extra query parameters for the request.
+        :return: A list of SubmissionPartial objects, the next page (0 if it is the last).
+        """
         page_parsed: BeautifulSoup = self.get_parsed("search", q=q, page=(page := int(page)), **params)
         info_parsed: dict[str, Any] = parse_search_submissions(page_parsed)
         return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
                 info_parsed["from"], info_parsed["to"], info_parsed["total"])
 
     def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
+        """
+        Fetch a page from the list of users watching the user.
+        :param user: The name of the user (_ characters are allowed).
+        :param page: The page to fetch.
+        :return: A list of UserPartial objects and the next page (0 if it is the last).
+        """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
             self.get_parsed(join_url("watchlist", "to", username_url(user), page), skip_auth_check=True))
@@ -163,6 +277,12 @@ class FAAPI:
         return users, (page + 1) if np else 0
 
     def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
+        """
+        Fetch a page from the list of users watched by the user.
+        :param user: The name of the user (_ characters are allowed).
+        :param page: The page to fetch.
+        :return: A list of UserPartial objects and the next page (0 if it is the last).
+        """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
             self.get_parsed(join_url("watchlist", "by", username_url(user), page), skip_auth_check=True))
@@ -175,11 +295,9 @@ class FAAPI:
 
     def user_exists(self, user: str) -> int:
         """
-        0 okay
-        1 account disabled
-        2 system error
-        3 unknown error
-        4 request error
+        Check if a user exists.
+        :param user: The name of the user (_ characters are allowed).
+        :return: 0 okay, 1 account disabled, 2 system error, 3 unknown error, 4 request error
         """
 
         if not (res := self.get(join_url("user", username_url(user)))).ok:
@@ -195,11 +313,9 @@ class FAAPI:
 
     def submission_exists(self, submission_id: int) -> int:
         """
-        0 okay
-        1 account disabled
-        2 system error
-        3 unknown error
-        4 request error
+        Check if a submission exists.
+        :param submission_id: The ID of the submission.
+        :return: 0 okay, 1 account disabled, 2 system error, 3 unknown error, 4 request error
         """
 
         if not (res := self.get(join_url("view", submission_id))).ok:
@@ -215,11 +331,9 @@ class FAAPI:
 
     def journal_exists(self, journal_id: int) -> int:
         """
-        0 okay
-        1 account disabled
-        2 system error
-        3 unknown error
-        4 request error
+        Check if a journal exists.
+        :param journal_id: The ID of the journal.
+        :return: 0 okay, 1 account disabled, 2 system error, 3 unknown error, 4 request error
         """
 
         if not (res := self.get(join_url("journal", journal_id))).ok:

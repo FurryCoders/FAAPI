@@ -20,6 +20,10 @@ UserStats: Type['UserStats'] = namedtuple(
 
 
 class UserBase:
+    """
+    Base class for the user objects.
+    """
+
     def __init__(self):
         self.name: str = ""
         self.status: str = ""
@@ -36,15 +40,30 @@ class UserBase:
 
     @property
     def name_url(self):
+        """
+        Compose the URL-safe username.
+        :return: The cleaned username.
+        """
         return username_url(self.name.lower())
 
     @property
     def url(self):
+        """
+        Compose the full URL to the user.
+        :return: The URL to the user.
+        """
         return join_url(root, "user", self.name_url)
 
 
 class UserPartial(UserBase):
+    """
+    This class contains a user's partial information.
+    """
+
     def __init__(self, user_tag: Tag = None):
+        """
+        :param user_tag: The tag from which to parse the user information.
+        """
         assert user_tag is None or isinstance(user_tag, Tag)
 
         super().__init__()
@@ -64,6 +83,10 @@ class UserPartial(UserBase):
         yield "user_icon_url", self.user_icon_url
 
     def parse(self, user_tag: Tag = None):
+        """
+        Parse a user page, overrides any information already present in the object.
+        :param user_tag: The tag from which to parse the user information.
+        """
         assert user_tag is None or isinstance(user_tag, Tag)
         self.user_tag = user_tag or self.user_tag
         if self.user_tag is None:
@@ -78,7 +101,14 @@ class UserPartial(UserBase):
 
 
 class User(UserBase):
+    """
+    This class contains a user's full information.
+    """
+
     def __init__(self, user_page: BeautifulSoup = None):
+        """
+        :param user_page: The page from which to parse the user information.
+        """
         assert user_page is None or isinstance(user_page, BeautifulSoup)
 
         super().__init__()
@@ -106,6 +136,10 @@ class User(UserBase):
         yield "user_icon_url", self.user_icon_url
 
     def parse(self, user_page: BeautifulSoup = None):
+        """
+        Parse a user page, overrides any information already present in the object.
+        :param user_page: The page from which to parse the user information.
+        """
         assert user_page is None or isinstance(user_page, BeautifulSoup)
         self.user_page = user_page or self.user_page
         if self.user_page is None:

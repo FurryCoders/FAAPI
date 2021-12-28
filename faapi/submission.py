@@ -12,6 +12,10 @@ from .user import UserPartial
 
 
 class SubmissionBase:
+    """
+    Base class for the submission objects.
+    """
+
     def __init__(self):
         self.id: int = 0
         self.title: str = ""
@@ -30,11 +34,22 @@ class SubmissionBase:
 
     @property
     def url(self):
+        """
+        Compose the full URL to the submission.
+        :return: The URL to the submission.
+        """
         return join_url(root, "view", self.id)
 
 
 class SubmissionPartial(SubmissionBase):
+    """
+    This class contains a submission's partial information.
+    """
+
     def __init__(self, submission_figure: Tag = None):
+        """
+        :param submission_figure: The figure tag from which to parse the submission information.
+        """
         assert submission_figure is None or isinstance(submission_figure, Tag)
 
         super().__init__()
@@ -55,6 +70,10 @@ class SubmissionPartial(SubmissionBase):
         yield "thumbnail_url", self.thumbnail_url
 
     def parse(self, submission_figure: Tag = None):
+        """
+        Parse a submission figure Tag, overrides any information already present in the object.
+        :param submission_figure: The optional figure tag from which to parse the submission
+        """
         assert submission_figure is None or isinstance(submission_figure, Tag)
         self.submission_figure = submission_figure or self.submission_figure
         if self.submission_figure is None:
@@ -71,7 +90,14 @@ class SubmissionPartial(SubmissionBase):
 
 
 class Submission(SubmissionBase):
+    """
+    This class contains a submission's full information.
+    """
+
     def __init__(self, submission_page: BeautifulSoup = None):
+        """
+        :param submission_page: The page from which to parse the submission information.
+        """
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
 
         super().__init__()
@@ -114,6 +140,10 @@ class Submission(SubmissionBase):
         yield "next", self.next
 
     def parse(self, submission_page: BeautifulSoup = None):
+        """
+        Parse a submission page, overrides any information already present in the object.
+        :param submission_page: The optional page from which to parse the submission
+        """
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
         self.submission_page = submission_page or self.submission_page
         if self.submission_page is None:

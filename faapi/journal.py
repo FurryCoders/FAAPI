@@ -14,7 +14,14 @@ from .user import UserPartial
 
 
 class Journal:
+    """
+    This class contains a journal's information.
+    """
+
     def __init__(self, journal_item: Union[Tag, BeautifulSoup] = None):
+        """
+        :param journal_item: The element from which to parse the journal, can be a Tag from a journals page or a single journal page.
+        """
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
 
         self.journal_item: Optional[Union[Tag, BeautifulSoup]] = journal_item
@@ -43,10 +50,18 @@ class Journal:
         return f"{self.id} {self.author} {self.title}"
 
     @property
-    def url(self):
+    def url(self) -> str:
+        """
+        Compose the full URL to the journal.
+        :return: The URL to the journal.
+        """
         return join_url(root, "journal", self.id)
 
     def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
+        """
+        Parse a journal Tag or page, overrides any information already present in the object.
+        :param journal_item: The element from which to parse the journal, can be a Tag from a journals page or a single journal page.
+        """
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
         self.journal_item = journal_item or self.journal_item
         if self.journal_item is None:
