@@ -286,6 +286,8 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_profile: Optional[Tag] = user_page.select_one("div.userpage-profile")
     tag_title_join_date: Optional[Tag] = user_page.select_one("div.userpage-flex-item.username > span")
     tag_stats: Optional[Tag] = user_page.select_one("div.userpage-section-right div.table")
+    tag_watchlist_to: Optional[Tag] = user_page.select_one("a[href*='watchlist/to']")
+    tag_watchlist_by: Optional[Tag] = user_page.select_one("a[href*='watchlist/by']")
     tag_infos: list[Tag] = user_page.select("div#userpage-contact-item div.table-row")
     tag_contacts: list[Tag] = user_page.select("div#userpage-contact div.user-contact-user-info")
     tag_user_icon_url: Optional[Tag] = user_page.select_one("img.user-nav-avatar")
@@ -294,6 +296,8 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_profile is not None, assertion_exception(ParsingError("Missing profile tag"))
     assert tag_title_join_date is not None, assertion_exception(ParsingError("Missing join date tag"))
     assert tag_stats is not None, assertion_exception(ParsingError("Missing stats tag"))
+    assert tag_watchlist_to is not None, assertion_exception(ParsingError("Missing watchlist to tag"))
+    assert tag_watchlist_by is not None, assertion_exception(ParsingError("Missing watchlist by tag"))
     assert tag_user_icon_url is not None, assertion_exception(ParsingError("Missing user icon URL tag"))
 
     status: str = (u := tag_status.text.strip())[0]
@@ -301,8 +305,11 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
     profile: str = "".join(map(str, tag_profile.children)).strip()
-    stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
-                                       filter(bool, map(str.strip, tag_stats.text.split("\n")))))
+    stats: tuple[int, ...] = (
+        *map(lambda s: int(s.split(":")[1]), filter(bool, map(str.strip, tag_stats.text.split("\n")))),
+        int(m[1]) if (m := search(r"(\d+)", tag_watchlist_to.text)) else 0,
+        int(m[1]) if (m := search(r"(\d+)", tag_watchlist_by.text)) else 0,
+    )
 
     tag_key: Optional[Tag]
     info: dict[str, str] = {}

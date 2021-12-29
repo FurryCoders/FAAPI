@@ -14,7 +14,7 @@ from .parse import username_url
 
 UserStats: Type['UserStats'] = namedtuple(
     "UserStats",
-    ["views", "submissions", "favs", "comments_earned", "comments_made", "journals"]
+    ["views", "submissions", "favs", "comments_earned", "comments_made", "journals", "watched_by", "watching"]
 )
 
 
@@ -116,7 +116,7 @@ class User(UserBase):
         self.title: str = ""
         self.join_date: datetime = datetime.fromtimestamp(0)
         self.profile: str = ""
-        self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0)
+        self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0, 0, 0)
         self.info: dict[str, str] = {}
         self.contacts: dict[str, str] = {}
         self.user_icon_url: str = ""
