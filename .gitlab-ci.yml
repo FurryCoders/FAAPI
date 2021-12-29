@@ -26,9 +26,9 @@ publish:
   only:
     - tags
   before_script:
-    - curl -sSL https://install.python-poetry.org | python -
-    - /root/.local/bin/poetry --version
-    - /root/.local/bin/poetry config virtualenvs.in-project true
-    - /root/.local/bin/poetry install --no-root
+    - python -m pip install poetry==1.1.12
+    - python -m poetry --version
+    - python -m poetry config virtualenvs.in-project true
+    - python -m poetry install --no-root
   script:
-    - poetry publish --build --username __token__ --password $PYPI_TOKEN
+    - python -m poetry publish --build --username __token__ --password $PYPI_TOKEN
