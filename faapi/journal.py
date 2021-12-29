@@ -2,11 +2,10 @@ from datetime import datetime
 from typing import Optional
 from typing import Union
 
-from bs4 import BeautifulSoup  # type: ignore
-from bs4.element import Tag  # type: ignore
-
 from .connection import join_url
 from .connection import root
+from .parse import BeautifulSoup
+from .parse import Tag
 from .parse import check_page_raise
 from .parse import parse_journal_page
 from .parse import parse_journal_section
