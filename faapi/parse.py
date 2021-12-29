@@ -7,19 +7,24 @@ from re import sub
 from typing import Any
 from typing import Optional
 
-from bs4 import BeautifulSoup  # type: ignore
-from bs4.element import NavigableString  # type: ignore
-from bs4.element import Tag  # type: ignore
+from bs4 import BeautifulSoup
+from bs4.element import NavigableString
+from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
 from .exceptions import DisabledAccount
 from .exceptions import NoTitle
 from .exceptions import NonePage
 from .exceptions import NoticeMessage
+from .exceptions import ParsingError
 from .exceptions import ServerError
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
+
+
+def assertion_exception(err: Exception):
+    raise err
 
 
 def parse_page(text: str) -> BeautifulSoup:
@@ -38,7 +43,7 @@ def check_page(page: BeautifulSoup) -> int:
 
     if page is None:
         return 1
-    elif not (title := page.title.text.lower()):
+    elif not (title := page.title.text.lower() if page.title else ""):
         return 2
     elif title.startswith("account disabled"):
         return 3
@@ -58,9 +63,11 @@ def check_page_raise(page: BeautifulSoup) -> None:
     elif check == 3:
         raise DisabledAccount
     elif check == 4:
-        raise ServerError(*filter(bool, d.text.split("\n")) if (d := page.select_one("div.section-body")) else ())
+        body: str = b.text if (b := page.select_one("div.section-body")) else ""
+        raise ServerError(*filter(bool, body.splitlines()))
     elif check == 5:
-        raise NoticeMessage(*filter(bool, page.select_one("section.notice-message div.section-body").text.split("\n")))
+        body: str = b.text if (b := page.select_one("section.notice-message div.section-body")) else ""  # type: ignore
+        raise NoticeMessage(*filter(bool, body.splitlines()))
 
 
 def username_url(username: str) -> str:
@@ -80,10 +87,19 @@ def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
 
 
 def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
-    id_: int = int(section_tag.attrs["id"][4:])
-    title: str = section_tag.select_one("h2").text.strip()
-    date: datetime = parse_date(section_tag.select_one("span.popup_date")["title"].strip())
-    content: str = "".join(map(str, (tag_content := section_tag.select_one("div.journal-body")).children))
+    id_: int = int(section_tag.attrs.get("id", "00000")[4:])
+    tag_title: Optional[Tag] = section_tag.select_one("h2")
+    tag_date: Optional[Tag] = section_tag.select_one("span.popup_date")
+    tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
+
+    assert id_ is not 0, assertion_exception(ParsingError("Missing ID"))
+    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
+    assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
+    assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
+
+    title: str = tag_title.text.strip()
+    date: datetime = parse_date((t[0] if isinstance(t := tag_date["title"], list) else t).strip())
+    content: str = "".join(map(str, tag_content.children))
     mentions: list[str] = parse_mentions(tag_content)
 
     return {
@@ -97,16 +113,23 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
 
 def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journal_page)
-    tag_id: Tag = journal_page.select_one("meta[property='og:url']")
-    tag_title: Tag = journal_page.select_one("h2.journal-title")
-    tag_date: Tag = journal_page.select_one("span.popup_date")
-    tag_content: Tag = journal_page.select_one("div.journal-content")
+    tag_id: Optional[Tag] = journal_page.select_one("meta[property='og:url']")
+    tag_title: Optional[Tag] = journal_page.select_one("h2.journal-title")
+    tag_date: Optional[Tag] = journal_page.select_one("span.popup_date")
+    tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
 
-    id_: int = int(tag_id["content"].strip("/").split("/")[-1])
+    assert tag_id is not None, assertion_exception(ParsingError("Missing ID tag"))
+    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
+    assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
+    assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
+
+    id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    date: datetime = parse_date(tag_date["title"].strip())
+    date: datetime = parse_date(tag_date.attrs["title"].strip())
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: list[str] = parse_mentions(tag_content)
+
+    assert id_ is not 0, assertion_exception(ParsingError("Missing ID"))
 
     return {
         **user_info,
@@ -120,11 +143,19 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
     id_: int = int(figure_tag.attrs["id"][4:])
-    title: str = figure_tag.select_one("figcaption a[href^='/view/']").attrs["title"]
-    author: str = figure_tag.select_one("figcaption a[href^='/user/']").attrs["title"]
+    tag_title: Optional[Tag] = figure_tag.select_one("figcaption a[href^='/view/']")
+    tag_author: Optional[Tag] = figure_tag.select_one("figcaption a[href^='/user/']")
+    tag_thumbnail: Optional[Tag] = figure_tag.select_one("img")
+
+    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
+    assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
+    assert tag_thumbnail is not None, assertion_exception(ParsingError("Missing thumbnail tag"))
+
+    title: str = tag_title.attrs["title"]
+    author: str = tag_author.attrs["title"]
     rating: str = next(c for c in figure_tag["class"] if c.startswith("r-"))[2:]
     type_: str = next(c for c in figure_tag["class"] if c.startswith("t-"))[2:]
-    thumbnail_url: str = "https:" + figure_tag.select_one("img").attrs["src"]
+    thumbnail_url: str = "https:" + tag_thumbnail.attrs["src"]
 
     return {
         "id": id_,
@@ -137,9 +168,15 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
 
 
 def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
-    tag_author: Tag = author_tag.select_one("div.submission-id-sub-container")
-    tag_author_name: Tag = tag_author.select_one("a > strong")
-    tag_author_icon: Tag = author_tag.select_one("img.submission-user-icon")
+    tag_author: Optional[Tag] = author_tag.select_one("div.submission-id-sub-container")
+
+    assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
+
+    tag_author_name: Optional[Tag] = tag_author.select_one("a > strong")
+    tag_author_icon: Optional[Tag] = author_tag.select_one("img.submission-user-icon")
+
+    assert tag_author_name is not None, assertion_exception(ParsingError("Missing author name tag"))
+    assert tag_author_icon is not None, assertion_exception(ParsingError("Missing author icon tag"))
 
     author_name: str = tag_author_name.text.strip()
     author_title: str = ([*filter(bool, [child.strip()
@@ -147,7 +184,7 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
                                          if isinstance(child, NavigableString)][3:])] or [""])[-1]
     author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
     author_title = author_title.strip("\xA0 ")  # NBSP
-    author_icon_url: str = "https:" + tag_author_icon["src"]
+    author_icon_url: str = "https:" + tag_author_icon.attrs["src"]
 
     return {
         "author": author_name,
@@ -157,31 +194,54 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
 
 def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
-    tag_id: Tag = sub_page.select_one("meta[property='og:url']")
-    tag_sub_info: Tag = sub_page.select_one("div.submission-id-sub-container")
-    tag_title: Tag = tag_sub_info.select_one("div.submission-title")
-    tag_author: Tag = sub_page.select_one("div.submission-id-container")
-    tag_date: Tag = sub_page.select_one("span.popup_date")
-    tag_tags: list[Tag] = sub_page.select("section.tags-row a")
-    tag_rating: Tag = sub_page.select_one("div.rating span")
-    tag_type: Tag = sub_page.select_one("div#submission_page[class^='page-content-type']")
-    tag_info: Tag = sub_page.select_one("section.info.text")
-    tag_category1: Tag = tag_info.select_one("span.category-name")
-    tag_category2: Tag = tag_info.select_one("span.type-name")
-    tag_species: Tag = (info_spans := tag_info.select("span"))[2]
-    tag_gender: Tag = info_spans[3]
-    tag_description: Tag = sub_page.select_one("div.submission-description")
-    tag_folder: Tag = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
-    tag_file_url: Tag = sub_page.select_one("div.download a")
-    tag_thumbnail_url: Tag = sub_page.select_one("img#submissionImg")
-    tag_prev: Tag = sub_page.select_one("div.submission-content div.favorite-nav a:nth-child(1)")
-    tag_next: Tag = sub_page.select_one("div.submission-content div.favorite-nav a:last-child")
+    tag_id: Optional[Tag] = sub_page.select_one("meta[property='og:url']")
+    tag_sub_info: Optional[Tag] = sub_page.select_one("div.submission-id-sub-container")
 
-    id_: int = int(tag_id["content"].strip("/").split("/")[-1])
+    assert tag_sub_info is not None, assertion_exception(ParsingError("Missing info tag"))
+
+    tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
+    tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
+    tag_date: Optional[Tag] = sub_page.select_one("span.popup_date")
+    tag_tags: list[Tag] = sub_page.select("section.tags-row a")
+    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span")
+    tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
+    tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
+
+    assert tag_info is not None, assertion_exception(ParsingError("Missing info tag"))
+
+    tag_category1: Optional[Tag] = tag_info.select_one("span.category-name")
+    tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
+    tag_species: Optional[Tag] = (info_spans := tag_info.select("span"))[2]
+    tag_gender: Optional[Tag] = info_spans[3]
+    tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
+    tag_folder: Optional[Tag] = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
+    tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
+    tag_thumbnail_url: Optional[Tag] = sub_page.select_one("img#submissionImg")
+    tag_prev: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:nth-child(1)")
+    tag_next: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:last-child")
+
+    assert tag_id is not None, assertion_exception(ParsingError("Missing id tag"))
+    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
+    assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
+    assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
+    assert tag_rating is not None, assertion_exception(ParsingError("Missing rating tag"))
+    assert tag_type is not None, assertion_exception(ParsingError("Missing type tag"))
+    assert tag_category1 is not None, assertion_exception(ParsingError("Missing category1 tag"))
+    assert tag_category2 is not None, assertion_exception(ParsingError("Missing category2 tag"))
+    assert tag_species is not None, assertion_exception(ParsingError("Missing species tag"))
+    assert tag_gender is not None, assertion_exception(ParsingError("Missing gender tag"))
+    assert tag_description is not None, assertion_exception(ParsingError("Missing description tag"))
+    assert tag_folder is not None, assertion_exception(ParsingError("Missing folder tag"))
+    assert tag_file_url is not None, assertion_exception(ParsingError("Missing file URL tag"))
+    assert tag_thumbnail_url is not None, assertion_exception(ParsingError("Missing thumbnail URL tag"))
+    assert tag_prev is not None, assertion_exception(ParsingError("Missing prev tag"))
+    assert tag_next is not None, assertion_exception(ParsingError("Missing next tag"))
+
+    id_: int = int(tag_id.attrs["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     date: datetime = parse_date(
-        tag_date["title"].strip()
-        if match(r"^[A-Za-z]+ \d+,.*$", tag_date["title"])
+        tag_date.attrs["title"].strip()
+        if match(r"^[A-Za-z]+ \d+,.*$", tag_date.attrs["title"])
         else tag_date.text.strip()
     )
     tags: list[str] = [t.text.strip() for t in tag_tags]
@@ -192,13 +252,13 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: list[str] = parse_mentions(tag_description)
-    folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", tag_folder["href"])) else ""
-    file_url: str = "https:" + tag_file_url["href"]
-    thumbnail_url: str = ("https:" + tag_thumbnail_url["data-preview-src"]) if tag_thumbnail_url else ""
+    folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", tag_folder.attrs["href"])) else ""
+    file_url: str = "https:" + tag_file_url.attrs["href"]
+    thumbnail_url: str = ("https:" + tag_thumbnail_url.attrs["data-preview-src"]) if tag_thumbnail_url else ""
     prev_sub: Optional[int] = int(
-        tag_prev["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
+        tag_prev.attrs["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
     next_sub: Optional[int] = int(
-        tag_next["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
+        tag_next.attrs["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
 
     return {
         "id": id_,
@@ -222,15 +282,21 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
-    tag_name: Tag = user_page.select_one("div.username")
-    tag_profile: Tag = user_page.select_one("div.userpage-profile")
-    tag_title_join_date: Tag = user_page.select_one("div.userpage-flex-item.username > span")
-    tag_stats: Tag = user_page.select_one("div.userpage-section-right div.table")
-    tag_info: Tag = user_page.select_one("div#userpage-contact-item")
-    tag_contacts: Tag = user_page.select_one("div#userpage-contact")
-    tag_user_icon_url: Tag = user_page.select_one("img.user-nav-avatar")
+    tag_status: Optional[Tag] = user_page.select_one("div.username span")
+    tag_profile: Optional[Tag] = user_page.select_one("div.userpage-profile")
+    tag_title_join_date: Optional[Tag] = user_page.select_one("div.userpage-flex-item.username > span")
+    tag_stats: Optional[Tag] = user_page.select_one("div.userpage-section-right div.table")
+    tag_infos: list[Tag] = user_page.select("div#userpage-contact-item div.table-row")
+    tag_contacts: list[Tag] = user_page.select("div#userpage-contact div.user-contact-user-info")
+    tag_user_icon_url: Optional[Tag] = user_page.select_one("img.user-nav-avatar")
 
-    status: str = (u := tag_name.find("span").text.strip())[0]
+    assert tag_status is not None, assertion_exception(ParsingError("Missing name tag"))
+    assert tag_profile is not None, assertion_exception(ParsingError("Missing profile tag"))
+    assert tag_title_join_date is not None, assertion_exception(ParsingError("Missing join date tag"))
+    assert tag_stats is not None, assertion_exception(ParsingError("Missing stats tag"))
+    assert tag_user_icon_url is not None, assertion_exception(ParsingError("Missing user icon URL tag"))
+
+    status: str = (u := tag_status.text.strip())[0]
     name: str = u[1:]
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
@@ -238,20 +304,23 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     stats: tuple[int, ...] = tuple(map(lambda s: int(s.split(":")[1]),
                                        filter(bool, map(str.strip, tag_stats.text.split("\n")))))
 
+    tag_key: Optional[Tag]
     info: dict[str, str] = {}
-    if tag_info is not None:
-        for tb in tag_info.select("div.table-row"):
-            if "profile-empty" in tb.attrs.get("class", []):
-                continue
-            elif not (val := [*filter(bool, [c.strip() for c in tb.children if isinstance(c, NavigableString)])][-1:]):
-                continue
-            info[tb.select_one("div").text.strip()] = val[0]
-    contacts: dict[str, str] = {
-        pc.select_one("span").text.strip(): a["href"] if (a := pc.select_one("a")) else
-        [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
-        for pc in tag_contacts.select("div.user-contact-user-info")
-    } if tag_contacts is not None else {}
-    user_icon_url: str = "https:" + tag_user_icon_url["src"]
+    contacts: dict[str, str] = {}
+    for tb in tag_infos:
+        tag_key = tb.select_one("div")
+        assert tag_key is not None, assertion_exception(ParsingError("Missing info key tag"))
+        if "profile-empty" in tb.attrs.get("class", []):
+            continue
+        elif not (val := [*filter(bool, [c.strip() for c in tb.children if isinstance(c, NavigableString)])][-1:]):
+            continue
+        info[tag_key.text.strip()] = val[0]
+    for pc in tag_contacts:
+        tag_key = pc.select_one("span")
+        assert tag_key is not None, assertion_exception(ParsingError("Missing contact key tag"))
+        contacts[tag_key.text.strip()] = a.attrs["href"] if (a := pc.select_one("a")) else \
+            [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
+    user_icon_url: str = "https:" + tag_user_icon_url.attrs["src"]
 
     return {
         "name": name,
@@ -281,9 +350,13 @@ def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
 
 
 def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
+    tag_username: Optional[Tag] = folder_page.select_one("div.userpage-flex-item.username")
+    tag_user_icon: Optional[Tag] = folder_page.select_one("img.user-nav-avatar")
+    assert tag_username is not None, assertion_exception(ParsingError("Missing username tag"))
+    assert tag_user_icon is not None, assertion_exception(ParsingError("Missing user icon tag"))
     return {
-        **parse_user_tag(folder_page.select_one("div.userpage-flex-item.username")),
-        "user_icon_url": "https:" + folder_page.select_one("img.user-nav-avatar")["src"],
+        **parse_user_tag(tag_username),
+        "user_icon_url": "https:" + tag_user_icon.attrs["src"],
     }
 
 
@@ -301,7 +374,7 @@ def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Any]:
     parsed_submissions = parse_user_submissions(favorites_page)
     tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
-    next_page: str = tag_next_page["href"].split("/", 3)[-1] if tag_next_page else ""
+    next_page: str = tag_next_page.attrs["href"].split("/", 3)[-1] if tag_next_page else ""
 
     return {
         **parsed_submissions,
@@ -321,8 +394,10 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
-    tag_stats: Tag = search_page.select_one("div[id='query-stats']")
-    for div in tag_stats.select("div"):
+    tag_stats: Optional[Tag] = search_page.select_one("div[id='query-stats']")
+    assert tag_stats is not None, assertion_exception(ParsingError("Missing stats tag"))
+
+    for div in tag_stats.select(""):
         div.decompose()
     a, b, tot = map(int,
                     s.groups() if (s := search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip())) else (0, 0, 0))
@@ -339,8 +414,8 @@ def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], bool]:
     tags_users: list[Tag] = watch_page.select("div.watch-list-items")
-    tag_next: Tag = watch_page.select_one("section div.floatright form[method=get]")
+    tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")
     return (
         [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users],
-        watchlist_next_regexp.match(tag_next["action"]) is not None
+        watchlist_next_regexp.match(tag_next["action"]) is not None if tag_next else False
     )
