@@ -92,7 +92,7 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     tag_date: Optional[Tag] = section_tag.select_one("span.popup_date")
     tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
 
-    assert id_ is not 0, assertion_exception(ParsingError("Missing ID"))
+    assert id_ != 0, assertion_exception(ParsingError("Missing ID"))
     assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
     assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
     assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
@@ -129,7 +129,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: list[str] = parse_mentions(tag_content)
 
-    assert id_ is not 0, assertion_exception(ParsingError("Missing ID"))
+    assert id_ != 0, assertion_exception(ParsingError("Missing ID"))
 
     return {
         **user_info,
