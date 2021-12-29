@@ -1,7 +1,6 @@
 from collections import namedtuple
 from datetime import datetime
 from typing import Optional
-from typing import Type
 
 from .connection import join_url
 from .connection import root
@@ -12,10 +11,20 @@ from .parse import parse_user_page
 from .parse import parse_user_tag
 from .parse import username_url
 
-UserStats: Type['UserStats'] = namedtuple(
-    "UserStats",
-    ["views", "submissions", "favs", "comments_earned", "comments_made", "journals", "watched_by", "watching"]
-)
+
+class UserStats(namedtuple("UserStats", ["views", "submissions", "favs", "comments_earned",
+                                         "comments_made", "journals", "watched_by", "watching"])):
+    """
+    This object contains a user's statistics:
+    * views
+    * submissions
+    * favs
+    * comments_earned
+    * comments_made
+    * journals
+    * watched_by
+    * watching
+    """
 
 
 class UserBase:
