@@ -233,7 +233,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_description is not None, assertion_exception(ParsingError("Missing description tag"))
     assert tag_folder is not None, assertion_exception(ParsingError("Missing folder tag"))
     assert tag_file_url is not None, assertion_exception(ParsingError("Missing file URL tag"))
-    assert tag_thumbnail_url is not None, assertion_exception(ParsingError("Missing thumbnail URL tag"))
     assert tag_prev is not None, assertion_exception(ParsingError("Missing prev tag"))
     assert tag_next is not None, assertion_exception(ParsingError("Missing next tag"))
 
