@@ -11,7 +11,7 @@ from cfscrape import CloudflareScraper  # type: ignore
 from cfscrape import create_scraper  # type: ignore
 from requests import Response
 from requests import Session
-from urllib3.exceptions import IncompleteRead  # type: ignore
+from http.client import IncompleteRead
 
 from .__version__ import __version__
 
@@ -53,6 +53,6 @@ def stream_binary(session: CloudflareScraper, url: str, *, chunk_size: Optional[
     file_binary: bytes = bytes().join(stream.iter_content(chunk_size))
 
     if (length := int(stream.headers.get("Content-Length", 0))) > 0 and length != len(file_binary):
-        raise IncompleteRead(l := len(file_binary), length - l)
+        raise IncompleteRead(file_binary, length - len(file_binary))
 
     return file_binary

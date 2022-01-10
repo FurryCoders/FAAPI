@@ -405,8 +405,9 @@ def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
 
     for div in tag_stats.select(""):
         div.decompose()
-    a, b, tot = map(int,
-                    s.groups() if (s := search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip())) else (0, 0, 0))
+    a, b, tot = 0, 0, 0
+    if s := search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()):
+        a, b, tot = map(int, s.groups())
     figures: list[Tag] = search_page.select("figure[id^='sid-']")
 
     return {
