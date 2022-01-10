@@ -50,6 +50,7 @@ class UserBase:
     def name_url(self):
         """
         Compose the URL-safe username.
+
         :return: The cleaned username.
         """
         return username_url(self.name.lower())
@@ -58,6 +59,7 @@ class UserBase:
     def url(self):
         """
         Compose the full URL to the user.
+
         :return: The URL to the user.
         """
         return join_url(root, "user", self.name_url)
@@ -93,6 +95,7 @@ class UserPartial(UserBase):
     def parse(self, user_tag: Tag = None):
         """
         Parse a user page, overrides any information already present in the object.
+
         :param user_tag: The tag from which to parse the user information.
         """
         assert user_tag is None or isinstance(user_tag, Tag)
@@ -146,6 +149,7 @@ class User(UserBase):
     def parse(self, user_page: BeautifulSoup = None):
         """
         Parse a user page, overrides any information already present in the object.
+
         :param user_page: The page from which to parse the user information.
         """
         assert user_page is None or isinstance(user_page, BeautifulSoup)

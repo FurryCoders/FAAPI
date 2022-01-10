@@ -36,6 +36,7 @@ class SubmissionBase:
     def url(self):
         """
         Compose the full URL to the submission.
+
         :return: The URL to the submission.
         """
         return join_url(root, "view", self.id)
@@ -72,7 +73,8 @@ class SubmissionPartial(SubmissionBase):
     def parse(self, submission_figure: Tag = None):
         """
         Parse a submission figure Tag, overrides any information already present in the object.
-        :param submission_figure: The optional figure tag from which to parse the submission
+
+        :param submission_figure: The optional figure tag from which to parse the submission.
         """
         assert submission_figure is None or isinstance(submission_figure, Tag)
         self.submission_figure = submission_figure or self.submission_figure
@@ -142,7 +144,8 @@ class Submission(SubmissionBase):
     def parse(self, submission_page: BeautifulSoup = None):
         """
         Parse a submission page, overrides any information already present in the object.
-        :param submission_page: The optional page from which to parse the submission
+
+        :param submission_page: The optional page from which to parse the submission.
         """
         assert submission_page is None or isinstance(submission_page, BeautifulSoup)
         self.submission_page = submission_page or self.submission_page

@@ -52,6 +52,7 @@ class Journal:
     def url(self) -> str:
         """
         Compose the full URL to the journal.
+
         :return: The URL to the journal.
         """
         return join_url(root, "journal", self.id)
@@ -59,6 +60,7 @@ class Journal:
     def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
         """
         Parse a journal Tag or page, overrides any information already present in the object.
+
         :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
         """
         assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
