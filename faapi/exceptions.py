@@ -1,16 +1,16 @@
-class DisallowedPath(Exception):
+class DisallowedPath(BaseException):
     """
     The path is not allowed by the robots.txt.
     """
 
 
-class ParsingError(Exception):
+class ParsingError(BaseException):
     """
     An error occurred while parsing the page.
     """
 
 
-class Unauthorized(Exception):
+class Unauthorized(BaseException):
     """
     The user is not logged-in.
     """
