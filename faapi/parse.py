@@ -23,7 +23,7 @@ mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.n
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
 
 
-def assertion_exception(err: Exception):
+def assertion_exception(err: BaseException):
     raise err
 
 
