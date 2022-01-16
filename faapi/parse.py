@@ -369,11 +369,12 @@ def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(submissions_page)
     figures: list[Tag] = submissions_page.select("figure[id^='sid-']")
+    last_page: bool = not any(b.text.lower() == "next" for b in submissions_page.select("form button.button"))
 
     return {
         **user_info,
         "figures": figures,
-        "last_page": not figures,
+        "last_page": last_page,
     }
 
 
@@ -391,11 +392,12 @@ def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journals_page)
     sections: list[Tag] = journals_page.select("section[id^='jid:']")
+    last_page: bool = not any(b.text.lower() == "next" for b in journals_page.select("form button.button"))
 
     return {
         **user_info,
         "sections": sections,
-        "last_page": not sections,
+        "last_page": last_page,
     }
 
 
@@ -409,13 +411,14 @@ def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
     if s := search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()):
         a, b, tot = map(int, s.groups())
     figures: list[Tag] = search_page.select("figure[id^='sid-']")
+    last_page: bool = not any(b.text.lower() == "next" for b in search_page.select("button.button:not(.disabled)"))
 
     return {
         "from": (a or 1) - 1,
         "to": (b or 1) - 1,
         "total": tot,
         "figures": figures,
-        "last_page": b >= tot
+        "last_page": last_page
     }
 
 
