@@ -314,16 +314,16 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     info: dict[str, str] = {}
     contacts: dict[str, str] = {}
     for tb in tag_infos:
-        tag_key = tb.select_one("div")
-        assert tag_key is not None, assertion_exception(ParsingError("Missing info key tag"))
-        if "profile-empty" in tb.attrs.get("class", []):
+        if (tag_key := tb.select_one("div")) is None:
+            continue
+        elif "profile-empty" in tb.attrs.get("class", []):
             continue
         elif not (val := [*filter(bool, [c.strip() for c in tb.children if isinstance(c, NavigableString)])][-1:]):
             continue
         info[tag_key.text.strip()] = val[0]
     for pc in tag_contacts:
-        tag_key = pc.select_one("span")
-        assert tag_key is not None, assertion_exception(ParsingError("Missing contact key tag"))
+        if (tag_key := pc.select_one("span")) is None:
+            continue
         contacts[tag_key.text.strip()] = a.attrs["href"] if (a := pc.select_one("a")) else \
             [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
     user_icon_url: str = "https:" + tag_user_icon_url.attrs["src"]
