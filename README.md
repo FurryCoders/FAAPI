@@ -7,9 +7,9 @@
 Python library to implement API-like functionality for the [Fur Affinity](https://furaffinity.net) website.
 
 [![](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
-[![](https://img.shields.io/github/v/tag/FurryCoders/faapi?label=github&sort=date&logo=github&color=blue)](https://github.com/FurryCoders/faapi)
 [![](https://img.shields.io/pypi/pyversions/faapi?logo=Python)](https://www.python.org)
 
+[![](https://img.shields.io/github/v/tag/FurryCoders/faapi?label=github&sort=date&logo=github&color=blue)](https://github.com/FurryCoders/faapi)
 [![](https://img.shields.io/github/issues/FurryCoders/faapi?logo=github&color=blue)](https://github.com/FurryCoders/FAAPI/issues)
 
 </div>
