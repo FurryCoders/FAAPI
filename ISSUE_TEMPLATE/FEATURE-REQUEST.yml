@@ -1,0 +1,23 @@
+name: Feature Request
+description: Open a feature request
+title: "[Feature Request]: "
+labels: ["feature request"]
+assignees:
+  - MatteoCampinoti94
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    id: summary
+    attributes:
+      label: The idea
+      description: Summarize your idea, including UX/UI changes
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation ideas
+      description: How would you implement the feature?
