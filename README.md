@@ -1,6 +1,6 @@
 <div align="center">
 
-<img alt="logo" width="400" src="https://raw.githubusercontent.com/FurryCoders/Logos/main/logos/falocalrepo-transparent.png">
+<img alt="logo" width="400" src="https://raw.githubusercontent.com/FurryCoders/Logos/main/logos/faapi-transparent.png">
 
 # Fur Affinity API
 
