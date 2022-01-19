@@ -1,4 +1,4 @@
-**DEPRECATED** This repository mirrors the main one on https://gitlab.com/MatteoCampinoti94/falocalrepo up to version
+**DEPRECATED** This repository mirrors the main one on https://gitlab.com/MatteoCampinoti94/faapi up to version
 3.3.6. Issues are turned off and pull requests will be ignored.
 
 <div align="center">
