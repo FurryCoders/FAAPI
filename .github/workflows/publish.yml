@@ -1,0 +1,32 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  Publish:
+    name: Publish with Poetry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: ${{ github.ref }}
+          check-name: "Test"
+          repo-token: ${{ secrets.API_TOKEN }}
+          wait-interval: 10
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.10.1"
+      - uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: "1.1.12"
+      - name: Build and publish
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-root
+          poetry publish --build --username __token__ --password ${{ secrets.PYPI_API_TOKEN }}
