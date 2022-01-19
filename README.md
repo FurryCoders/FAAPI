@@ -1,3 +1,6 @@
+**DEPRECATED* This repository mirrors the main one on https://gitlab.com/MatteoCampinoti94/falocalrepo up to version
+3.3.6. Issues are turned off and pull requests will be ignored.
+
 <div align="center">
 
 <img alt="logo" width="400" src="https://gitlab.com/uploads/-/system/project/avatar/7434083/logo.png">
@@ -18,7 +21,8 @@ Python library to implement API-like functionality for the [Fur Affinity](https:
 
 ## Requirements
 
-Python 3.9+ is necessary to run this library. [Poetry](https://python-poetry.org) is used for packaging and dependency management.
+Python 3.9+ is necessary to run this library. [Poetry](https://python-poetry.org) is used for packaging and dependency
+management.
 
 ## Usage
 
