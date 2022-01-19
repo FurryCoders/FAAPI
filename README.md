@@ -1,6 +1,3 @@
-**DEPRECATED** This repository mirrors the main one on https://gitlab.com/MatteoCampinoti94/faapi up to version
-3.3.6. Issues are turned off and pull requests will be ignored.
-
 <div align="center">
 
 <img alt="logo" width="400" src="https://gitlab.com/uploads/-/system/project/avatar/7434083/logo.png">
@@ -9,13 +6,11 @@
 
 Python library to implement API-like functionality for the [Fur Affinity](https://furaffinity.net) website.
 
-[![version_pypi](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
-[![version_gitlab](https://img.shields.io/gitlab/v/tag/MatteoCampinoti94/faapi?label=version&sort=date&logo=gitlab&color=FCA121)](https://gitlab.com/MatteoCampinoti94/faapi)
-[![pipeline status](https://gitlab.com/MatteoCampinoti94/FAAPI/badges/master/pipeline.svg)](https://gitlab.com/MatteoCampinoti94/FAAPI/-/commits/master)
-[![version_python](https://img.shields.io/pypi/pyversions/faapi?logo=Python)](https://www.python.org)
+[![](https://img.shields.io/pypi/v/faapi?logo=pypi)](https://pypi.org/project/faapi/)
+[![](https://img.shields.io/github/v/tag/FurryCoders/faapi?label=github&sort=date&logo=github&color=blue)](https://github.com/FurryCoders/faapi)
+[![](https://img.shields.io/pypi/pyversions/faapi?logo=Python)](https://www.python.org)
 
-[![issues_gitlab](https://img.shields.io/badge/dynamic/json?logo=gitlab&color=orange&label=issues&suffix=%20open&query=%24.length&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2Fmatteocampinoti94%252Ffaapi%2Fissues%3Fstate%3Dopened)](https://gitlab.com/MatteoCampinoti94/FAAPI/issues)
-[![issues_github](https://img.shields.io/github/issues/matteocampinoti94/faapi?logo=github&color=blue)](https://github.com/MatteoCampinoti94/FAAPI/issues)
+[![](https://img.shields.io/github/issues/FurryCoders/faapi?logo=github&color=blue)](https://github.com/FurryCoders/FAAPI/issues)
 
 </div>
 
@@ -387,17 +382,13 @@ If no `user_page` is passed then the object fields will remain at their default 
 
 All contributions and suggestions are welcome!
 
-The only requirement is that any merge request must be sent to the GitLab project as the one on GitHub is only a
-mirror: [GitLab/FALocalRepo](https://gitlab.com/MatteoCampinoti94/FALocalRepo)
-
 If you have suggestions for fixes or improvements, you can open an issue with your idea, see [#Issues](#issues) for
 details.
 
 ## Issues
 
-If any problem is encountered during usage of the program, an issue can be opened on the project's pages
-on [GitLab](https://gitlab.com/MatteoCampinoti94/FAAPI/issues) (preferred)
-or [GitHub](https://github.com/MatteoCampinoti94/FAAPI/issues) (mirror repository).
+If any problem is encountered during usage of the program, an issue can be opened
+on [GitHub](https://github.com/FurryCoders/FAAPI/issues).
 
 Issues can also be used to suggest improvements and features.
 
