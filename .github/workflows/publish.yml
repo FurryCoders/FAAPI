@@ -16,7 +16,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
           check-name: "Test"
-          repo-token: ${{ secrets.API_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
