@@ -1,15 +1,6 @@
-from requests.exceptions import RequestException
-
-
 class DisallowedPath(Exception):
     """
     The path is not allowed by the robots.txt.
-    """
-
-
-class ParsingError(Exception):
-    """
-    An error occurred while parsing the page.
     """
 
 
@@ -19,9 +10,9 @@ class Unauthorized(Exception):
     """
 
 
-class NotFound(RequestException):
+class ParsingError(Exception):
     """
-    The resource could not be found.
+    An error occurred while parsing the page.
     """
 
 
@@ -34,6 +25,12 @@ class NonePage(ParsingError):
 class NoTitle(ParsingError):
     """
     The parsed paged is missing a title.
+    """
+
+
+class NotFound(ParsingError):
+    """
+    The resource could not be found.
     """
 
 
