@@ -17,8 +17,9 @@ Python library to implement API-like functionality for the [Fur Affinity](https:
 
 ## Requirements
 
-Python 3.9+ is necessary to run this library. [Poetry](https://python-poetry.org) is used for packaging and dependency
-management.
+Python 3.9+ is necessary to run this
+library. [<img src="https://python-poetry.org/images/logo-origami.svg" height="12"> Poetry](https://python-poetry.org)
+is used for packaging and dependency management.
 
 ## Usage
 
