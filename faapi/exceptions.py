@@ -1,3 +1,6 @@
+from requests.exceptions import RequestException
+
+
 class DisallowedPath(Exception):
     """
     The path is not allowed by the robots.txt.
@@ -13,6 +16,12 @@ class ParsingError(Exception):
 class Unauthorized(Exception):
     """
     The user is not logged-in.
+    """
+
+
+class NotFound(RequestException):
+    """
+    The resource could not be found.
     """
 
 
