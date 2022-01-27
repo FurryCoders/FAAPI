@@ -22,6 +22,7 @@ from .exceptions import ServerError
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
+not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 
 
 def assertion_exception(err: BaseException):
@@ -61,7 +62,6 @@ def check_page(page: BeautifulSoup) -> int:
 
 
 def check_page_raise(page: BeautifulSoup) -> None:
-    not_found: bool
     if page is None:
         raise NonePage
     elif not (title := page.title.text.lower() if page.title else ""):
@@ -70,16 +70,18 @@ def check_page_raise(page: BeautifulSoup) -> None:
         raise DisabledAccount
     elif title == "system error":
         error_text: str = error.text.lower() if (error := page.select_one("div.section-body")) else ""
-        not_found = any(m in error_text
-                        for m in ("not in our database", "cannot be found", "could not be found", "user not found"))
-        raise NotFound if not_found else ServerError(*filter(bool, error_text.splitlines()))
+        if any(m in error_text for m in not_found_messages):
+            raise NotFound
+        else:
+            raise ServerError(*filter(bool, error_text.splitlines()))
     elif notice := page.select_one("section.notice-message"):
         notice_text: str = p.text.lower() if (p := notice.find("p")) else ""
-        not_found = any(m in notice_text
-                        for m in ("not in our database", "cannot be found", "could not be found", "user not found"))
-        raise DisabledAccount if "deactivated" in notice_text \
-            else NotFound if not_found \
-            else NoticeMessage(*filter(bool, notice_text.splitlines()))
+        if "deactivated" in notice_text:
+            raise DisabledAccount
+        elif any(m in notice_text for m in not_found_messages):
+            raise NotFound
+        else:
+            raise NoticeMessage(*filter(bool, notice_text.splitlines()))
 
 
 def username_url(username: str) -> str:
