@@ -33,6 +33,7 @@ from .user import User
 from .user import UserPartial
 
 
+# noinspection GrazieInspection
 class FAAPI:
     """
     This class provides the methods to access and parse Fur Affinity pages and retrieve objects.
