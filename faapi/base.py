@@ -17,7 +17,6 @@ from .exceptions import DisallowedPath
 from .exceptions import Unauthorized
 from .journal import Journal
 from .parse import BeautifulSoup
-from .parse import check_page
 from .parse import check_page_raise
 from .parse import parse_loggedin_user
 from .parse import parse_page
