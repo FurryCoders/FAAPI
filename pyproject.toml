@@ -18,6 +18,10 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[tool.poetry.urls]
+"Source" = "https://github.com/FurryCoders/FAAPI"
+"Download" = "https://pypi.org/project/faapi/#files"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.27.1"
