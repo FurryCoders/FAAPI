@@ -6,17 +6,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test:
-    name: Test
+  style-test:
+    name: Style test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install flake8
+        run: python -m pip install flake8
+      - name: Style test
+        run: python -m flake8 --max-line-length=120 faapi
+
+  types-test:
+    name: Types Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Install MyPy
         run: python -m pip install mypy types-beautifulsoup4
-      - name: Install flake8
-        run: python -m pip install flake8
-      - name: Style test
-        run: python -m flake8 --max-line-length=120 faapi
       - name: Types test
         run: python -m mypy --install-types --non-interactive faapi
