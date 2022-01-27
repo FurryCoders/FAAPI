@@ -15,6 +15,7 @@ from dateutil.parser import parse as parse_date
 from .exceptions import DisabledAccount
 from .exceptions import NoTitle
 from .exceptions import NonePage
+from .exceptions import NotFound
 from .exceptions import NoticeMessage
 from .exceptions import ParsingError
 from .exceptions import ServerError
@@ -37,37 +38,49 @@ def check_page(page: BeautifulSoup) -> int:
     1 if page is None
     2 if page has no title
     3 if page is from a disabled account
-    4 if page is a system error
-    5 if page has a notice-message (error)
+    4 if page is a not found error
+    5 if page is a system error
+    6 if page has a notice-message (error)
     """
 
-    if page is None:
+    try:
+        check_page_raise(page)
+        return 0
+    except NonePage:
         return 1
-    elif not (title := page.title.text.lower() if page.title else ""):
+    except NoTitle:
         return 2
-    elif title.startswith("account disabled"):
+    except DisabledAccount:
         return 3
-    elif title == "system error":
+    except NotFound:
         return 4
-    elif notice := page.select_one("section.notice-message"):
-        return 3 if (p := notice.find("p")) and "deactivated" in p.text.lower() else 5
-
-    return 0
+    except SystemError:
+        return 5
+    except NoticeMessage:
+        return 6
 
 
 def check_page_raise(page: BeautifulSoup) -> None:
-    if (check := check_page(page)) == 1:
+    if page is None:
         raise NonePage
-    elif check == 2:
+    elif not (title := page.title.text.lower() if page.title else ""):
         raise NoTitle
-    elif check == 3:
+    elif title.startswith("account disabled"):
         raise DisabledAccount
-    elif check == 4:
-        body: str = b.text if (b := page.select_one("div.section-body")) else ""
-        raise ServerError(*filter(bool, body.splitlines()))
-    elif check == 5:
-        body: str = b.text if (b := page.select_one("section.notice-message div.section-body")) else ""  # type: ignore
-        raise NoticeMessage(*filter(bool, body.splitlines()))
+    elif title == "system error":
+        error_text: str = error.text.lower() if (error := page.select_one("div.section-body")) else ""
+        not_found: bool = any(m in error_text
+                              for m in ("not in our database", "cannot be found",
+                                        "could not be found", "user not found"))
+        raise NotFound if not_found else ServerError(*filter(bool, error_text.splitlines()))
+    elif notice := page.select_one("section.notice-message"):
+        notice_text: str = p.text.lower() if (p := notice.find("p")) else ""
+        not_found: bool = any(m in notice_text
+                              for m in ("not in our database", "cannot be found",
+                                        "could not be found", "user not found"))
+        raise DisabledAccount if "deactivated" in notice_text \
+            else NotFound if not_found \
+            else NoticeMessage(*filter(bool, notice_text.splitlines()))
 
 
 def username_url(username: str) -> str:
