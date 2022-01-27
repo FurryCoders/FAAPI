@@ -186,27 +186,6 @@ omitted, and the API will still be able to access public pages.
   Given a username, returns a list of `User` objects for each user that is watching the given user.
 * `watchlist_by(self, user: str) -> List[User]`<br>
   Given a username, returns a list of `User` objects for each user that is watched by the given user.
-* `user_exists(user: str) -> int`<br>
-  Checks if the passed user exists - i.e. if there is a page under that name - and returns an int result.
-    * 0 okay
-    * 1 account disabled
-    * 2 system error
-    * 3 unknown error
-    * 4 request error
-* `submission_exists(submission_id: int) -> int`<br>
-  Checks if the passed submissions exists - i.e. if there is a page with that ID - and returns an int result.
-    * 0 okay
-    * 1 account disabled
-    * 2 system error
-    * 3 unknown error
-    * 4 request error
-* `journal_exists(journal_id: int) -> int`<br>
-  Checks if the passed journal exists - i.e. if there is a page under that ID - and returns an int result.
-    * 0 okay
-    * 1 account disabled
-    * 2 system error
-    * 3 unknown error
-    * 4 request error
 
 ### Journal
 
