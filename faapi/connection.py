@@ -1,3 +1,4 @@
+from http.client import IncompleteRead
 from http.cookiejar import Cookie
 from http.cookiejar import CookieJar
 from platform import python_version
@@ -11,7 +12,6 @@ from cfscrape import CloudflareScraper  # type: ignore
 from cfscrape import create_scraper  # type: ignore
 from requests import Response
 from requests import Session
-from http.client import IncompleteRead
 
 from .__version__ import __version__
 
