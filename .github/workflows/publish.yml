@@ -73,13 +73,11 @@ jobs:
           touch RELEASE.md
           PREVIOUS_TAG="$(git tag -l --sort=-version:refname | head -2 | tail -1)"
           echo "Full changelog: https://github.com/$GITHUB_REPOSITORY/compare/$PREVIOUS_TAG...$TAG_NAME" >> RELEASE.md
+          cat RELEASE.md
+          printf "\n\n## Dist Files\n"
+          ls -l dist
           echo "::set-output name=tag::$TAG_NAME"
           echo "::set-output name=release_body::RELEASE.md"
-      - name: Release Result
-        run: |
-          cat RELEASE.md
-          printf "\n## Dist Files\n"
-          ls -l dist || echo "  no files"
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
