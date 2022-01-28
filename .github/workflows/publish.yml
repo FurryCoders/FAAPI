@@ -12,19 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Wait for Style Test
+      - name: Wait for Flake8 Test
         id: wait1
         uses: fountainhead/action-wait-for-check@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "Style Test"
+          checkName: "Flake8"
           ref: ${{ github.event.push_request.head.sha || github.sha }}
-      - name: Wait for Types Test
+      - name: Wait for mypy Test
         id: wait2
         uses: fountainhead/action-wait-for-check@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "Types Test"
+          checkName: "mypy"
           ref: ${{ github.event.push_request.head.sha || github.sha }}
     outputs:
       conclusion: ${{ steps.wait1.outputs.conclusion == 'success' && steps.wait2.outputs.conclusion == 'success' }}

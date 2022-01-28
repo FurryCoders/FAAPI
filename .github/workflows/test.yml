@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  style-test:
-    name: Style Test
+  flake8:
+    name: Flake8
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,8 +18,8 @@ jobs:
           python -m pip install flake8
           python -m flake8 --max-line-length=120 faapi
 
-  types-test:
-    name: Types Test
+  mypy:
+    name: mypy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
