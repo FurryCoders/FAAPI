@@ -63,12 +63,12 @@ jobs:
           name: dist
           path: dist
       - name: Get Tag
-        id: tagName
+        id: tag
         uses: olegtarasov/get-tag@v2.1.1
-      - name: Make Release
+      - name: Build Release File
         id: release
         env:
-          TAG_NAME: ${{ steps.tagName.outputs.tag }}
+          TAG_NAME: ${{ steps.tag.outputs.tag }}
         run: |
           touch RELEASE.md
           PREVIOUS_TAG="$(git tag -l --sort=-version:refname | head -2 | tail -1)"
