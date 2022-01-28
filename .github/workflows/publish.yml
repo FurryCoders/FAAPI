@@ -7,32 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  style-test:
-    name: Style test
+  wait:
+    name: wait
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - name: Install flake8
-        run: python -m pip install flake8
-      - name: Style test
-        run: python -m flake8 --max-line-length=120 faapi
-
-  types-test:
-    name: Types Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - name: Install MyPy
-        run: python -m pip install mypy types-beautifulsoup4
-      - name: Types test
-        run: python -m mypy --install-types --non-interactive faapi
+      - name: Wait on check
+        id: wait
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "Test End"
+          ref: ${{ github.event.push_request.head.sha || github.sha }}
+      - name: Fail
+        if: ${{ steps.wait.outputs.conclusion != 'success' }}
+        run: exit 1
 
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    needs: [style-test, types-test]
+    needs: wait
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -58,7 +52,7 @@ jobs:
   Release:
     name: Release
     runs-on: ubuntu-latest
-    needs: Publish
+    needs: publish
     steps:
       - uses: actions/checkout@v2
         with:
