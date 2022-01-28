@@ -73,15 +73,15 @@ def check_page_raise(page: BeautifulSoup) -> None:
         if any(m in error_text for m in not_found_messages):
             raise NotFound
         else:
-            raise ServerError(*filter(bool, error_text.splitlines()))
+            raise ServerError(*filter(bool, map(str.strip, error_text.splitlines())))
     elif notice := page.select_one("section.notice-message"):
-        notice_text: str = p.text.lower() if (p := notice.find("p")) else ""
+        notice_text: str = notice.text.lower()
         if "deactivated" in notice_text:
             raise DisabledAccount
         elif any(m in notice_text for m in not_found_messages):
             raise NotFound
         else:
-            raise NoticeMessage(*filter(bool, notice_text.splitlines()))
+            raise NoticeMessage(*filter(bool, map(str.strip, notice_text.splitlines())))
 
 
 def username_url(username: str) -> str:
