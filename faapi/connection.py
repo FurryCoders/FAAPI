@@ -29,7 +29,7 @@ def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareS
 
     for cookie in cookies:
         if isinstance(cookie, Cookie):
-            session.cookies.set(cookie.name, cookie.value, )
+            session.cookies.set(cookie.name, cookie.value)
         else:
             session.cookies.set(cookie["name"], cookie["value"])
 
