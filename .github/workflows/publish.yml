@@ -56,7 +56,7 @@ jobs:
           name: dist
           path: dist
 
-  Release:
+  release:
     name: Release
     runs-on: ubuntu-latest
     needs: publish
