@@ -6,9 +6,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  checkTag:
+    name: Check Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check for Tag
+        id: tag
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          TAG=$(git tag -l --sort=-version:refname | head -1)
+          [[ $TAG = '' ]] && exit 0 
+          TAG_SHA=$(git rev-list -n 1 $TAG)
+          [[ $TAG_SHA = $SHA ]] && RESULT=1 || RESULT=0
+          echo "::set-output name=isTag::$RESULT"
+    outputs:
+      isTag: ${{ steps.tag.outputs.isTag == '1' }}
+
   style-test:
     name: Style test
     runs-on: ubuntu-latest
+    needs: checkTag
+    if: ${{ needs.checkTag.outputs.isTag == 'false' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -20,6 +40,8 @@ jobs:
   types-test:
     name: Types Test
     runs-on: ubuntu-latest
+    needs: checkTag
+    if: ${{ needs.checkTag.outputs.isTag == 'false' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
