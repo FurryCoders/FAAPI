@@ -12,21 +12,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Wait on check
-        id: wait
+      - name: Wait for Style Test
+        id: wait1
         uses: fountainhead/action-wait-for-check@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "Test End"
+          checkName: "Style Test"
           ref: ${{ github.event.push_request.head.sha || github.sha }}
-      - name: Fail
-        if: ${{ steps.wait.outputs.conclusion != 'success' }}
-        run: exit 1
+      - name: Wait for Types Test
+        id: wait2
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "Types Test"
+          ref: ${{ github.event.push_request.head.sha || github.sha }}
+    outputs:
+      conclusion: ${{ steps.wait1.outputs.conclusion == 'success' && steps.wait2.outputs.conclusion == 'success' }}
 
   publish:
     name: Publish
     runs-on: ubuntu-latest
     needs: wait
+    if: ${{ needs.wait.outputs.conclusion == 'true' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
