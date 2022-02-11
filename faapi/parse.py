@@ -23,6 +23,7 @@ from .exceptions import ServerError
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
+deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
 
 
 def assertion_exception(err: BaseException):
@@ -76,7 +77,7 @@ def check_page_raise(page: BeautifulSoup) -> None:
             raise ServerError(*filter(bool, map(str.strip, error_text.splitlines())))
     elif notice := page.select_one("section.notice-message"):
         notice_text: str = notice.text.lower()
-        if "deactivated" in notice_text:
+        if any(m in notice_text for m in deactivated_messages):
             raise DisabledAccount
         elif any(m in notice_text for m in not_found_messages):
             raise NotFound
