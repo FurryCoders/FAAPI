@@ -70,16 +70,16 @@ def check_page_raise(page: BeautifulSoup) -> None:
     elif title.startswith("account disabled"):
         raise DisabledAccount
     elif title == "system error":
-        error_text: str = error.text.lower() if (error := page.select_one("div.section-body")) else ""
-        if any(m in error_text for m in not_found_messages):
+        error_text: str = error.text if (error := page.select_one("div.section-body")) else ""
+        if any(m in error_text.lower() for m in not_found_messages):
             raise NotFound
         else:
             raise ServerError(*filter(bool, map(str.strip, error_text.splitlines())))
     elif notice := page.select_one("section.notice-message"):
-        notice_text: str = notice.text.lower()
-        if any(m in notice_text for m in deactivated_messages):
+        notice_text: str = notice.text
+        if any(m in notice_text.lower() for m in deactivated_messages):
             raise DisabledAccount
-        elif any(m in notice_text for m in not_found_messages):
+        elif any(m in notice_text.lower() for m in not_found_messages):
             raise NotFound
         else:
             raise NoticeMessage(*filter(bool, map(str.strip, notice_text.splitlines())))
