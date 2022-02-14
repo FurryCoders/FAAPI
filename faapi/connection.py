@@ -3,7 +3,7 @@ from http.cookiejar import Cookie
 from http.cookiejar import CookieJar
 from platform import python_version
 from platform import uname
-from re import sub
+from re import compile as re_compile
 from typing import Optional
 from typing import Union
 from urllib.robotparser import RobotFileParser
@@ -38,7 +38,7 @@ def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareS
 
 def get_robots(session: Session) -> RobotFileParser:
     robots: RobotFileParser = RobotFileParser(url := join_url(root, "robots.txt"))
-    robots.parse(sub(r"\n\s*#.*\n+", "\n", session.get(url).text).splitlines())
+    robots.parse(filter(re_compile(r"^[^#].*").match, session.get(url).text.splitlines()))
     return robots
 
 
