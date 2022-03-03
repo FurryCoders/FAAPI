@@ -259,7 +259,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         else tag_date.text.strip()
     )
     tags: list[str] = [t.text.strip() for t in tag_tags]
-    category: str = tag_category1.text.strip() + "/" + tag_category2.text.strip()
+    category: str = tag_category1.text.strip() + " / " + tag_category2.text.strip()
     species: str = tag_species.text.strip()
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
