@@ -218,6 +218,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
     tag_date: Optional[Tag] = sub_page.select_one("span.popup_date")
     tag_tags: list[Tag] = sub_page.select("section.tags-row a")
+    tag_views: Optional[Tag] = sub_page.select_one("div.views span")
+    tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
+    tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
     tag_rating: Optional[Tag] = sub_page.select_one("div.rating span")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
@@ -239,6 +242,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
     assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
     assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
+    assert tag_views is not None, assertion_exception(ParsingError("Missing views tag"))
+    assert tag_comment_count is not None, assertion_exception(ParsingError("Missing comment count tag"))
+    assert tag_favorites is not None, assertion_exception(ParsingError("Missing favorites tag"))
     assert tag_rating is not None, assertion_exception(ParsingError("Missing rating tag"))
     assert tag_type is not None, assertion_exception(ParsingError("Missing type tag"))
     assert tag_category1 is not None, assertion_exception(ParsingError("Missing category1 tag"))
@@ -263,6 +269,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     species: str = tag_species.text.strip()
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
+    views: str = tag_views.text.strip()
+    comment_count: str = tag_comment_count.text.strip()
+    favorites: str = tag_favorites.text.strip()
     type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: list[str] = parse_mentions(tag_description)
@@ -284,6 +293,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         "species": species,
         "gender": gender,
         "rating": rating,
+        "views": views,
+        "comment_count": comment_count,
+        "favorites": favorites,
         "type": type_,
         "description": description,
         "mentions": mentions,

@@ -111,6 +111,9 @@ class Submission(SubmissionBase):
         self.species: str = ""
         self.gender: str = ""
         self.rating: str = ""
+        self.views = ""
+        self.comment_count = ""
+        self.favorites = ""
         self.type: str = ""
         self.description: str = ""
         self.mentions: list[str] = []
@@ -132,6 +135,9 @@ class Submission(SubmissionBase):
         yield "species", self.species
         yield "gender", self.gender
         yield "rating", self.rating
+        yield "views", self.views
+        yield "comment_count", self.comment_count
+        yield "favorites", self.favorites
         yield "type", self.type
         yield "description", self.description
         yield "mentions", self.mentions
@@ -167,6 +173,9 @@ class Submission(SubmissionBase):
         self.species = parsed["species"]
         self.gender = parsed["gender"]
         self.rating = parsed["rating"]
+        self.views = parsed["views"]
+        self.comment_count = parsed["comment_count"]
+        self.favorites = parsed["favorites"]
         self.type = parsed["type"]
         self.description = parsed["description"]
         self.mentions = parsed["mentions"]
