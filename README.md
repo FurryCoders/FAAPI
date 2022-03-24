@@ -264,9 +264,7 @@ The main class that parses and holds submission metadata.
 * `species: str` species
 * `gender: str` gender
 * `rating: str` rating
-* `views: str` view count
-* `comment_count: str` number of comments
-* `favorites: str` number of favs
+* `stats: SubmissionStats` submission statistics stored in a named tuple (`views`, `comments` (count), `favorites`)
 * `type: str` submission type (text, image, etc...)
 * `description: str` description in HTML format
 * `mentions: List[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
