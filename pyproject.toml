@@ -5,8 +5,8 @@ description = "Python module to implement API-like functionality for the FurAffi
 authors = ["Matteo Campinoti <matteo.campinoti94@gmail.com>"]
 license = "EUPL-1.2"
 readme = "README.md"
-homepage = "https://gitlab.com/MatteoCampinoti94/FAAPI"
-repository = "https://gitlab.com/MatteoCampinoti94/FAAPI"
+homepage = "https://github.com/FurryCoders/FAAPI"
+repository = "https://github.com/FurryCoders/FAAPI"
 classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
