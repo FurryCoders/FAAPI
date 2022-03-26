@@ -198,6 +198,7 @@ following fields:
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
   timestamp 0)
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
+* `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
 * `content: str` journal content in HTML format
 * `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
