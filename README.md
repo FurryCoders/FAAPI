@@ -338,7 +338,7 @@ A class that holds a user's main information.
 * `title: str` the user title as it appears on their userpage
 * `join_date: datetime` the date the user joined (defaults to timestamp 0)
 * `profile: str` profile text in HTML format
-* `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favs`, `comments_earned`
+* `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favorites`, `comments_earned`
   , `comments_made`, `journals`, `watched_by`, `watching`)
 * `info: Dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
   etc.)

@@ -12,13 +12,13 @@ from .parse import parse_user_tag
 from .parse import username_url
 
 
-class UserStats(namedtuple("UserStats", ["views", "submissions", "favs", "comments_earned",
+class UserStats(namedtuple("UserStats", ["views", "submissions", "favorites", "comments_earned",
                                          "comments_made", "journals", "watched_by", "watching"])):
     """
     This object contains a user's statistics:
     * views
     * submissions
-    * favs
+    * favorites
     * comments_earned
     * comments_made
     * journals
