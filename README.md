@@ -35,7 +35,7 @@ import orjson
 
 cookies = RequestsCookieJar()
 cookies.set("a", "38565475-3421-3f21-7f63-3d341339737")
-cookies.set("b", "356f5962-5a60-0922-1c11-65003b703038")
+cookies.set("b", "356f5962-5a60-0922-1c11-65003b70308")
 
 api = faapi.FAAPI(cookies)
 sub, sub_file = api.submission(12345678, get_file=True)
