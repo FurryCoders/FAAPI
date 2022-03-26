@@ -19,8 +19,10 @@ classifiers = [
 ]
 
 [tool.poetry.urls]
+"Changelog" = "https://github.com/FurryCoders/FAAPI/blob/main/CHANGELOG.md"
 "Source" = "https://github.com/FurryCoders/FAAPI"
 "Download" = "https://pypi.org/project/faapi/#files"
+"Bug Reports" = "https://github.com/FurryCoders/FAAPI/issues"
 
 [tool.poetry.dependencies]
 python = "^3.9"
