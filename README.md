@@ -239,15 +239,18 @@ and search pages. It contains only the following fields:
 
 #### Init
 
-`__init__(submission_figure: bs4.element.Tag)`
+`__init__(submission_figure: bs4.element.Tag = None)`
 
-`SubmissionPartial` init needs a figure tag taken from a parsed page.
+To initialise the object, an optional `bs4.element.Tag` object is needed containing the parsed HTML of a submission
+figure tag.
+
+If no `submission_figure` is passed then the object fields will remain at their default - empty - value.
 
 #### Methods
 
 * `url -> str`<br>
   Property method that returns the Fur Affinity URL to the submission (`https://www.furaffinity.net/view/{id}`).
-* `parse(submission_figure: bs4.element.Tag)`<br>
+* `parse(submission_figure: bs4.element.Tag = None)`<br>
   Parses the stored submission figure tag for information. If `submission_figure` is passed, it overwrites the
   existing `submission_figure` value.
 
