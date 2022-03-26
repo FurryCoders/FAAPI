@@ -29,16 +29,5 @@ ENV/
 # mypy
 .mypy_cache/
 
-# cookies
-*.cookies
-*.cookies.json
-
-# api test files
-apitest*
-
 # Editors folders
 .idea/
-
-# Examples
-examples/*
-!examples/*.py
