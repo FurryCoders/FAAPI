@@ -106,16 +106,19 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     tag_title: Optional[Tag] = section_tag.select_one("h2")
     tag_date: Optional[Tag] = section_tag.select_one("span.popup_date")
     tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
+    tag_comments: Optional[Tag] = section_tag.select_one("div.section-footer > a > span")
 
     assert id_ != 0, assertion_exception(ParsingError("Missing ID"))
     assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
     assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
     assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
+    assert tag_comments is not None, assertion_exception(ParsingError("Missing comments tag"))
 
     title: str = tag_title.text.strip()
     date: datetime = parse_date((t[0] if isinstance(t := tag_date["title"], list) else t).strip())
     content: str = "".join(map(str, tag_content.children))
     mentions: list[str] = parse_mentions(tag_content)
+    comments: int = int(tag_comments.text.strip())
 
     return {
         "id": id_,
@@ -123,6 +126,7 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
         "date": date,
         "content": content,
         "mentions": mentions,
+        "comments": comments,
     }
 
 
@@ -132,17 +136,20 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     tag_title: Optional[Tag] = journal_page.select_one("h2.journal-title")
     tag_date: Optional[Tag] = journal_page.select_one("span.popup_date")
     tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
+    tag_comments: Optional[Tag] = journal_page.select_one("div.section-footer > span")
 
     assert tag_id is not None, assertion_exception(ParsingError("Missing ID tag"))
     assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
     assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
     assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
+    assert tag_comments is not None, assertion_exception(ParsingError("Missing comments tag"))
 
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     date: datetime = parse_date(tag_date.attrs["title"].strip())
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: list[str] = parse_mentions(tag_content)
+    comments: int = int(tag_comments.text.strip())
 
     assert id_ != 0, assertion_exception(ParsingError("Missing ID"))
 
@@ -153,6 +160,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
         "date": date,
         "content": content,
         "mentions": mentions,
+        "comments": comments,
     }
 
 
