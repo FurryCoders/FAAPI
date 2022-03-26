@@ -366,14 +366,16 @@ If no `user_page` is passed then the object fields will remain at their default 
 The following are the exceptions explicitly raised by the FAAPI functions. The exceptions deriving from `ParsingError`
 are chosen depending on the content of the page. Because Fur Affinity doesn't use HTTP status codes besides 404, the
 page is checked against a static list of known error messages/page titles in order to determine the specific error to be
-used. If no match is found, then the `ServerError` and `NoticeMessage` exceptions are used instead. The actual error
-message parsed from the page is used as arguments for the exceptions, so that it can be analise further when caught.
+used. If no match is found, then the `ServerError` (if the page has the "Server Error" title) or the more
+general `NoticeMessage` exceptions are used instead. The actual error message parsed from the page is used as argument
+for the exceptions, so that it can be analysed when caught.
 
 * `DisallowedPath(Exception)` The path is not allowed by the robots.txt.
 * `Unauthorized(Exception)` The user is not logged-in.
 * `ParsingError(Exception)` An error occurred while parsing the page.
-    * `NonePage(ParsingError)` The parsed page is None.
-    * `NotFound(ParsingError)` The resource could not be found.
+    * `NonePage(ParsingError)` The parsed page is `None`.
+    * `NotFound(ParsingError)` The resource could not be found (general 404 page or non-existing submission, user, or
+      journal).
     * `NoTitle(ParsingError)` The parsed paged is missing a title.
     * `DisabledAccount(ParsingError)` The resource belongs to a disabled account.
     * `ServerError(ParsingError)` The page contains a server error notice.
