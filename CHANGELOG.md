@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.5.0
+
+### New Features
+
+* New `Submission.stats` field for submission statistics stored in a named tuple (`views`, `comments` (count)
+  , `favorites`)
+    * Pull request [#2](https://github.com/FurryCoders/FAAPI/pull/2), thanks
+      to [@warpKaiba](https://github.com/warpKaiba)!
+* New `Journal.stats` field for journal statistics stored in a named tuple (`comments` (count))
+
+### Fixes
+
+* Fix links in PyPi metadata pointing to previous hosting at GitLab
+
 ## v3.4.3
 
 ### Changes
