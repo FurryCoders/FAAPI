@@ -10,6 +10,10 @@
       to [@warpKaiba](https://github.com/warpKaiba)!
 * New `Journal.stats` field for journal statistics stored in a named tuple (`comments` (count))
 
+### Changes
+
+* Rename `UserStats.favs` to `UserStats.favorites`
+
 ### Fixes
 
 * Fix links in PyPi metadata pointing to previous hosting at GitLab
