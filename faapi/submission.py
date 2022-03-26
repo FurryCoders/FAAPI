@@ -14,7 +14,7 @@ from .user import UserPartial
 
 class SubmissionStats(namedtuple("SubmissionStats", ["views", "comments", "favorites"])):
     """
-    This object contains a user's statistics:
+    This object contains the submission's statistics:
     * views
     * comments
     * favorites
