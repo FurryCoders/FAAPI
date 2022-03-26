@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import datetime
 from typing import Optional
 from typing import Union
@@ -10,6 +11,13 @@ from .parse import check_page_raise
 from .parse import parse_journal_page
 from .parse import parse_journal_section
 from .user import UserPartial
+
+
+class JournalStats(namedtuple("JournalStats", ["comments"])):
+    """
+    This object contains the journal's statistics:
+    * comments
+    """
 
 
 class Journal:
@@ -29,6 +37,7 @@ class Journal:
         self.title: str = ""
         self.date: datetime = datetime.fromtimestamp(0)
         self.author: UserPartial = UserPartial()
+        self.stats: JournalStats = JournalStats(0)
         self.content: str = ""
         self.mentions: list[str] = []
 
@@ -39,6 +48,7 @@ class Journal:
         yield "title", self.title
         yield "date", self.date
         yield "author", dict(self.author)
+        yield "stats", self.stats._asdict()
         yield "content", self.content
         yield "mentions", self.mentions
 
@@ -82,6 +92,7 @@ class Journal:
         self.author.title = parsed.get("user_title", "")
         self.author.join_date = parsed.get("user_join_date", "")
         self.author.user_icon_url = parsed.get("user_icon_url", "")
+        self.stats = JournalStats(parsed["comments"])
         self.date = parsed["date"]
         self.content = parsed["content"]
         self.mentions = parsed["mentions"]
