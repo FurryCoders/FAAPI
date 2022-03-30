@@ -25,7 +25,7 @@ class Comment:
         self.id: int = 0
         self.author: faapi.user.UserPartial = faapi.user.UserPartial()
         self.date: datetime = datetime.fromtimestamp(0)
-        self.text: Optional[Tag] = None
+        self.text: str = ""
         self.parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = parent
         self.replies: list['Comment'] = []
         self.reply_to: Optional[int] = None
