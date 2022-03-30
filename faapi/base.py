@@ -86,7 +86,7 @@ class FAAPI:
         :param raise_for_disallowed: Whether to raise an exception for a non-allowed path.
         :return: True if the path is allowed in the robots.txt, False otherwise.
         """
-        if not (allowed := self.robots.can_fetch(self.user_agent, path)) and raise_for_disallowed:
+        if not (allowed := self.robots.can_fetch(self.user_agent, "/" + path.lstrip("/"))) and raise_for_disallowed:
             raise DisallowedPath(f"Path {path} is not allowed by robots.txt")
         return allowed
 
