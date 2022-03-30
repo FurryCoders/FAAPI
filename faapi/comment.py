@@ -9,7 +9,15 @@ from .parse import parse_comment_tag
 
 
 class Comment:
+    """
+    Contains comment information.
+    """
+
     def __init__(self, tag: Tag = None, parent: Union[faapi.submission.Submission, faapi.journal.Journal] = None):
+        """
+        :param tag: The comment tag from which to parse information
+        :param parent: The parent object of the comment
+        """
         assert tag is None or isinstance(tag, Tag)
 
         self.tag: Optional[Tag] = tag
@@ -48,6 +56,13 @@ class Comment:
         return "" if self.parent is None else f"{self.parent.url}#cid:{self.id}"
 
     def parse(self, tag: Tag = None):
+        """
+        Parse a comment tag, overrides any information already present in the object.
+
+        :param tag: The comment tag from which to parse information
+        """
+        assert tag is None or isinstance(tag, Tag)
+
         if tag is not None:
             self.tag = tag
         elif self.tag is None:
@@ -69,6 +84,12 @@ class Comment:
 
 
 def sort_comments(comments: list[Comment]) -> list[Comment]:
+    """
+    Sort a list of comments into a tree structure. Replies are overwritten.
+
+    :param comments: A list of Comment objects (flat or tree-structured)
+    :return: A tree-structured list of comments with replies
+    """
     comments = sorted(flatten_comments(comments), key=lambda c: c.date)
     for comment in comments:
         comment.replies = [c for c in comments if c.reply_to == comment.id]
@@ -76,6 +97,12 @@ def sort_comments(comments: list[Comment]) -> list[Comment]:
 
 
 def flatten_comments(comments: list[Comment]) -> list[Comment]:
+    """
+    Flattens a list of comments. Replies are not added if missing.
+
+    :param comments: A list of Comment objects (flat or tree-structured)
+    :return: A flat date-sorted (ascending) list of comments
+    """
     return [c for comment in comments for c in [comment, *flatten_comments(comment.replies)]]
 
 
