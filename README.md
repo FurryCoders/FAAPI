@@ -299,6 +299,41 @@ If no `submission_page` is passed then the object fields will remain at their de
   Parses the stored submission page for metadata. If `submission_page` is passed, it overwrites the
   existing `submission_page` value.
 
+### Comment
+
+This object class contains comment metadata and is used to build a tree structure with the comments and their replies.
+
+* `id: int` the comment ID
+* `author: UserPartial` the user who posted the comment
+* `date: datetime` the date the comment was posted
+* `text: str` the comment text in HTML format
+* `replies: list[Comment]` list of replies to the comment
+* `reply_to: Optional[int]` the ID of the parent comment, if the comment is a reply
+* `edited: bool` `True` if the comment was edited, `False` otherwise
+* `hidden: bool` `True` if the comment was hidden, `False` otherwise (if the comment was hidden, the author and date
+  fields will default to their empty values)
+* `parent: Optional[Union[Submission, Journal]]` the `Submission` or `Journal` object the comments are connected to
+
+#### Init
+
+`__init__(self, tag: bs4.element.Tag = None, parent: Union[Submission, Journal] = None)`
+
+To initialise the object, an optional `bs4.element.Tag` object is needed containing the comment tag as taken from a
+submission/journal page.
+
+The optional `parent` argument sets the `parent` variable described above.
+
+If no `tag` is passed then the object fields will remain at their default - empty - value.
+
+#### Methods
+
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the comment (
+  e.g. `https://www.furaffinity.net/view/12345678#cid:1234567890`). If the `parent` variable is `None`, the property
+  returns an empty string.
+* `parse(tag: bs4.element.Tag = None)`<br>
+  Parses the stored tag for metadata. If `tag` is passed, it overwrites the existing `tag` value.
+
 ### UserPartial
 
 A stripped-down class that holds basic user information. It is used to hold metadata gathered when parsing a submission,
