@@ -8,6 +8,7 @@ from .connection import root
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
+from .parse import parse_comments
 from .parse import parse_journal_page
 from .parse import parse_journal_section
 from .user import UserPartial
@@ -40,6 +41,8 @@ class Journal:
         self.stats: JournalStats = JournalStats(0)
         self.content: str = ""
         self.mentions: list[str] = []
+        from .comment import Comment
+        self.comments: list[Comment] = []
 
         self.parse()
 
@@ -51,6 +54,8 @@ class Journal:
         yield "stats", self.stats._asdict()
         yield "content", self.content
         yield "mentions", self.mentions
+        from .comment import _remove_parents
+        yield "comments", [dict(_remove_parents(c)) for c in self.comments]
 
     def __repr__(self):
         return self.__str__()
@@ -82,6 +87,8 @@ class Journal:
         if isinstance(self.journal_item, BeautifulSoup):
             check_page_raise(self.journal_item)
             parsed = parse_journal_page(self.journal_item)
+            from .comment import sort_comments, Comment
+            self.comments = sort_comments([Comment(t, self) for t in parse_comments(self.journal_item)])
         else:
             parsed = parse_journal_section(self.journal_item)
 

@@ -7,6 +7,7 @@ from .connection import root
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
+from .parse import parse_comments
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
 from .user import UserPartial
@@ -130,6 +131,8 @@ class Submission(SubmissionBase):
         self.thumbnail_url: str = ""
         self.prev: Optional[int] = None
         self.next: Optional[int] = None
+        from .comment import Comment
+        self.comments: list[Comment] = []
 
         self.parse()
 
@@ -152,6 +155,8 @@ class Submission(SubmissionBase):
         yield "thumbnail_url", self.thumbnail_url
         yield "prev", self.prev
         yield "next", self.next
+        from .comment import _remove_parents
+        yield "comments", [dict(_remove_parents(c)) for c in self.comments]
 
     def parse(self, submission_page: BeautifulSoup = None):
         """
@@ -188,3 +193,5 @@ class Submission(SubmissionBase):
         self.thumbnail_url = parsed["thumbnail_url"]
         self.prev = parsed["prev"]
         self.next = parsed["next"]
+        from .comment import sort_comments, Comment
+        self.comments = sort_comments([Comment(t, self) for t in parse_comments(self.submission_page)])
