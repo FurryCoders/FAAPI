@@ -26,11 +26,11 @@ class Comment:
         self.author: faapi.user.UserPartial = faapi.user.UserPartial()
         self.date: datetime = datetime.fromtimestamp(0)
         self.text: str = ""
-        self.parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = parent
         self.replies: list['Comment'] = []
         self.reply_to: Optional[int] = None
         self.edited: bool = False
         self.hidden: bool = False
+        self.parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = parent
 
         self.parse()
 
@@ -39,11 +39,11 @@ class Comment:
         yield "author", dict(self.author)
         yield "date", self.date
         yield "text", self.text
-        yield "parent", None if self.parent is None else dict(self.parent)
         yield "replies", [dict(r) for r in self.replies]
         yield "reply_to", self.reply_to
         yield "edited", self.edited
         yield "hidden", self.hidden
+        yield "parent", None if self.parent is None else dict(self.parent)
 
     def __repr__(self):
         return self.__str__()
