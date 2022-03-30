@@ -10,7 +10,7 @@ from .parse import parse_comment_tag
 
 class Comment:
     """
-    Contains comment information.
+    This class contains a comment's information.
     """
 
     def __init__(self, tag: Tag = None, parent: Union[faapi.submission.Submission, faapi.journal.Journal] = None):
