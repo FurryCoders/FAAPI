@@ -376,7 +376,7 @@ If no `user_tag` is passed then the object fields will remain at their default -
 
 ### User
 
-A class that holds a user's main information.
+The main class storing all of a user's metadata.
 
 * `name: str` display name with capital letters and extra characters such as "_"
 * `status: str` user status (~, !, etc.)
