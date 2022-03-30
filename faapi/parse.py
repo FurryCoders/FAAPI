@@ -376,6 +376,68 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     }
 
 
+def parse_comment_tag(tag: Tag) -> dict:
+    tag_id: Tag | None = tag.select_one("a")
+    tag_username: Tag | None = tag.select_one("div.header strong.comment_username > h3")
+    tag_user_icon: Tag | None = tag.select_one("div.header img.comment_useravatar")
+    tag_user_title: Tag | None = tag.select_one("div.header div.name div.cell span.hideonmobile")
+    tag_body: Tag | None = tag.select_one("div.base > div.body")
+    tag_parent_link: Tag | None = tag.select_one("a.comment-parent")
+    tag_edited: Tag | None = tag.select_one("img.edited")
+
+    assert tag_id is not None, assertion_exception(ParsingError("Missing link tag"))
+    assert tag_body is not None, assertion_exception(ParsingError("Missing body tag"))
+
+    attr_id: str | None = tag_id.attrs.get("id")
+
+    assert attr_id is not None, assertion_exception(ParsingError("Missing id attribute"))
+
+    comment_id: int = int(attr_id.removeprefix("cid:"))
+    comment_text: str = "".join(map(str, tag_body.children)).strip()
+
+    if tag_username is None:
+        return {
+            "id": comment_id,
+            "user_name": "",
+            "user_title": "",
+            "user_icon_url": "",
+            "timestamp": 0,
+            "text": comment_text,
+            "parent": None,
+            "edited": tag_edited is not None,
+            "hidden": True,
+        }
+
+    assert tag_username is not None, assertion_exception(ParsingError("Missing user name tag"))
+    assert tag_user_icon is not None, assertion_exception(ParsingError("Missing user icon tag"))
+    assert tag_user_title is not None, assertion_exception(ParsingError("Missing user title tag"))
+
+    attr_timestamp: str | None = tag.attrs.get("data-timestamp")
+    attr_user_icon: str | None = tag_user_icon.attrs.get("src")
+    attr_parent_href: str | None = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
+
+    assert attr_timestamp is not None, assertion_exception(ParsingError("Missing timestamp attribute"))
+    assert attr_user_icon is not None, assertion_exception(ParsingError("Missing user icon src attribute"))
+
+    parent_id: int | None = int(attr_parent_href.removeprefix("#cid:")) if attr_parent_href else None
+
+    return {
+        "id": comment_id,
+        "user_name": tag_username.text.strip(),
+        "user_title": tag_user_title.text.strip(),
+        "user_icon_url": "https:" + attr_user_icon,
+        "timestamp": int(attr_timestamp),
+        "text": comment_text,
+        "parent": parent_id,
+        "edited": tag_edited is not None,
+        "hidden": False,
+    }
+
+
+def parse_comments(page: BeautifulSoup) -> list[Tag]:
+    return page.select("div.comment_container")
+
+
 def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
     status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
     name: str = u[0][1:]
