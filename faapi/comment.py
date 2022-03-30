@@ -4,23 +4,21 @@ from typing import Union
 
 from bs4.element import Tag
 
-from faapi import Journal
-from faapi import Submission
-from faapi import UserPartial
+import faapi
 from .parse import parse_comment_tag
 
 
 class Comment:
-    def __init__(self, tag: Tag = None, parent: Union[Submission, Journal] = None):
+    def __init__(self, tag: Tag = None, parent: Union[faapi.submission.Submission, faapi.journal.Journal] = None):
         assert tag is None or isinstance(tag, Tag)
 
         self.tag: Optional[Tag] = tag
 
         self.id: int = 0
-        self.author: UserPartial = UserPartial()
+        self.author: faapi.user.UserPartial = faapi.user.UserPartial()
         self.date: datetime = datetime.fromtimestamp(0)
         self.text: Optional[Tag] = None
-        self.parent: Optional[Union[Submission, Journal]] = parent
+        self.parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = parent
         self.replies: list['Comment'] = []
         self.reply_to: Optional[int] = None
         self.edited: bool = False
@@ -59,7 +57,7 @@ class Comment:
 
         self.id = parsed["id"]
         self.date = datetime.fromtimestamp(parsed["timestamp"])
-        self.author = UserPartial()
+        self.author = faapi.user.UserPartial()
         self.author.name = parsed["user_name"]
         self.author.title = parsed["user_title"]
         self.author.user_icon_url = parsed["user_icon_url"]
