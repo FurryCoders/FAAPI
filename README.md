@@ -193,7 +193,7 @@ omitted, and the API will still be able to access public pages.
 This object contains information gathered when parsing a journals page, or a specific journal page. It contains the
 following fields:
 
-* `id: int` journal id
+* `id: int` journal ID
 * `title: str` journal title
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
   timestamp 0)
@@ -227,7 +227,7 @@ is then performed based on the class of the passed object.
 This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites
 and search pages. It contains only the following fields:
 
-* `id: int` submission id
+* `id: int` submission ID
 * `title: str` submission title
 * `author: UserPartial` submission author (only the `name` field is filled)
 * `rating: str` submission rating [general, mature, adult]
@@ -258,7 +258,7 @@ If no `submission_figure` is passed then the object fields will remain at their 
 
 The main class that parses and holds submission metadata.
 
-* `id: int` submission id
+* `id: int` submission ID
 * `title: str` submission title
 * `author: UserPartial` submission author (only the `name`, `title`, and `user_icon_url` fields are filled)
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
