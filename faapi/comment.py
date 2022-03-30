@@ -79,3 +79,20 @@ def sort_comments(comments: list[Comment]) -> list[Comment]:
 
 def flatten_comments(comments: list[Comment]) -> list[Comment]:
     return [c for comment in comments for c in [comment, *flatten_comments(comment.replies)]]
+
+
+def _remove_parents(comment: Comment) -> Comment:
+    comment_new: Comment = Comment()
+
+    comment_new.tag = comment.tag
+    comment_new.id = comment.id
+    comment_new.author = comment.author
+    comment_new.date = comment.date
+    comment_new.text = comment.text
+    comment_new.replies = [_remove_parents(c) for c in comment.replies]
+    comment_new.reply_to = comment.reply_to
+    comment_new.edited = comment.edited
+    comment_new.hidden = comment.hidden
+    comment_new.parent = None
+
+    return comment_new
