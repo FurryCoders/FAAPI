@@ -334,6 +334,16 @@ If no `tag` is passed then the object fields will remain at their default - empt
 * `parse(tag: bs4.element.Tag = None)`<br>
   Parses the stored tag for metadata. If `tag` is passed, it overwrites the existing `tag` value.
 
+#### Extra Functions
+
+These extra functions can be used to operate on a list of comments. They only alter the order and structure, but they do
+not touch any of the metadata.
+
+* `faapi.comment.sort_comments(comments: list[Comment]) -> list[Comment]`<br/>
+  Sorts a list of comments into a tree structure. Replies are overwritten.
+* `faapi.comment.flatten_comments(comments: list[Comment]) -> list[Comment]`<br/>
+  Flattens a list of comments. Replies are not added if missing.
+
 ### UserPartial
 
 A stripped-down class that holds basic user information. It is used to hold metadata gathered when parsing a submission,
