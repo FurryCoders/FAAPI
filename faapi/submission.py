@@ -4,6 +4,7 @@ from typing import Optional
 
 from .connection import join_url
 from .connection import root
+from .exceptions import _assertion_exception
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
@@ -62,7 +63,8 @@ class SubmissionPartial(SubmissionBase):
         """
         :param submission_figure: The figure tag from which to parse the submission information.
         """
-        assert submission_figure is None or isinstance(submission_figure, Tag)
+        assert submission_figure is None or isinstance(submission_figure, Tag), \
+            _assertion_exception(TypeError(f"submission_figure must be {None} or {BeautifulSoup.__name__}"))
 
         super().__init__()
 
@@ -87,7 +89,8 @@ class SubmissionPartial(SubmissionBase):
 
         :param submission_figure: The optional figure tag from which to parse the submission.
         """
-        assert submission_figure is None or isinstance(submission_figure, Tag)
+        assert submission_figure is None or isinstance(submission_figure, Tag), \
+            _assertion_exception(TypeError(f"submission_figure must be {None} or {BeautifulSoup.__name__}"))
         self.submission_figure = submission_figure or self.submission_figure
         if self.submission_figure is None:
             return
@@ -111,7 +114,8 @@ class Submission(SubmissionBase):
         """
         :param submission_page: The page from which to parse the submission information.
         """
-        assert submission_page is None or isinstance(submission_page, BeautifulSoup)
+        assert submission_page is None or isinstance(submission_page, BeautifulSoup), \
+            _assertion_exception(TypeError(f"submission_page must be {None} or {BeautifulSoup.__name__}"))
 
         super().__init__()
 
@@ -164,7 +168,8 @@ class Submission(SubmissionBase):
 
         :param submission_page: The optional page from which to parse the submission.
         """
-        assert submission_page is None or isinstance(submission_page, BeautifulSoup)
+        assert submission_page is None or isinstance(submission_page, BeautifulSoup), \
+            _assertion_exception(TypeError(f"submission_page must be {None} or {BeautifulSoup.__name__}"))
         self.submission_page = submission_page or self.submission_page
         if self.submission_page is None:
             return

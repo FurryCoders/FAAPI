@@ -5,6 +5,7 @@ from typing import Union
 from bs4.element import Tag
 
 import faapi
+from .exceptions import _assertion_exception
 from .parse import parse_comment_tag
 
 
@@ -18,7 +19,8 @@ class Comment:
         :param tag: The comment tag from which to parse information
         :param parent: The parent object of the comment
         """
-        assert tag is None or isinstance(tag, Tag)
+        assert tag is None or isinstance(tag, Tag), \
+            _assertion_exception(TypeError(f"tag must be {None} or {Tag.__name__}"))
 
         self.tag: Optional[Tag] = tag
 
@@ -61,7 +63,8 @@ class Comment:
 
         :param tag: The comment tag from which to parse information
         """
-        assert tag is None or isinstance(tag, Tag)
+        assert tag is None or isinstance(tag, Tag), \
+            _assertion_exception(TypeError(f"tag must be {None} or {Tag.__name__}"))
 
         if tag is not None:
             self.tag = tag

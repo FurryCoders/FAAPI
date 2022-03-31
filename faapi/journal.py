@@ -5,6 +5,7 @@ from typing import Union
 
 from .connection import join_url
 from .connection import root
+from .exceptions import _assertion_exception
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
@@ -30,7 +31,8 @@ class Journal:
         """
         :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
         """
-        assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
+        assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag)), \
+            _assertion_exception(TypeError(f"journal_item must be {None}, {Tag.__name__} or {BeautifulSoup.__name__}"))
 
         self.journal_item: Optional[Union[Tag, BeautifulSoup]] = journal_item
 
@@ -78,7 +80,8 @@ class Journal:
 
         :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
         """
-        assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag))
+        assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag)), \
+            _assertion_exception(TypeError(f"journal_item must be {None}, {Tag.__name__} or {BeautifulSoup.__name__}"))
         self.journal_item = journal_item or self.journal_item
         if self.journal_item is None:
             return

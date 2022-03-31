@@ -4,6 +4,7 @@ from typing import Optional
 
 from .connection import join_url
 from .connection import root
+from .exceptions import _assertion_exception
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
@@ -74,7 +75,8 @@ class UserPartial(UserBase):
         """
         :param user_tag: The tag from which to parse the user information.
         """
-        assert user_tag is None or isinstance(user_tag, Tag)
+        assert user_tag is None or isinstance(user_tag, Tag), \
+            _assertion_exception(TypeError(f"user_tag must be {None} or {Tag.__name__}"))
 
         super().__init__()
 
@@ -98,7 +100,8 @@ class UserPartial(UserBase):
 
         :param user_tag: The tag from which to parse the user information.
         """
-        assert user_tag is None or isinstance(user_tag, Tag)
+        assert user_tag is None or isinstance(user_tag, Tag), \
+            _assertion_exception(TypeError(f"user_tag must be {None} or {Tag.__name__}"))
         self.user_tag = user_tag or self.user_tag
         if self.user_tag is None:
             return
@@ -120,7 +123,8 @@ class User(UserBase):
         """
         :param user_page: The page from which to parse the user information.
         """
-        assert user_page is None or isinstance(user_page, BeautifulSoup)
+        assert user_page is None or isinstance(user_page, BeautifulSoup), \
+            _assertion_exception(TypeError(f"user_page must be {None} or {BeautifulSoup.__name__}"))
 
         super().__init__()
 
@@ -152,7 +156,8 @@ class User(UserBase):
 
         :param user_page: The page from which to parse the user information.
         """
-        assert user_page is None or isinstance(user_page, BeautifulSoup)
+        assert user_page is None or isinstance(user_page, BeautifulSoup), \
+            _assertion_exception(TypeError(f"user_page must be {None} or {BeautifulSoup.__name__}"))
         self.user_page = user_page or self.user_page
         if self.user_page is None:
             return
