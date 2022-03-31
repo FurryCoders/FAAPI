@@ -29,7 +29,7 @@ class Comment:
         self.date: datetime = datetime.fromtimestamp(0)
         self.text: str = ""
         self.replies: list['Comment'] = []
-        self.reply_to: Optional[int] = None
+        self.reply_to: Optional[Union['Comment', int]] = None
         self.edited: bool = False
         self.hidden: bool = False
         self.parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = parent
@@ -49,7 +49,8 @@ class Comment:
         yield "date", self.date
         yield "text", self.text
         yield "replies", [dict(r) for r in self.replies]
-        yield "reply_to", self.reply_to
+        yield "reply_to", dict(_remove_recursion(self.reply_to)) if isinstance(self.reply_to, Comment) \
+            else self.reply_to
         yield "edited", self.edited
         yield "hidden", self.hidden
         yield "parent", None if self.parent is None else dict(self.parent)
@@ -102,7 +103,7 @@ def sort_comments(comments: list[Comment]) -> list[Comment]:
     """
     comments = sorted(flatten_comments(comments), key=lambda c: c.date)
     for comment in comments:
-        comment.replies = [c for c in comments if c.reply_to == comment.id]
+        comment.replies = [_set_reply_to(c, comment) for c in comments if c.reply_to == comment]
     return [c for c in comments if c.reply_to is None]
 
 
@@ -116,6 +117,11 @@ def flatten_comments(comments: list[Comment]) -> list[Comment]:
     return [*{c.id: c for c in [r for c in comments for r in [c, *flatten_comments(c.replies)]]}.values()]
 
 
+def _set_reply_to(comment: Comment, reply_to: Union[Comment, int]) -> Comment:
+    comment.reply_to = reply_to
+    return comment
+
+
 def _remove_recursion(comment: Comment) -> Comment:
     comment_new: Comment = Comment()
 
@@ -125,7 +131,7 @@ def _remove_recursion(comment: Comment) -> Comment:
     comment_new.date = comment.date
     comment_new.text = comment.text
     comment_new.replies = [_remove_recursion(c) for c in comment.replies]
-    comment_new.reply_to = comment.reply_to
+    comment_new.reply_to = comment.reply_to.id if isinstance(comment.reply_to, Comment) else comment.reply_to
     comment_new.edited = comment.edited
     comment_new.hidden = comment.hidden
     comment_new.parent = None
