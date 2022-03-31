@@ -41,7 +41,7 @@ class UserBase:
         if isinstance(other, UserBase):
             return other.name_url == self.name_url
         elif isinstance(other, str):
-            return other == self.name_url
+            return username_url(other) == self.name_url
         return False
 
     def __iter__(self):
