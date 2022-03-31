@@ -207,11 +207,14 @@ class FAAPI:
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("gallery", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
+        author: UserPartial = UserPartial()
+        author.name, author.status, author.title, author.join_date, author.user_icon_url = [
+            info_parsed["user_name"], info_parsed["user_status"],
+            info_parsed["user_title"], info_parsed["user_join_date"],
+            info_parsed["user_icon_url"]
+        ]
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
-            s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
-                info_parsed["user_status"], info_parsed["user_title"],
-                info_parsed["user_join_date"], info_parsed["user_icon_url"]
-            ]
+            s.author = author
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     # noinspection DuplicatedCode
@@ -225,11 +228,14 @@ class FAAPI:
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("scraps", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
+        author: UserPartial = UserPartial()
+        author.name, author.status, author.title, author.join_date, author.user_icon_url = [
+            info_parsed["user_name"], info_parsed["user_status"],
+            info_parsed["user_title"], info_parsed["user_join_date"],
+            info_parsed["user_icon_url"]
+        ]
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
-            s.author.status, s.author.title, s.author.join_date, s.author.user_icon_url = [
-                info_parsed["user_status"], info_parsed["user_title"],
-                info_parsed["user_join_date"], info_parsed["user_icon_url"]
-            ]
+            s.author = author
         return submissions, (page + 1) * (not info_parsed["last_page"])
 
     def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], str]:
@@ -255,12 +261,14 @@ class FAAPI:
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("journals", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
+        author: UserPartial = UserPartial()
+        author.name, author.status, author.title, author.join_date, author.user_icon_url = [
+            info_parsed["user_name"], info_parsed["user_status"],
+            info_parsed["user_title"], info_parsed["user_join_date"],
+            info_parsed["user_icon_url"]
+        ]
         for j in (journals := list(map(Journal, info_parsed["sections"]))):
-            j.author.name, j.author.status, j.author.title, j.author.join_date, j.author.user_icon_url = [
-                info_parsed["user_name"], info_parsed["user_status"],
-                info_parsed["user_title"], info_parsed["user_join_date"],
-                info_parsed["user_icon_url"]
-            ]
+            j.author = author
         return journals, (page + 1) * (not info_parsed["last_page"])
 
     def search(self, q: str, page: int = 1, **params) -> tuple[list[SubmissionPartial], int, tuple[int, int, int]]:
