@@ -50,3 +50,7 @@ class NoticeMessage(ParsingError):
     """
     A notice of unknown type was found in the page.
     """
+
+
+def _assertion_exception(err: BaseException):
+    raise err

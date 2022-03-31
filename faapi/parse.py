@@ -19,15 +19,12 @@ from .exceptions import NotFound
 from .exceptions import NoticeMessage
 from .exceptions import ParsingError
 from .exceptions import ServerError
+from .exceptions import _assertion_exception
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www.)?furaffinity.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
-
-
-def assertion_exception(err: BaseException):
-    raise err
 
 
 def parse_page(text: str) -> BeautifulSoup:
@@ -108,11 +105,11 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
     tag_comments: Optional[Tag] = section_tag.select_one("div.section-footer > a > span")
 
-    assert id_ != 0, assertion_exception(ParsingError("Missing ID"))
-    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
-    assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
-    assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
-    assert tag_comments is not None, assertion_exception(ParsingError("Missing comments tag"))
+    assert id_ != 0, _assertion_exception(ParsingError("Missing ID"))
+    assert tag_title is not None, _assertion_exception(ParsingError("Missing title tag"))
+    assert tag_date is not None, _assertion_exception(ParsingError("Missing date tag"))
+    assert tag_content is not None, _assertion_exception(ParsingError("Missing content tag"))
+    assert tag_comments is not None, _assertion_exception(ParsingError("Missing comments tag"))
 
     title: str = tag_title.text.strip()
     date: datetime = parse_date((t[0] if isinstance(t := tag_date["title"], list) else t).strip())
@@ -138,11 +135,11 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
     tag_comments: Optional[Tag] = journal_page.select_one("div.section-footer > span")
 
-    assert tag_id is not None, assertion_exception(ParsingError("Missing ID tag"))
-    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
-    assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
-    assert tag_content is not None, assertion_exception(ParsingError("Missing content tag"))
-    assert tag_comments is not None, assertion_exception(ParsingError("Missing comments tag"))
+    assert tag_id is not None, _assertion_exception(ParsingError("Missing ID tag"))
+    assert tag_title is not None, _assertion_exception(ParsingError("Missing title tag"))
+    assert tag_date is not None, _assertion_exception(ParsingError("Missing date tag"))
+    assert tag_content is not None, _assertion_exception(ParsingError("Missing content tag"))
+    assert tag_comments is not None, _assertion_exception(ParsingError("Missing comments tag"))
 
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -151,7 +148,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
 
-    assert id_ != 0, assertion_exception(ParsingError("Missing ID"))
+    assert id_ != 0, _assertion_exception(ParsingError("Missing ID"))
 
     return {
         **user_info,
@@ -170,9 +167,9 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
     tag_author: Optional[Tag] = figure_tag.select_one("figcaption a[href^='/user/']")
     tag_thumbnail: Optional[Tag] = figure_tag.select_one("img")
 
-    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
-    assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
-    assert tag_thumbnail is not None, assertion_exception(ParsingError("Missing thumbnail tag"))
+    assert tag_title is not None, _assertion_exception(ParsingError("Missing title tag"))
+    assert tag_author is not None, _assertion_exception(ParsingError("Missing author tag"))
+    assert tag_thumbnail is not None, _assertion_exception(ParsingError("Missing thumbnail tag"))
 
     title: str = tag_title.attrs["title"]
     author: str = tag_author.attrs["title"]
@@ -193,13 +190,13 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
 def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
     tag_author: Optional[Tag] = author_tag.select_one("div.submission-id-sub-container")
 
-    assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
+    assert tag_author is not None, _assertion_exception(ParsingError("Missing author tag"))
 
     tag_author_name: Optional[Tag] = tag_author.select_one("a > strong")
     tag_author_icon: Optional[Tag] = author_tag.select_one("img.submission-user-icon")
 
-    assert tag_author_name is not None, assertion_exception(ParsingError("Missing author name tag"))
-    assert tag_author_icon is not None, assertion_exception(ParsingError("Missing author icon tag"))
+    assert tag_author_name is not None, _assertion_exception(ParsingError("Missing author name tag"))
+    assert tag_author_icon is not None, _assertion_exception(ParsingError("Missing author icon tag"))
 
     author_name: str = tag_author_name.text.strip()
     author_title: str = ([*filter(bool, [child.strip()
@@ -220,7 +217,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_id: Optional[Tag] = sub_page.select_one("meta[property='og:url']")
     tag_sub_info: Optional[Tag] = sub_page.select_one("div.submission-id-sub-container")
 
-    assert tag_sub_info is not None, assertion_exception(ParsingError("Missing info tag"))
+    assert tag_sub_info is not None, _assertion_exception(ParsingError("Missing info tag"))
 
     tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
     tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
@@ -233,7 +230,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
 
-    assert tag_info is not None, assertion_exception(ParsingError("Missing info tag"))
+    assert tag_info is not None, _assertion_exception(ParsingError("Missing info tag"))
 
     tag_category1: Optional[Tag] = tag_info.select_one("span.category-name")
     tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
@@ -246,24 +243,24 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_prev: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:nth-child(1)")
     tag_next: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:last-child")
 
-    assert tag_id is not None, assertion_exception(ParsingError("Missing id tag"))
-    assert tag_title is not None, assertion_exception(ParsingError("Missing title tag"))
-    assert tag_author is not None, assertion_exception(ParsingError("Missing author tag"))
-    assert tag_date is not None, assertion_exception(ParsingError("Missing date tag"))
-    assert tag_views is not None, assertion_exception(ParsingError("Missing views tag"))
-    assert tag_comment_count is not None, assertion_exception(ParsingError("Missing comment count tag"))
-    assert tag_favorites is not None, assertion_exception(ParsingError("Missing favorites tag"))
-    assert tag_rating is not None, assertion_exception(ParsingError("Missing rating tag"))
-    assert tag_type is not None, assertion_exception(ParsingError("Missing type tag"))
-    assert tag_category1 is not None, assertion_exception(ParsingError("Missing category1 tag"))
-    assert tag_category2 is not None, assertion_exception(ParsingError("Missing category2 tag"))
-    assert tag_species is not None, assertion_exception(ParsingError("Missing species tag"))
-    assert tag_gender is not None, assertion_exception(ParsingError("Missing gender tag"))
-    assert tag_description is not None, assertion_exception(ParsingError("Missing description tag"))
-    assert tag_folder is not None, assertion_exception(ParsingError("Missing folder tag"))
-    assert tag_file_url is not None, assertion_exception(ParsingError("Missing file URL tag"))
-    assert tag_prev is not None, assertion_exception(ParsingError("Missing prev tag"))
-    assert tag_next is not None, assertion_exception(ParsingError("Missing next tag"))
+    assert tag_id is not None, _assertion_exception(ParsingError("Missing id tag"))
+    assert tag_title is not None, _assertion_exception(ParsingError("Missing title tag"))
+    assert tag_author is not None, _assertion_exception(ParsingError("Missing author tag"))
+    assert tag_date is not None, _assertion_exception(ParsingError("Missing date tag"))
+    assert tag_views is not None, _assertion_exception(ParsingError("Missing views tag"))
+    assert tag_comment_count is not None, _assertion_exception(ParsingError("Missing comment count tag"))
+    assert tag_favorites is not None, _assertion_exception(ParsingError("Missing favorites tag"))
+    assert tag_rating is not None, _assertion_exception(ParsingError("Missing rating tag"))
+    assert tag_type is not None, _assertion_exception(ParsingError("Missing type tag"))
+    assert tag_category1 is not None, _assertion_exception(ParsingError("Missing category1 tag"))
+    assert tag_category2 is not None, _assertion_exception(ParsingError("Missing category2 tag"))
+    assert tag_species is not None, _assertion_exception(ParsingError("Missing species tag"))
+    assert tag_gender is not None, _assertion_exception(ParsingError("Missing gender tag"))
+    assert tag_description is not None, _assertion_exception(ParsingError("Missing description tag"))
+    assert tag_folder is not None, _assertion_exception(ParsingError("Missing folder tag"))
+    assert tag_file_url is not None, _assertion_exception(ParsingError("Missing file URL tag"))
+    assert tag_prev is not None, _assertion_exception(ParsingError("Missing prev tag"))
+    assert tag_next is not None, _assertion_exception(ParsingError("Missing next tag"))
 
     id_: int = int(tag_id.attrs["content"].strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
@@ -326,13 +323,13 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_contacts: list[Tag] = user_page.select("div#userpage-contact div.user-contact-user-info")
     tag_user_icon_url: Optional[Tag] = user_page.select_one("img.user-nav-avatar")
 
-    assert tag_status is not None, assertion_exception(ParsingError("Missing name tag"))
-    assert tag_profile is not None, assertion_exception(ParsingError("Missing profile tag"))
-    assert tag_title_join_date is not None, assertion_exception(ParsingError("Missing join date tag"))
-    assert tag_stats is not None, assertion_exception(ParsingError("Missing stats tag"))
-    assert tag_watchlist_to is not None, assertion_exception(ParsingError("Missing watchlist to tag"))
-    assert tag_watchlist_by is not None, assertion_exception(ParsingError("Missing watchlist by tag"))
-    assert tag_user_icon_url is not None, assertion_exception(ParsingError("Missing user icon URL tag"))
+    assert tag_status is not None, _assertion_exception(ParsingError("Missing name tag"))
+    assert tag_profile is not None, _assertion_exception(ParsingError("Missing profile tag"))
+    assert tag_title_join_date is not None, _assertion_exception(ParsingError("Missing join date tag"))
+    assert tag_stats is not None, _assertion_exception(ParsingError("Missing stats tag"))
+    assert tag_watchlist_to is not None, _assertion_exception(ParsingError("Missing watchlist to tag"))
+    assert tag_watchlist_by is not None, _assertion_exception(ParsingError("Missing watchlist by tag"))
+    assert tag_user_icon_url is not None, _assertion_exception(ParsingError("Missing user icon URL tag"))
 
     status: str = (u := tag_status.text.strip())[0]
     name: str = u[1:]
@@ -385,12 +382,12 @@ def parse_comment_tag(tag: Tag) -> dict:
     tag_parent_link: Tag | None = tag.select_one("a.comment-parent")
     tag_edited: Tag | None = tag.select_one("img.edited")
 
-    assert tag_id is not None, assertion_exception(ParsingError("Missing link tag"))
-    assert tag_body is not None, assertion_exception(ParsingError("Missing body tag"))
+    assert tag_id is not None, _assertion_exception(ParsingError("Missing link tag"))
+    assert tag_body is not None, _assertion_exception(ParsingError("Missing body tag"))
 
     attr_id: str | None = tag_id.attrs.get("id")
 
-    assert attr_id is not None, assertion_exception(ParsingError("Missing id attribute"))
+    assert attr_id is not None, _assertion_exception(ParsingError("Missing id attribute"))
 
     comment_id: int = int(attr_id.removeprefix("cid:"))
     comment_text: str = "".join(map(str, tag_body.children)).strip()
@@ -408,16 +405,16 @@ def parse_comment_tag(tag: Tag) -> dict:
             "hidden": True,
         }
 
-    assert tag_username is not None, assertion_exception(ParsingError("Missing user name tag"))
-    assert tag_user_icon is not None, assertion_exception(ParsingError("Missing user icon tag"))
-    assert tag_user_title is not None, assertion_exception(ParsingError("Missing user title tag"))
+    assert tag_username is not None, _assertion_exception(ParsingError("Missing user name tag"))
+    assert tag_user_icon is not None, _assertion_exception(ParsingError("Missing user icon tag"))
+    assert tag_user_title is not None, _assertion_exception(ParsingError("Missing user title tag"))
 
     attr_timestamp: str | None = tag.attrs.get("data-timestamp")
     attr_user_icon: str | None = tag_user_icon.attrs.get("src")
     attr_parent_href: str | None = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
 
-    assert attr_timestamp is not None, assertion_exception(ParsingError("Missing timestamp attribute"))
-    assert attr_user_icon is not None, assertion_exception(ParsingError("Missing user icon src attribute"))
+    assert attr_timestamp is not None, _assertion_exception(ParsingError("Missing timestamp attribute"))
+    assert attr_user_icon is not None, _assertion_exception(ParsingError("Missing user icon src attribute"))
 
     parent_id: int | None = int(attr_parent_href.removeprefix("#cid:")) if attr_parent_href else None
 
@@ -455,8 +452,8 @@ def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
 def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
     tag_username: Optional[Tag] = folder_page.select_one("div.userpage-flex-item.username")
     tag_user_icon: Optional[Tag] = folder_page.select_one("img.user-nav-avatar")
-    assert tag_username is not None, assertion_exception(ParsingError("Missing username tag"))
-    assert tag_user_icon is not None, assertion_exception(ParsingError("Missing user icon tag"))
+    assert tag_username is not None, _assertion_exception(ParsingError("Missing username tag"))
+    assert tag_user_icon is not None, _assertion_exception(ParsingError("Missing user icon tag"))
     return {
         **parse_user_tag(tag_username),
         "user_icon_url": "https:" + tag_user_icon.attrs["src"],
@@ -500,7 +497,7 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
     tag_stats: Optional[Tag] = search_page.select_one("div[id='query-stats']")
-    assert tag_stats is not None, assertion_exception(ParsingError("Missing stats tag"))
+    assert tag_stats is not None, _assertion_exception(ParsingError("Missing stats tag"))
 
     for div in tag_stats.select(""):
         div.decompose()
