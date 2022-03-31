@@ -342,7 +342,7 @@ not touch any of the metadata.
 * `faapi.comment.sort_comments(comments: list[Comment]) -> list[Comment]`<br/>
   Sorts a list of comments into a tree structure. Replies are overwritten.
 * `faapi.comment.flatten_comments(comments: list[Comment]) -> list[Comment]`<br/>
-  Flattens a list of comments. Replies are not added if missing.
+  Flattens a list of comments. Replies are not modified.
 
 #### Comments Tree Graphs
 

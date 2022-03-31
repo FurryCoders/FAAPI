@@ -98,7 +98,7 @@ def sort_comments(comments: list[Comment]) -> list[Comment]:
 
 def flatten_comments(comments: list[Comment]) -> list[Comment]:
     """
-    Flattens a list of comments. Replies are not added if missing.
+    Flattens a list of comments. Replies are not modified.
 
     :param comments: A list of Comment objects (flat or tree-structured)
     :return: A flat date-sorted (ascending) list of comments
