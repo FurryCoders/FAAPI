@@ -125,7 +125,7 @@ def _remove_recursion(comment: Comment) -> Comment:
     comment_new.author = comment.author
     comment_new.date = comment.date
     comment_new.text = comment.text
-    comment_new.replies = [_remove_parents(c) for c in comment.replies]
+    comment_new.replies = [_remove_recursion(c) for c in comment.replies]
     comment_new.reply_to = comment.reply_to
     comment_new.edited = comment.edited
     comment_new.hidden = comment.hidden
