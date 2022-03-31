@@ -322,6 +322,8 @@ the `copy.deepcopy` function. If such iterations are needed, simply set the `par
 the `reply_to` variable to `None` or the comment's ID in all the comments (this can be done easily after flattening the
 comments list with `faapi.comment.flatten_comments`, the comments can then be sorted again
 with `faapi.comment.sort_comments`).
+*Note:* The `__iter__` method of `Comment` objects automatically removes recursion. The `parent` variable is set
+to `None` and `reply_to` is set to the comment's ID.
 
 #### Init
 
