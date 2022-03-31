@@ -308,16 +308,20 @@ This object class contains comment metadata and is used to build a tree structur
 * `date: datetime` the date the comment was posted
 * `text: str` the comment text in HTML format
 * `replies: list[Comment]` list of replies to the comment
-* `reply_to: Optional[int]` the ID of the parent comment, if the comment is a reply
+* `reply_to: Optional[Comment, int]` the parent comment, if the comment is a reply. The variable type is `int` only if
+  the comment is parsed outside the parse method of a `Submission` or `Journal` (e.g. by creating a new comment with a
+  comment tag).
 * `edited: bool` `True` if the comment was edited, `False` otherwise
 * `hidden: bool` `True` if the comment was hidden, `False` otherwise (if the comment was hidden, the author and date
   fields will default to their empty values)
 * `parent: Optional[Union[Submission, Journal]]` the `Submission` or `Journal` object the comments are connected to
 
-*Note:* Because each comment contains the parent `Submission` or `Journal` object, some iterations may cause infinite
-recursion errors, for example when using the `copy.deepcopy` function. If such iterations are needed, simply set
-the `parent` variable to `None` in all the comments (this can be done easily after flattening the comments list
-with `faapi.comment.flatten_comments`, the comments can then be sorted again with `faapi.comment.sort_comments`).
+*Note:* Because each comment contains the parent `Submission` or `Journal` object (which contains the comment itself)
+and the replied comment object, some iterations may cause infinite recursion errors, for example when using
+the `copy.deepcopy` function. If such iterations are needed, simply set the `parent` variable to `None` and
+the `reply_to` variable to `None` or the comment's ID in all the comments (this can be done easily after flattening the
+comments list with `faapi.comment.flatten_comments`, the comments can then be sorted again
+with `faapi.comment.sort_comments`).
 
 #### Init
 
