@@ -166,8 +166,8 @@ class Submission(SubmissionBase):
         yield "thumbnail_url", self.thumbnail_url
         yield "prev", self.prev
         yield "next", self.next
-        from .comment import _remove_parents
-        yield "comments", [dict(_remove_parents(c)) for c in self.comments]
+        from .comment import _remove_recursion
+        yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
     def parse(self, submission_page: BeautifulSoup = None):
         """

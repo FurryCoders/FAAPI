@@ -116,7 +116,8 @@ def flatten_comments(comments: list[Comment]) -> list[Comment]:
     return [*{c.id: c for c in [r for c in comments for r in [c, *flatten_comments(c.replies)]]}.values()]
 
 
-def _remove_parents(comment: Comment) -> Comment:
+
+def _remove_recursion(comment: Comment) -> Comment:
     comment_new: Comment = Comment()
 
     comment_new.tag = comment.tag

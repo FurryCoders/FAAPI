@@ -63,8 +63,8 @@ class Journal:
         yield "stats", self.stats._asdict()
         yield "content", self.content
         yield "mentions", self.mentions
-        from .comment import _remove_parents
-        yield "comments", [dict(_remove_parents(c)) for c in self.comments]
+        from .comment import _remove_recursion
+        yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
     def __repr__(self):
         return self.__str__()
