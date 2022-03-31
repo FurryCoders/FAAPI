@@ -61,7 +61,7 @@ class UserBase:
 
         :return: The cleaned username.
         """
-        return username_url(self.name.lower())
+        return username_url(self.name)
 
     @property
     def url(self):
