@@ -207,6 +207,9 @@ following fields:
 
 `Journal` objects can be directly cast to a dict object or iterated through.
 
+Comparison with `Journal` can be made with either another `Journal` object (the IDs are compared), or an integer (
+the `Journal.id` value is compared to the given integer).
+
 #### Init
 
 `__init__(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`
@@ -236,6 +239,9 @@ and search pages. It contains only the following fields:
 * `submission_figure: bs4.element.Tag` the figure tag used to parse the object fields
 
 `SubmissionPartial` objects can be directly cast to a dict object or iterated through.
+
+Comparison with `Submission` can be made with either another `SubmissionPartial` or `Submission` object (the IDs are
+compared), or an integer (the `Submission.id` value is compared to the given integer).
 
 #### Init
 
@@ -282,6 +288,9 @@ The main class that parses and holds submission metadata.
 
 `Submission` objects can be directly cast to a dict object and iterated through.
 
+Comparison with `Submission` can be made with either another `Submission` or `SubmissionPartial` object (the IDs are
+compared), or an integer (the `Submission.id` value is compared to the given integer).
+
 #### Init
 
 `__init__(submission_page: bs4.BeautifulSoup = None)`
@@ -315,6 +324,12 @@ This object class contains comment metadata and is used to build a tree structur
 * `hidden: bool` `True` if the comment was hidden, `False` otherwise (if the comment was hidden, the author and date
   fields will default to their empty values)
 * `parent: Optional[Union[Submission, Journal]]` the `Submission` or `Journal` object the comments are connected to
+
+`Comment` objects can be directly cast to a dict object and iterated through.
+
+Comparison with `Comment` can be made with either another comment (the IDs are compared), or an integer (
+the `Comment.id`
+value is compared to the given integer).
 
 *Note:* Because each comment contains the parent `Submission` or `Journal` object (which contains the comment itself)
 and the replied comment object, some iterations may cause infinite recursion errors, for example when using
@@ -408,6 +423,11 @@ journal, gallery, scraps, etc.
 * `user_tag: bs4.element.Tag` the user element used to parse information (placeholder, `UserPartial` is filled
   externally)
 
+`UserPartial` objects can be directly cast to a dict object and iterated through.
+
+Comparison with `UserPartial` can be made with either another `UserPartial` or `User` object (the URL names are
+compared), or a string (the URL name is compared to the given string).
+
 #### Init
 
 `__init__(user_tag: bs4.element.Tag = None)`
@@ -442,6 +462,11 @@ The main class storing all of a user's metadata.
 * `contacts: Dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
 * `user_icon_url: str` the URL to the user icon
 * `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
+
+`User` objects can be directly cast to a dict object and iterated through.
+
+Comparison with `User` can be made with either another `User` or `UserPartial` object (the URL names are compared), or a
+string (the URL name is compared to the given string).
 
 #### Init
 
