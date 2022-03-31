@@ -103,7 +103,7 @@ def flatten_comments(comments: list[Comment]) -> list[Comment]:
     :param comments: A list of Comment objects (flat or tree-structured)
     :return: A flat date-sorted (ascending) list of comments
     """
-    return [c for comment in comments for c in [comment, *flatten_comments(comment.replies)]]
+    return [*{c.id: c for c in [r for c in comments for r in [c, *flatten_comments(c.replies)]]}.values()]
 
 
 def _remove_parents(comment: Comment) -> Comment:
