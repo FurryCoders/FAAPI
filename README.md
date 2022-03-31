@@ -314,6 +314,11 @@ This object class contains comment metadata and is used to build a tree structur
   fields will default to their empty values)
 * `parent: Optional[Union[Submission, Journal]]` the `Submission` or `Journal` object the comments are connected to
 
+*Note:* Because each comment contains the parent `Submission` or `Journal` object, some iterations may cause infinite
+recursion errors, for example when using the `copy.deepcopy` function. If such iterations are needed, simply set
+the `parent` variable to `None` in all the comments (this can be done easily after flattening the comments list
+with `faapi.comment.flatten_comments`, the comments can then be sorted again with `faapi.comment.sort_comments`).
+
 #### Init
 
 `__init__(self, tag: bs4.element.Tag = None, parent: Union[Submission, Journal] = None)`
