@@ -36,6 +36,13 @@ class Comment:
 
         self.parse()
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, Comment):
+            return other.id == self.id
+        elif isinstance(other, int):
+            return other == self.id
+        return False
+
     def __iter__(self):
         yield "id", self.id
         yield "author", dict(self.author)

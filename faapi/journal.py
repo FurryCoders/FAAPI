@@ -48,6 +48,13 @@ class Journal:
 
         self.parse()
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, Journal):
+            return other.id == self.id
+        elif isinstance(other, int):
+            return other == self.id
+        return False
+
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title

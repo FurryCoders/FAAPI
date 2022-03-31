@@ -37,6 +37,13 @@ class UserBase:
         self.name: str = ""
         self.status: str = ""
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, UserBase):
+            return other.name_url == self.name_url
+        elif isinstance(other, str):
+            return other == self.name_url
+        return False
+
     def __iter__(self):
         yield "name", self.name
         yield "status", self.status

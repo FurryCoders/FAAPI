@@ -33,6 +33,13 @@ class SubmissionBase:
         self.title: str = ""
         self.author: UserPartial = UserPartial()
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, SubmissionBase):
+            return other.id == self.id
+        elif isinstance(other, int):
+            return other == self.id
+        return False
+
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title
