@@ -1,5 +1,30 @@
 # Changelog
 
+## v3.6.0
+
+### New Features
+
+* Comments! 💬
+    * A new `Comment` object is now used to store comments for submissions and journals
+    * The comments are organised in a tree structure, and each one contains references to both its parent
+      object (`Submission` or `Journal`) and, if the comment is a reply, to its parent comment too
+    * The auxiliary functions `faapi.comment.flatten_comments` and `faapi.comment.sort_comments` allow to flatten the
+      comment tree or reorganise it
+
+* Comparisons
+    * All objects can now be used with the comparison (==) operator with other objects of the same type or the type of
+      their key property (`id: int` for submissions and journals, and `name_url: str` for users)
+
+### Changes
+
+* The list of `Submission`/`Journal` objects returned by `FAAPI.gallery`, `FAAPI.scraps`, and `FAAPI.journals` now uses
+  a shared `UserPartial` object in the `author` variable (i.e. changing a property of the author in one object of the
+  list will change it for the others as well)
+
+### Fixes
+
+* Fix path checking against robots.txt not working correctly with paths missing a leading forward slash
+
 ## v3.5.0
 
 ### New Features
