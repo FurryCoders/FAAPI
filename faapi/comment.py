@@ -101,8 +101,7 @@ def sort_comments(comments: list[Comment]) -> list[Comment]:
     :param comments: A list of Comment objects (flat or tree-structured)
     :return: A tree-structured list of comments with replies
     """
-    comments = sorted(flatten_comments(comments), key=lambda c: c.date)
-    for comment in comments:
+    for comment in (comments := sorted(flatten_comments(comments), key=lambda c: c.date)):
         comment.replies = [_set_reply_to(c, comment) for c in comments if c.reply_to == comment]
     return [c for c in comments if c.reply_to is None]
 
