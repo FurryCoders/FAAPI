@@ -335,8 +335,8 @@ value is compared to the given integer).
 and the replied comment object, some iterations may cause infinite recursion errors, for example when using
 the `copy.deepcopy` function. If such iterations are needed, simply set the `parent` variable to `None` and
 the `reply_to` variable to `None` or the comment's ID (this can be done easily after flattening the comments list
-with `faapi.comment.flatten_comments`, the comments can then be sorted again with `faapi.comment.sort_comments` to
-restore the `reply_to` values).
+with `faapi.comment.flatten_comments`, the comments can then be sorted again with `faapi.comment.sort_comments` which
+will also restore the `reply_to` values to `Comment` objects).
 *Note:* The `__iter__` method of `Comment` objects automatically removes recursion. The `parent` variable is set
 to `None` and `reply_to` is set to the comment's ID.
 
