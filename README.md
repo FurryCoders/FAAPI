@@ -319,7 +319,8 @@ This object class contains comment metadata and is used to build a tree structur
 * `replies: list[Comment]` list of replies to the comment
 * `reply_to: Optional[Comment, int]` the parent comment, if the comment is a reply. The variable type is `int` only if
   the comment is parsed outside the parse method of a `Submission` or `Journal` (e.g. by creating a new comment with a
-  comment tag).
+  comment tag), and when iterating over the parent object (to avoid infinite recursion errors), be it `Submission`
+  , `Journal` or another `Comment`.
 * `edited: bool` `True` if the comment was edited, `False` otherwise
 * `hidden: bool` `True` if the comment was hidden, `False` otherwise (if the comment was hidden, the author and date
   fields will default to their empty values)
