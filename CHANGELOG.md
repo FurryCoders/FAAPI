@@ -20,6 +20,7 @@
 * The list of `Submission`/`Journal` objects returned by `FAAPI.gallery`, `FAAPI.scraps`, and `FAAPI.journals` now uses
   a shared `UserPartial` object in the `author` variable (i.e. changing a property of the author in one object of the
   list will change it for the others as well)
+* An `Unauthorized` exception is raised if `FAAPI` is initialised with an empty cookies list
 
 ### Fixes
 
