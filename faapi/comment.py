@@ -28,8 +28,8 @@ class Comment:
         self.author: faapi.user.UserPartial = faapi.user.UserPartial()
         self.date: datetime = datetime.fromtimestamp(0)
         self.text: str = ""
-        self.replies: list['Comment'] = []
-        self.reply_to: Optional[Union['Comment', int]] = None
+        self.replies: list[Comment] = []
+        self.reply_to: Optional[Union[Comment, int]] = None
         self.edited: bool = False
         self.hidden: bool = False
         self.parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = parent
