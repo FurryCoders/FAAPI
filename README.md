@@ -93,7 +93,7 @@ cookies.set("b", "356f5962-5a60-0922-1c11-65003b703038")
 To access session cookies, consult the manual of the browser used to log in.
 
 *Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.
-*Note:* as of 2021-12-05 only cookies `a` and `b` are needed.
+*Note:* as of April 2022 only cookies `a` and `b` are needed.
 
 ### User Agent
 
@@ -182,7 +182,7 @@ omitted, and the API will still be able to access public pages.
   last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the
   last three returned integers are 0, 47 and 437, then the page contains submissions 1 through 48 of a search that has
   found a total of 437 submissions.<br>
-  *Note:* as of April 2021 the "/search" path is disallowed by Fur Affinity's robots.txt.
+  *Note:* as of April 2022 the "/search" path is disallowed by Fur Affinity's robots.txt.
 * `watchlist_to(self, user: str) -> List[User]`<br>
   Given a username, returns a list of `User` objects for each user that is watching the given user.
 * `watchlist_by(self, user: str) -> List[User]`<br>
