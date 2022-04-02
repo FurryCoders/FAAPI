@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: 3.10.2
+
 jobs:
   flake8:
     name: Flake8
