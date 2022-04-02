@@ -274,9 +274,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     species: str = tag_species.text.strip()
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
-    views: str = tag_views.text.strip()
-    comment_count: str = tag_comment_count.text.strip()
-    favorites: str = tag_favorites.text.strip()
+    views: int = int(tag_views.text.strip())
+    comment_count: int = int(tag_comment_count.text.strip())
+    favorites: int = int(tag_favorites.text.strip())
     type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: list[str] = parse_mentions(tag_description)
