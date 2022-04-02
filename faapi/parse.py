@@ -374,18 +374,18 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_comment_tag(tag: Tag) -> dict:
-    tag_id: Tag | None = tag.select_one("a")
-    tag_username: Tag | None = tag.select_one("div.header strong.comment_username > h3")
-    tag_user_icon: Tag | None = tag.select_one("div.header img.comment_useravatar")
-    tag_user_title: Tag | None = tag.select_one("div.header div.name div.cell span.hideonmobile")
-    tag_body: Tag | None = tag.select_one("div.base > div.body")
-    tag_parent_link: Tag | None = tag.select_one("a.comment-parent")
-    tag_edited: Tag | None = tag.select_one("img.edited")
+    tag_id: Optional[Tag] = tag.select_one("a")
+    tag_username: Optional[Tag] = tag.select_one("div.header strong.comment_username > h3")
+    tag_user_icon: Optional[Tag] = tag.select_one("div.header img.comment_useravatar")
+    tag_user_title: Optional[Tag] = tag.select_one("div.header div.name div.cell span.hideonmobile")
+    tag_body: Optional[Tag] = tag.select_one("div.base > div.body")
+    tag_parent_link: Optional[Tag] = tag.select_one("a.comment-parent")
+    tag_edited: Optional[Tag] = tag.select_one("img.edited")
 
     assert tag_id is not None, _raise_exception(ParsingError("Missing link tag"))
     assert tag_body is not None, _raise_exception(ParsingError("Missing body tag"))
 
-    attr_id: str | None = tag_id.attrs.get("id")
+    attr_id: Optional[str] = tag_id.attrs.get("id")
 
     assert attr_id is not None, _raise_exception(ParsingError("Missing id attribute"))
 
@@ -409,14 +409,14 @@ def parse_comment_tag(tag: Tag) -> dict:
     assert tag_user_icon is not None, _raise_exception(ParsingError("Missing user icon tag"))
     assert tag_user_title is not None, _raise_exception(ParsingError("Missing user title tag"))
 
-    attr_timestamp: str | None = tag.attrs.get("data-timestamp")
-    attr_user_icon: str | None = tag_user_icon.attrs.get("src")
-    attr_parent_href: str | None = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
+    attr_timestamp: Optional[str] = tag.attrs.get("data-timestamp")
+    attr_user_icon: Optional[str] = tag_user_icon.attrs.get("src")
+    attr_parent_href: Optional[str] = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
 
     assert attr_timestamp is not None, _raise_exception(ParsingError("Missing timestamp attribute"))
     assert attr_user_icon is not None, _raise_exception(ParsingError("Missing user icon src attribute"))
 
-    parent_id: int | None = int(attr_parent_href.removeprefix("#cid:")) if attr_parent_href else None
+    parent_id: Optional[int] = int(attr_parent_href.removeprefix("#cid:")) if attr_parent_href else None
 
     return {
         "id": comment_id,
