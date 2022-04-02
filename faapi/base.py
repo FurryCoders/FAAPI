@@ -88,7 +88,7 @@ class FAAPI:
         :return: True if the path is allowed in the robots.txt, False otherwise.
         """
         if not (allowed := self.robots.can_fetch(self.user_agent, "/" + path.lstrip("/"))) and raise_for_disallowed:
-            raise DisallowedPath(f"Path {path} is not allowed by robots.txt")
+            raise DisallowedPath(f"Path {path!r} is not allowed by robots.txt")
         return allowed
 
     @property
