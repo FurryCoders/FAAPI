@@ -11,7 +11,7 @@ from .parse import parse_comment_tag
 
 class Comment:
     """
-    Contains comment information and references to replies and parent objects
+    Contains comment information and references to replies and parent objects.
     """
 
     def __init__(self, tag: Tag = None, parent: Union[faapi.submission.Submission, faapi.journal.Journal] = None):

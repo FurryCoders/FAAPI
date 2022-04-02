@@ -65,6 +65,10 @@ class JournalBase:
 
 
 class JournalPartial(JournalBase):
+    """
+    Contains partial journal information gathered from journals pages.
+    """
+
     def __init__(self, journal_tag: Tag = None):
         """
         :param journal_tag: The tag from which to parse the journal.
@@ -108,7 +112,7 @@ class JournalPartial(JournalBase):
 
 class Journal(JournalBase):
     """
-    Contains complete journal information, including comments
+    Contains complete journal information gathered from journal pages, including comments.
     """
 
     def __init__(self, journal_page: BeautifulSoup = None):

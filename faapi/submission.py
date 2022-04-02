@@ -63,7 +63,7 @@ class SubmissionBase:
 
 class SubmissionPartial(SubmissionBase):
     """
-    Contains partial submission information gathered from submission pages (gallery, scraps, etc.)
+    Contains partial submission information gathered from submissions pages (gallery, scraps, etc.).
     """
 
     def __init__(self, submission_figure: Tag = None):
