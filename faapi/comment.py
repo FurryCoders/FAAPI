@@ -22,7 +22,7 @@ class Comment:
         assert tag is None or isinstance(tag, Tag), \
             _assertion_exception(TypeError(f"tag must be {None} or {Tag.__name__}"))
 
-        self.tag: Optional[Tag] = tag
+        self.comment_tag: Optional[Tag] = tag
 
         self.id: int = 0
         self.author: faapi.user.UserPartial = faapi.user.UserPartial()
@@ -65,20 +65,20 @@ class Comment:
     def url(self):
         return "" if self.parent is None else f"{self.parent.url}#cid:{self.id}"
 
-    def parse(self, tag: Tag = None):
+    def parse(self, comment_tag: Tag = None):
         """
         Parse a comment tag, overrides any information already present in the object.
 
-        :param tag: The comment tag from which to parse information
+        :param comment_tag: The comment tag from which to parse information
         """
-        assert tag is None or isinstance(tag, Tag), \
+        assert comment_tag is None or isinstance(comment_tag, Tag), \
             _assertion_exception(TypeError(f"tag must be {None} or {Tag.__name__}"))
 
-        self.tag = tag or self.tag
-        if self.tag is None:
+        self.comment_tag = comment_tag or self.comment_tag
+        if self.comment_tag is None:
             return
 
-        parsed: dict = parse_comment_tag(self.tag)
+        parsed: dict = parse_comment_tag(self.comment_tag)
 
         self.id = parsed["id"]
         self.date = datetime.fromtimestamp(parsed["timestamp"])
@@ -123,7 +123,7 @@ def _set_reply_to(comment: Comment, reply_to: Union[Comment, int]) -> Comment:
 def _remove_recursion(comment: Comment) -> Comment:
     comment_new: Comment = Comment()
 
-    comment_new.tag = comment.tag
+    comment_new.comment_tag = comment.comment_tag
     comment_new.id = comment.id
     comment_new.author = comment.author
     comment_new.date = comment.date

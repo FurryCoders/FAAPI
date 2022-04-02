@@ -363,6 +363,7 @@ This object class contains comment metadata and is used to build a tree structur
 * `hidden: bool` `True` if the comment was hidden, `False` otherwise (if the comment was hidden, the author and date
   fields will default to their empty values)
 * `parent: Optional[Union[Submission, Journal]]` the `Submission` or `Journal` object the comments are connected to
+* `comment_tag: bs4.element.Tag` the comment tag used to parse the object fields
 
 `Comment` objects can be directly cast to a dict object and iterated through.
 
