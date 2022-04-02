@@ -75,6 +75,8 @@ class JournalPartial(JournalBase):
 
         super(JournalPartial, self).__init__()
 
+        self.parse()
+
     def parse(self, journal_tag: Union[Tag, BeautifulSoup] = None):
         """
         Parse a journal tag, overrides any information already present in the object.
