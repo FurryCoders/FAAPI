@@ -11,6 +11,12 @@
     * The auxiliary functions `faapi.comment.flatten_comments` and `faapi.comment.sort_comments` allow to flatten the
       comment tree or reorganise it
 
+* Separate `JournalPartial` and `Journal` objects
+    * The new `JournalPartial` class takes the place of the previous `Journal` class, and it is now used only to parse
+      journal from a user's journals folder
+    * The new `Journal` class contains the same fields as `JournalPartial` with the addition of comments, and it is only used
+      to parse journal pages
+
 * Comparisons
     * All objects can now be used with the comparison (==) operator with other objects of the same type or the type of
       their key property (`id: int` for submissions and journals, and `name_url: str` for users)
