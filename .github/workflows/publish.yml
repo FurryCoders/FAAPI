@@ -16,31 +16,24 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        tests: ["Flake8", "mypy"]
         python: ["3.10", "3.9"]
     steps:
       - uses: actions/checkout@v2
-      - name: Wait for Flake8 Test
-        id: wait1
+      - name: Wait for Tests
+        id: wait
         uses: fountainhead/action-wait-for-check@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "Flake8 (${{ matrix.python }})"
+          checkName: "${{ matrix.test }} (${{ matrix.python }})"
           ref: ${{ github.event.push_request.head.sha || github.sha }}
-      - name: Wait for mypy Test
-        id: wait2
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "mypy (${{ matrix.python }})"
-          ref: ${{ github.event.push_request.head.sha || github.sha }}
-    outputs:
-      conclusion: ${{ steps.wait1.outputs.conclusion == 'success' && steps.wait2.outputs.conclusion == 'success' }}
+      - if: ${{ steps.wait.outputs.conclusion != 'success' }}
+        run: exit 1
 
   publish:
     name: Publish
     runs-on: ubuntu-latest
     needs: wait
-    if: ${{ needs.wait.outputs.conclusion == 'true' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
