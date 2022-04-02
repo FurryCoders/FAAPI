@@ -173,7 +173,7 @@ omitted, and the API will still be able to access public pages.
   returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page
   value as argument is equivalent to page 1.<br>
   *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-* `journals(user: str, page: int = 1) -> -> Tuple[List[Journal], int]`<br>
+* `journals(user: str, page: int = 1) -> -> Tuple[List[JournalPartial], int]`<br>
   Returns the list of submissions found on a specific journals page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
 * `search(q: str = "", page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
@@ -188,10 +188,9 @@ omitted, and the API will still be able to access public pages.
 * `watchlist_by(self, user: str) -> List[User]`<br>
   Given a username, returns a list of `User` objects for each user that is watched by the given user.
 
-### Journal
+### JournalPartial
 
-This object contains information gathered when parsing a journals page, or a specific journal page. It contains the
-following fields:
+This object contains partial information gathered when parsing a journals folder. It contains the following fields:
 
 * `id: int` journal ID
 * `title: str` journal title
@@ -202,28 +201,66 @@ following fields:
 * `content: str` journal content in HTML format
 * `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
-* `user_icon_url: str` the URL to the user icon (cannot be parsed when downloading via `FAAPI.get_journals`)
-* `journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup]` the journal tag/page used to parse the object fields
+* `journal_tag: bs4.element.Tag` the journal tag used to parse the object fields
 
-`Journal` objects can be directly cast to a dict object or iterated through.
+`JournalPartial` objects can be directly cast to a dict object or iterated through.
 
-Comparison with `Journal` can be made with either another `Journal` object (the IDs are compared), or an integer (
-the `Journal.id` value is compared to the given integer).
+Comparison with `JournalPartial` can be made with either another `JournalPartial` or `Journal` object (the IDs are
+compared), or an integer (the `JournalPartial.id` value is compared to the given integer).
 
 #### Init
 
-`__init__(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`
+`__init__(journal_tag: bs4.element.Tag = None)`
 
-`Journal` takes one optional parameters: a journal section tag from a journals page, or a parsed journal page. Parsing
-is then performed based on the class of the passed object.
+`Journal` takes one optional parameters: a journal section tag from a journals page.
+
+If no `journal_tag` is passed then the object fields will remain at their default - empty - value.
 
 #### Methods
 
 * `url -> str`<br>
   Property method that returns the Fur Affinity URL to the journal (`https://www.furaffinity.net/journal/{id}`).
-* `parse(journal_item: Union[bs4.element.Tag, bs4.BeautifulSoup] = None)`<br>
-  Parses the stored journal tag/page for information. If `journal_item` is passed, it overwrites the
-  existing `journal_item` value.
+* `parse(journal_item: bs4.element.Tag = None)`<br>
+  Parses the stored journal tag for information. If `journal_tag` is passed, it overwrites the existing `journal_tag`
+  value.
+
+### Journal
+
+This object contains full information gathered when parsing a journal page. It contains the same fields
+as `JournalPartial` with the addition of comments:
+
+* `id: int` journal ID
+* `title: str` journal title
+* `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
+  timestamp 0)
+* `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
+* `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
+* `content: str` journal content in HTML format
+* `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
+  `@username`, etc.)
+* `comments: List[Comments]` the comments to the journal, organised in a tree structure
+* `journal_page: bs4.BeautifulSoup` the journal page used to parse the object fields
+
+`Journal` objects can be directly cast to a dict object or iterated through.
+
+Comparison with `Journal` can be made with either another `Journal` or `JournalPartial` object (the IDs are compared),
+or an integer (the `Journal.id` value is compared to the given integer).
+
+#### Init
+
+`__init__(journal_page: bs4.BeautifulSoup = None)`
+
+`Journal` takes one optional journal page argument.
+
+If no `journal_page` is passed then the object fields will remain at their default - empty - value.
+
+#### Methods
+
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the journal (`https://www.furaffinity.net/journal/{id}`).
+* `parse(journal_page: bs4.BeautifulSoup = None)`<br>
+  Parses the stored journal tag for information. If `journal_tag` is passed, it overwrites the existing `journal_tag`
+  value.
 
 ### SubmissionPartial
 
@@ -282,9 +319,10 @@ The main class that parses and holds submission metadata.
 * `folder: str` the submission folder (gallery or scraps)
 * `file_url: str` the URL to the submission file
 * `thumbnail_url: str` the URL to the submission thumbnail
-* `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
 * `prev: int` the ID of the previous submission (if any)
 * `next: int` the ID of the next submission (if any)
+* `comments: List[Comments]` the comments to the submission, organised in a tree structure
+* `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
 
 `Submission` objects can be directly cast to a dict object and iterated through.
 
