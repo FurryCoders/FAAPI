@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tests: ["Flake8", "mypy"]
+        test: ["Flake8", "mypy"]
         python: ["3.10", "3.9"]
     steps:
       - uses: actions/checkout@v2
