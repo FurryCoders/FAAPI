@@ -39,12 +39,12 @@ class FAAPI:
     This class provides the methods to access and parse Fur Affinity pages and retrieve objects.
     """
 
-    def __init__(self, cookies: Union[list[dict[str, str]], CookieJar] = None):
+    def __init__(self, cookies: Union[list[dict[str, str]], CookieJar]):
         """
         :param cookies: The cookies for the session.
         """
 
-        self.session: CloudflareScraper = make_session(cookies or [])  # Session used for get requests
+        self.session: CloudflareScraper = make_session(cookies)  # Session used for get requests
         self.robots: RobotFileParser = get_robots(self.session)  # robots.txt handler
         self.last_get: float = time() - self.crawl_delay  # Time of last get (UNIX time)
         self.raise_for_unauthorized: bool = True  # Control login checks

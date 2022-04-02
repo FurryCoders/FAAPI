@@ -118,12 +118,10 @@ It holds 6 different fields:
 
 #### Init
 
-`__init__(cookies: List[dict] | CookieJar = None)`
+`__init__(cookies: list[dict[str, str]] | CookieJar)`
 
-The class init has a single optional argument `cookies` necessary to read logged-in-only pages. The cookies can be
-omitted, and the API will still be able to access public pages.
-
-*Note:* Cookies must be in the format mentioned above in [#Cookies](#cookies).
+The class init has a single argument for the cookies. Cookies must be in the format mentioned above
+in [#Cookies](#cookies).
 
 #### Methods & Properties
 
