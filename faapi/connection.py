@@ -15,7 +15,7 @@ from requests import Session
 
 from .__version__ import __version__
 from .exceptions import Unauthorized
-from .exceptions import _assertion_exception
+from .exceptions import _raise_exception
 
 root: str = "https://www.furaffinity.net"
 
@@ -25,7 +25,7 @@ def join_url(*url_comps: Union[str, int]) -> str:
 
 
 def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareScraper:
-    assert len(cookies), _assertion_exception(Unauthorized("No cookies for session"))
+    assert len(cookies), _raise_exception(Unauthorized("No cookies for session"))
     session: CloudflareScraper = create_scraper()
     session.headers["User-Agent"] = f"faapi/{__version__} Python/{python_version()} {(u := uname()).system}/{u.release}"
 

@@ -52,5 +52,5 @@ class NoticeMessage(ParsingError):
     """
 
 
-def _assertion_exception(err: BaseException):
+def _raise_exception(err: BaseException):
     raise err

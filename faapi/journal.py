@@ -5,7 +5,7 @@ from typing import Union
 
 from .connection import join_url
 from .connection import root
-from .exceptions import _assertion_exception
+from .exceptions import _raise_exception
 from .parse import BeautifulSoup
 from .parse import Tag
 from .parse import check_page_raise
@@ -74,7 +74,7 @@ class JournalPartial(JournalBase):
         :param journal_tag: The tag from which to parse the journal.
         """
         assert journal_tag is None or isinstance(journal_tag, Tag), \
-            _assertion_exception(TypeError(f"journal_item must be {None} or {Tag.__name__}"))
+            _raise_exception(TypeError(f"journal_item must be {None} or {Tag.__name__}"))
         self.journal_tag: Optional[Tag] = journal_tag
 
         super(JournalPartial, self).__init__()
@@ -88,7 +88,7 @@ class JournalPartial(JournalBase):
         :param journal_tag: The tag from which to parse the journal.
         """
         assert journal_tag is None or isinstance(journal_tag, BeautifulSoup), \
-            _assertion_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
+            _raise_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
 
         self.journal_tag = journal_tag or self.journal_tag
         if self.journal_tag is None:
@@ -120,7 +120,7 @@ class Journal(JournalBase):
         :param journal_page: The page from which to parse the journal.
         """
         assert journal_page is None or isinstance(journal_page, BeautifulSoup), \
-            _assertion_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
+            _raise_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
         self.journal_page: Optional[BeautifulSoup] = journal_page
 
         super(Journal, self).__init__()
@@ -143,7 +143,7 @@ class Journal(JournalBase):
         :param journal_page: The page from which to parse the journal.
         """
         assert journal_page is None or isinstance(journal_page, BeautifulSoup), \
-            _assertion_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
+            _raise_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
 
         self.journal_page = journal_page or self.journal_page
         if self.journal_page is None:
