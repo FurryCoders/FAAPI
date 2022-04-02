@@ -125,7 +125,7 @@ in [#Cookies](#cookies).
 
 #### Methods & Properties
 
-* `load_cookies(cookies: List[dict] | CookieJar)`<br>
+* `load_cookies(cookies: list[dict[str, str]] | CookieJar)`<br>
   Load new cookies and create a new session.<br>
   *Note:* This method removes any cookies currently in use, to update/add single cookies access them from the session
   object.
@@ -145,9 +145,9 @@ in [#Cookies](#cookies).
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
   an `HTTPError` exception is raised. If `skip_page_check` is set to `True`, the parsed page is not checked for errors (
   e.g. non-existing submission). If `skip_auth_check` is set to `True`, the page is not checked for login status.
-* `me() -> Optional[User]`<br>
+* `me() -> User | None`<br>
   Returns the logged-in user as a `User` object if the cookies are from a login session.
-* `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> Tuple[Submission, Optional[bytes]]`<br>
+* `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> tuple[Submission, bytes | None]`<br>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
   a `bytes` object with the submission file if `get_file` is passed as `True`. The optional `chunk_size` argument is
   used for the request; if left to `None` or set to 0 the download is performed directly without streaming.<br>
@@ -160,30 +160,30 @@ in [#Cookies](#cookies).
   Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
 * `user(user: str) -> User`<br>
   Given a username, it returns a `User` object containing information regarding the user.
-* `gallery(user: str, page: int = 1) -> Tuple[List[SubmissionPartial], int]`<br>
+* `gallery(user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]`<br>
   Returns the list of submissions found on a specific gallery page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `scraps(user: str, page: int = 1) -> -> Tuple[List[SubmissionPartial], int]`<br>
+* `scraps(user: str, page: int = 1) -> -> tuple[list[SubmissionPartial], int]`<br>
   Returns the list of submissions found on a specific scraps page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `favorites(user: str, page: str = "") -> Tuple[List[SubmissionPartial], str]`<br>
+* `favorites(user: str, page: str = "") -> tuple[list[SubmissionPartial], str]`<br>
   Downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one
   returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page
   value as argument is equivalent to page 1.<br>
   *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-* `journals(user: str, page: int = 1) -> -> Tuple[List[JournalPartial], int]`<br>
+* `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int]`<br>
   Returns the list of submissions found on a specific journals page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `search(q: str = "", page: int = 0, **params) -> Tuple[List[SubmissionPartial], int, int, int, int]`<br>
+* `search(q: str = "", page: int = 0, **params) -> tuple[list[SubmissionPartial], int, int, int, int]`<br>
   Parses FA search given the query (and optional other params) and returns the submissions found, and the next page
   together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the
   last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the
   last three returned integers are 0, 47 and 437, then the page contains submissions 1 through 48 of a search that has
   found a total of 437 submissions.<br>
   *Note:* as of April 2022 the "/search" path is disallowed by Fur Affinity's robots.txt.
-* `watchlist_to(self, user: str) -> List[User]`<br>
+* `watchlist_to(self, user: str) -> list[User]`<br>
   Given a username, returns a list of `User` objects for each user that is watching the given user.
-* `watchlist_by(self, user: str) -> List[User]`<br>
+* `watchlist_by(self, user: str) -> list[User]`<br>
   Given a username, returns a list of `User` objects for each user that is watched by the given user.
 
 ### JournalPartial
@@ -197,7 +197,7 @@ This object contains partial information gathered when parsing a journals folder
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
 * `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
 * `content: str` journal content in HTML format
-* `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
+* `mentions: list[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `journal_tag: bs4.element.Tag` the journal tag used to parse the object fields
 
@@ -234,9 +234,9 @@ as `JournalPartial` with the addition of comments:
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
 * `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
 * `content: str` journal content in HTML format
-* `mentions: List[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
+* `mentions: list[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
-* `comments: List[Comments]` the comments to the journal, organised in a tree structure
+* `comments: list[Comments]` the comments to the journal, organised in a tree structure
 * `journal_page: bs4.BeautifulSoup` the journal page used to parse the object fields
 
 `Journal` objects can be directly cast to a dict object or iterated through.
@@ -304,7 +304,7 @@ The main class that parses and holds submission metadata.
 * `author: UserPartial` submission author (only the `name`, `title`, and `user_icon_url` fields are filled)
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
   timestamp 0)
-* `tags: List[str]` tags list
+* `tags: list[str]` tags list
 * `category: str` category
 * `species: str` species
 * `gender: str` gender
@@ -312,14 +312,14 @@ The main class that parses and holds submission metadata.
 * `stats: SubmissionStats` submission statistics stored in a named tuple (`views`, `comments` (count), `favorites`)
 * `type: str` submission type (text, image, etc...)
 * `description: str` description in HTML format
-* `mentions: List[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
+* `mentions: list[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `folder: str` the submission folder (gallery or scraps)
 * `file_url: str` the URL to the submission file
 * `thumbnail_url: str` the URL to the submission thumbnail
 * `prev: int` the ID of the previous submission (if any)
 * `next: int` the ID of the next submission (if any)
-* `comments: List[Comments]` the comments to the submission, organised in a tree structure
+* `comments: list[Comments]` the comments to the submission, organised in a tree structure
 * `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
 
 `Submission` objects can be directly cast to a dict object and iterated through.
@@ -353,14 +353,14 @@ This object class contains comment metadata and is used to build a tree structur
 * `date: datetime` the date the comment was posted
 * `text: str` the comment text in HTML format
 * `replies: list[Comment]` list of replies to the comment
-* `reply_to: Optional[Comment, int]` the parent comment, if the comment is a reply. The variable type is `int` only if
-  the comment is parsed outside the parse method of a `Submission` or `Journal` (e.g. by creating a new comment with a
+* `reply_to: Comment | int | None` the parent comment, if the comment is a reply. The variable type is `int` only if the
+  comment is parsed outside the parse method of a `Submission` or `Journal` (e.g. by creating a new comment with a
   comment tag), and when iterating over the parent object (to avoid infinite recursion errors), be it `Submission`
   , `Journal` or another `Comment`.
 * `edited: bool` `True` if the comment was edited, `False` otherwise
 * `hidden: bool` `True` if the comment was hidden, `False` otherwise (if the comment was hidden, the author and date
   fields will default to their empty values)
-* `parent: Optional[Union[Submission, Journal]]` the `Submission` or `Journal` object the comments are connected to
+* `parent: Submission | Journal | None` the `Submission` or `Journal` object the comments are connected to
 * `comment_tag: bs4.element.Tag` the comment tag used to parse the object fields
 
 `Comment` objects can be directly cast to a dict object and iterated through.
@@ -379,7 +379,7 @@ to `None` and `reply_to` is set to the comment's ID.
 
 #### Init
 
-`__init__(self, tag: bs4.element.Tag = None, parent: Union[Submission, Journal] = None)`
+`__init__(self, tag: bs4.element.Tag = None, parent: Submission | Journal = None)`
 
 To initialise the object, an optional `bs4.element.Tag` object is needed containing the comment tag as taken from a
 submission/journal page.
@@ -494,9 +494,9 @@ The main class storing all of a user's metadata.
 * `profile: str` profile text in HTML format
 * `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favorites`, `comments_earned`
   , `comments_made`, `journals`, `watched_by`, `watching`)
-* `info: Dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
+* `info: dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
   etc.)
-* `contacts: Dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
+* `contacts: dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
 * `user_icon_url: str` the URL to the user icon
 * `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
 
