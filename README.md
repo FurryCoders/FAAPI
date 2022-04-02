@@ -368,8 +368,7 @@ This object class contains comment metadata and is used to build a tree structur
 `Comment` objects can be directly cast to a dict object and iterated through.
 
 Comparison with `Comment` can be made with either another comment (the IDs are compared), or an integer (
-the `Comment.id`
-value is compared to the given integer).
+the `Comment.id` value is compared to the given integer).
 
 *Note:* Because each comment contains the parent `Submission` or `Journal` object (which contains the comment itself)
 and the replied comment object, some iterations may cause infinite recursion errors, for example when using
