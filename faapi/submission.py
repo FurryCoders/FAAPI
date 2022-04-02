@@ -63,7 +63,7 @@ class SubmissionBase:
 
 class SubmissionPartial(SubmissionBase):
     """
-    This class contains a submission's partial information.
+    Contains partial submission information gathered from submission pages (gallery, scraps, etc.)
     """
 
     def __init__(self, submission_figure: Tag = None):
@@ -114,7 +114,7 @@ class SubmissionPartial(SubmissionBase):
 
 class Submission(SubmissionBase):
     """
-    This class contains a submission's full information.
+    Contains complete submission information gathered from submission pages, including comments.
     """
 
     def __init__(self, submission_page: BeautifulSoup = None):

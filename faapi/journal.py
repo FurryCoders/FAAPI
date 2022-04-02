@@ -24,7 +24,7 @@ class JournalStats(namedtuple("JournalStats", ["comments"])):
 
 class Journal:
     """
-    This class contains a journal's information.
+    Contains journal information, including comments
     """
 
     def __init__(self, journal_item: Union[Tag, BeautifulSoup] = None):

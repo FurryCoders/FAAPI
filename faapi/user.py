@@ -75,7 +75,7 @@ class UserBase:
 
 class UserPartial(UserBase):
     """
-    This class contains a user's partial information.
+    Contains partial user information gathered from user folders (gallery, journals, etc.) and submission/journal pages.
     """
 
     def __init__(self, user_tag: Tag = None):
@@ -123,7 +123,7 @@ class UserPartial(UserBase):
 
 class User(UserBase):
     """
-    This class contains a user's full information.
+    Contains complete user information gathered from userpages.
     """
 
     def __init__(self, user_page: BeautifulSoup = None):
