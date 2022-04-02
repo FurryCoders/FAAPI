@@ -109,6 +109,7 @@ class UserPartial(UserBase):
         """
         assert user_tag is None or isinstance(user_tag, Tag), \
             _assertion_exception(TypeError(f"user_tag must be {None} or {Tag.__name__}"))
+
         self.user_tag = user_tag or self.user_tag
         if self.user_tag is None:
             return
@@ -165,6 +166,7 @@ class User(UserBase):
         """
         assert user_page is None or isinstance(user_page, BeautifulSoup), \
             _assertion_exception(TypeError(f"user_page must be {None} or {BeautifulSoup.__name__}"))
+
         self.user_page = user_page or self.user_page
         if self.user_page is None:
             return

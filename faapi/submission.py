@@ -98,6 +98,7 @@ class SubmissionPartial(SubmissionBase):
         """
         assert submission_figure is None or isinstance(submission_figure, Tag), \
             _assertion_exception(TypeError(f"submission_figure must be {None} or {BeautifulSoup.__name__}"))
+
         self.submission_figure = submission_figure or self.submission_figure
         if self.submission_figure is None:
             return
@@ -177,6 +178,7 @@ class Submission(SubmissionBase):
         """
         assert submission_page is None or isinstance(submission_page, BeautifulSoup), \
             _assertion_exception(TypeError(f"submission_page must be {None} or {BeautifulSoup.__name__}"))
+
         self.submission_page = submission_page or self.submission_page
         if self.submission_page is None:
             return

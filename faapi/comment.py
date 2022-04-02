@@ -74,9 +74,8 @@ class Comment:
         assert tag is None or isinstance(tag, Tag), \
             _assertion_exception(TypeError(f"tag must be {None} or {Tag.__name__}"))
 
-        if tag is not None:
-            self.tag = tag
-        elif self.tag is None:
+        self.tag = tag or self.tag
+        if self.tag is None:
             return
 
         parsed: dict = parse_comment_tag(self.tag)
