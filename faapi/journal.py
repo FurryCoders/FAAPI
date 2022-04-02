@@ -127,7 +127,8 @@ class Journal(JournalBase):
         self.parse()
 
     def __iter__(self):
-        super(Journal, self).__iter__()
+        for k, v in super(Journal, self).__iter__():
+            yield k, v
         from .comment import _remove_recursion
         yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
