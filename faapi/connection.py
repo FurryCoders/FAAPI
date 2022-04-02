@@ -25,7 +25,7 @@ def join_url(*url_comps: Union[str, int]) -> str:
 
 
 def make_session(cookies: Union[list[dict[str, str]], CookieJar]) -> CloudflareScraper:
-    assert len(cookies), _assertion_exception(Unauthorized("No cookies in session"))
+    assert len(cookies), _assertion_exception(Unauthorized("No cookies for session"))
     session: CloudflareScraper = create_scraper()
     session.headers["User-Agent"] = f"faapi/{__version__} Python/{python_version()} {(u := uname()).system}/{u.release}"
 
