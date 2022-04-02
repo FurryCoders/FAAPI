@@ -16,6 +16,7 @@ from .connection import stream_binary
 from .exceptions import DisallowedPath
 from .exceptions import Unauthorized
 from .journal import Journal
+from .journal import JournalPartial
 from .parse import BeautifulSoup
 from .parse import check_page_raise
 from .parse import parse_loggedin_user
@@ -251,7 +252,7 @@ class FAAPI:
         submissions: list[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
         return submissions, info_parsed["next_page"]
 
-    def journals(self, user: str, page: int = 1) -> tuple[list[Journal], int]:
+    def journals(self, user: str, page: int = 1) -> tuple[list[JournalPartial], int]:
         """
         Fetch a user's journals page.
 
@@ -267,7 +268,7 @@ class FAAPI:
             info_parsed["user_title"], info_parsed["user_join_date"],
             info_parsed["user_icon_url"]
         ]
-        for j in (journals := list(map(Journal, info_parsed["sections"]))):
+        for j in (journals := list(map(JournalPartial, info_parsed["sections"]))):
             j.author = author
         return journals, (page + 1) * (not info_parsed["last_page"])
 

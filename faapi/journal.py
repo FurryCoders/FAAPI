@@ -22,20 +22,8 @@ class JournalStats(namedtuple("JournalStats", ["comments"])):
     """
 
 
-class Journal:
-    """
-    Contains journal information, including comments
-    """
-
-    def __init__(self, journal_item: Union[Tag, BeautifulSoup] = None):
-        """
-        :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
-        """
-        assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag)), \
-            _assertion_exception(TypeError(f"journal_item must be {None}, {Tag.__name__} or {BeautifulSoup.__name__}"))
-
-        self.journal_item: Optional[Union[Tag, BeautifulSoup]] = journal_item
-
+class JournalBase:
+    def __init__(self):
         self.id: int = 0
         self.title: str = ""
         self.date: datetime = datetime.fromtimestamp(0)
@@ -43,10 +31,6 @@ class Journal:
         self.stats: JournalStats = JournalStats(0)
         self.content: str = ""
         self.mentions: list[str] = []
-        from .comment import Comment
-        self.comments: list[Comment] = []
-
-        self.parse()
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Journal):
@@ -63,8 +47,6 @@ class Journal:
         yield "stats", self.stats._asdict()
         yield "content", self.content
         yield "mentions", self.mentions
-        from .comment import _remove_recursion
-        yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
     def __repr__(self):
         return self.__str__()
@@ -81,27 +63,34 @@ class Journal:
         """
         return join_url(root, "journal", self.id)
 
-    def parse(self, journal_item: Union[Tag, BeautifulSoup] = None):
-        """
-        Parse a journal Tag or page, overrides any information already present in the object.
 
-        :param journal_item: The element from which to parse the journal, a Tag from a journals page or a journal page.
+class JournalPartial(JournalBase):
+    def __init__(self, journal_tag: Tag = None):
         """
-        assert journal_item is None or isinstance(journal_item, (BeautifulSoup, Tag)), \
-            _assertion_exception(TypeError(f"journal_item must be {None}, {Tag.__name__} or {BeautifulSoup.__name__}"))
-        self.journal_item = journal_item or self.journal_item
-        if self.journal_item is None:
+        :param journal_tag: The tag from which to parse the journal.
+        """
+        assert journal_tag is None or isinstance(journal_tag, Tag), \
+            _assertion_exception(TypeError(f"journal_item must be {None} or {Tag.__name__}"))
+        self.journal_tag: Optional[Tag] = journal_tag
+
+        super(JournalPartial, self).__init__()
+
+    def parse(self, journal_tag: Union[Tag, BeautifulSoup] = None):
+        """
+        Parse a journal tag, overrides any information already present in the object.
+
+        :param journal_tag: The tag from which to parse the journal.
+        """
+        assert journal_tag is None or isinstance(journal_tag, BeautifulSoup), \
+            _assertion_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
+
+        self.journal_tag = journal_tag or self.journal_tag
+        if self.journal_tag is None:
             return
 
-        parsed: dict
-        if isinstance(self.journal_item, BeautifulSoup):
-            check_page_raise(self.journal_item)
-            parsed = parse_journal_page(self.journal_item)
-            from .comment import sort_comments, Comment
-            self.comments = sort_comments([Comment(t, self) for t in parse_comments(self.journal_item)])
-        else:
-            parsed = parse_journal_section(self.journal_item)
+        parsed: dict = parse_journal_section(self.journal_tag)
 
+        # noinspection DuplicatedCode
         self.id = parsed["id"]
         self.title = parsed["title"]
         self.author.name = parsed.get("user_name", "")
@@ -113,3 +102,61 @@ class Journal:
         self.date = parsed["date"]
         self.content = parsed["content"]
         self.mentions = parsed["mentions"]
+
+
+class Journal(JournalBase):
+    """
+    Contains complete journal information, including comments
+    """
+
+    def __init__(self, journal_page: BeautifulSoup = None):
+        """
+        :param journal_page: The page from which to parse the journal.
+        """
+        assert journal_page is None or isinstance(journal_page, BeautifulSoup), \
+            _assertion_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
+        self.journal_page: Optional[BeautifulSoup] = journal_page
+
+        super(Journal, self).__init__()
+
+        from .comment import Comment
+        self.comments: list[Comment] = []
+
+        self.parse()
+
+    def __iter__(self):
+        super(Journal, self).__iter__()
+        from .comment import _remove_recursion
+        yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
+
+    def parse(self, journal_page: Union[Tag, BeautifulSoup] = None):
+        """
+        Parse a journal page, overrides any information already present in the object.
+
+        :param journal_page: The page from which to parse the journal.
+        """
+        assert journal_page is None or isinstance(journal_page, BeautifulSoup), \
+            _assertion_exception(TypeError(f"journal_item must be {None} or {BeautifulSoup.__name__}"))
+
+        self.journal_page = journal_page or self.journal_page
+        if self.journal_page is None:
+            return
+
+        check_page_raise(self.journal_page)
+
+        parsed: dict = parse_journal_page(self.journal_page)
+
+        # noinspection DuplicatedCode
+        self.id = parsed["id"]
+        self.title = parsed["title"]
+        self.author.name = parsed.get("user_name", "")
+        self.author.status = parsed.get("user_status", "")
+        self.author.title = parsed.get("user_title", "")
+        self.author.join_date = parsed.get("user_join_date", "")
+        self.author.user_icon_url = parsed.get("user_icon_url", "")
+        self.stats = JournalStats(parsed["comments"])
+        self.date = parsed["date"]
+        self.content = parsed["content"]
+        self.mentions = parsed["mentions"]
+        from .comment import sort_comments, Comment
+        self.comments = sort_comments([Comment(t, self) for t in parse_comments(self.journal_page)])
