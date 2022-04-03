@@ -368,14 +368,14 @@ This object class contains comment metadata and is used to build a tree structur
 Comparison with `Comment` can be made with either another comment (the IDs are compared), or an integer (
 the `Comment.id` value is compared to the given integer).
 
+*Note:* The `__iter__` method of `Comment` objects automatically removes recursion. The `parent` variable is set
+to `None` and `reply_to` is set to the comment's ID.<br/>
 *Note:* Because each comment contains the parent `Submission` or `Journal` object (which contains the comment itself)
 and the replied comment object, some iterations may cause infinite recursion errors, for example when using
 the `copy.deepcopy` function. If such iterations are needed, simply set the `parent` variable to `None` and
 the `reply_to` variable to `None` or the comment's ID (this can be done easily after flattening the comments list
 with `faapi.comment.flatten_comments`, the comments can then be sorted again with `faapi.comment.sort_comments` which
 will also restore the `reply_to` values to `Comment` objects).
-*Note:* The `__iter__` method of `Comment` objects automatically removes recursion. The `parent` variable is set
-to `None` and `reply_to` is set to the comment's ID.
 
 #### Init
 
