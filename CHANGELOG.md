@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.6.1
+
+### Fixes
+
+* Fix `FAAPI.journals` not detecting the next page correctly
+    * Caused by a change in Fur Affinity's journals page
+
 ## v3.6.0
 
 ### New Features
