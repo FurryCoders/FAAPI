@@ -486,7 +486,7 @@ def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journals_page)
     sections: list[Tag] = journals_page.select("section[id^='jid:']")
-    last_page: bool = not any(b.text.lower() == "next" for b in journals_page.select("form button.button"))
+    last_page: bool = not any(b.text.lower() == "older" for b in journals_page.select("form button.button"))
 
     return {
         **user_info,
