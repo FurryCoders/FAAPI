@@ -125,6 +125,8 @@ class Journal(JournalBase):
 
         super(Journal, self).__init__()
 
+        self.header: str = ""
+        self.footer: str = ""
         from .comment import Comment
         self.comments: list[Comment] = []
 
@@ -133,6 +135,8 @@ class Journal(JournalBase):
     def __iter__(self):
         for k, v in super(Journal, self).__iter__():
             yield k, v
+        yield "header", self.header
+        yield "footer", self.footer
         from .comment import _remove_recursion
         yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
@@ -163,6 +167,8 @@ class Journal(JournalBase):
         self.author.user_icon_url = parsed.get("user_icon_url", "")
         self.stats = JournalStats(parsed["comments"])
         self.date = parsed["date"]
+        self.header = parsed["header"]
+        self.footer = parsed["footer"]
         self.content = parsed["content"]
         self.mentions = parsed["mentions"]
         from .comment import sort_comments, Comment
