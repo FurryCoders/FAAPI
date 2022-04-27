@@ -53,8 +53,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - uses: abatilo/actions-poetry@v2.0.0
-          with:
-            poetry-version: ${{ env.POETRY_VERSION }}
+        with:
+          poetry-version: ${{ env.POETRY_VERSION }}
       - run: |
           poetry install
       - name: Unit test
