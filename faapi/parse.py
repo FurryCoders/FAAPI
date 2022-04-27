@@ -132,6 +132,8 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     tag_id: Optional[Tag] = journal_page.select_one("meta[property='og:url']")
     tag_title: Optional[Tag] = journal_page.select_one("h2.journal-title")
     tag_date: Optional[Tag] = journal_page.select_one("span.popup_date")
+    tag_header: Optional[Tag] = journal_page.select_one("div.journal-header")
+    tag_footer: Optional[Tag] = journal_page.select_one("div.journal-footer")
     tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
     tag_comments: Optional[Tag] = journal_page.select_one("div.section-footer > span")
 
@@ -144,6 +146,8 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     date: datetime = parse_date(tag_date.attrs["title"].strip())
+    header: str = "".join(map(str, tag_header.children)).strip() if tag_header else ""
+    footer: str = "".join(map(str, tag_footer.children)).strip() if tag_footer else ""
     content: str = "".join(map(str, tag_content.children)).strip()
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
@@ -156,6 +160,8 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
         "title": title,
         "date": date,
         "content": content,
+        "header": header,
+        "footer": footer,
         "mentions": mentions,
         "comments": comments,
     }
