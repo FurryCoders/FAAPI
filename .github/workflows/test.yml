@@ -58,5 +58,5 @@ jobs:
       - run: |
           poetry install
       - name: Unit test
-        run: pytest tests -v
+        run: $(poetry env info --path)/bin/python -m pytest tests -v
 
