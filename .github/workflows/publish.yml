@@ -40,7 +40,7 @@ jobs:
         uses: fountainhead/action-wait-for-check@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "Unit Tests"
+          checkName: "pytest"
           ref: ${{ github.event.push_request.head.sha || github.sha }}
       - if: ${{ steps.wait.outputs.conclusion != 'success' }}
         run: exit 1
