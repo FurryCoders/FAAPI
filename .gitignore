@@ -31,3 +31,6 @@ ENV/
 
 # Editors folders
 .idea/
+
+# System folders/files
+.DS_Store
