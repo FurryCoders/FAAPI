@@ -233,6 +233,8 @@ as `JournalPartial` with the addition of comments:
   timestamp 0)
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
 * `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
+* `header: str` journal header in HTML format (if present)
+* `footer: str` journal footer in HTML format (if present)
 * `content: str` journal content in HTML format
 * `mentions: list[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
