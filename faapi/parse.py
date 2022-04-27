@@ -53,7 +53,7 @@ def check_page(page: BeautifulSoup) -> int:
         return 3
     except NotFound:
         return 4
-    except SystemError:
+    except ServerError:
         return 5
     except NoticeMessage:
         return 6
