@@ -58,5 +58,10 @@ jobs:
       - run: |
           poetry install
       - name: Unit test
+        env:
+          TEST_COOKIES: ${{ secrets.TEST_COOKIES }}
+          TEST_USER_LOGIN: ${{ secrets.TEST_USER_LOGIN }}
+          TEST_USER_DISABLED: ${{ secrets.TEST_USER_DISABLED }}
+          TEST_SUBMISSION: ${{ secrets.TEST_SUBMISSION }}
         run: $(poetry env info --path)/bin/python -m pytest tests -v
 
