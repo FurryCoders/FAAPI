@@ -31,34 +31,6 @@ def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 
 
-def check_page(page: BeautifulSoup) -> int:
-    """
-    0 if page is okay
-    1 if page is None
-    2 if page has no title
-    3 if page is from a disabled account
-    4 if page is a not found error
-    5 if page is a system error
-    6 if page has a notice-message (error)
-    """
-
-    try:
-        check_page_raise(page)
-        return 0
-    except NonePage:
-        return 1
-    except NoTitle:
-        return 2
-    except DisabledAccount:
-        return 3
-    except NotFound:
-        return 4
-    except ServerError:
-        return 5
-    except NoticeMessage:
-        return 6
-
-
 def check_page_raise(page: BeautifulSoup) -> None:
     if page is None:
         raise NonePage
