@@ -157,6 +157,7 @@ def test_gallery(cookies: RequestsCookieJar, data: dict):
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(ss) or p == 1
+        assert len(ss_) or p_ == 0
 
         ss.extend(ss_)
         p = p_
@@ -185,6 +186,7 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(ss) or p == 1
+        assert len(ss_) or p_ == 0
 
         ss.extend(ss_)
         p = p_
@@ -213,6 +215,7 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
         assert isinstance(p_, str)
         assert (p == "/" and p_ > p) or p_ < p or p_ == ""
         assert len(ss) or p == "/"
+        assert len(ss_) or p_ == ""
 
         ss.extend(ss_)
         p = p_
@@ -240,6 +243,7 @@ def test_journals(cookies: RequestsCookieJar, data: dict):
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(js) or p == 1
+        assert len(js_) or p_ == 0
 
         js.extend(js_)
         p = p_
