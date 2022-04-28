@@ -196,3 +196,30 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
         assert submission.rating != ""
         assert submission.thumbnail_url != ""
         assert submission.author.name_url == username_url(data["scraps"]["user"])
+
+
+# noinspection DuplicatedCode
+def test_favorites(cookies: RequestsCookieJar, data: dict):
+    api: FAAPI = FAAPI(cookies)
+
+    ss, p = [], "/"
+
+    while p and len(ss) < data["favorites"]["max_length"]:
+        ss_, p_ = api.favorites(data["favorites"]["user"], p)
+        assert isinstance(ss, list)
+        assert all(isinstance(s, SubmissionPartial) for s in ss)
+        assert isinstance(p_, str)
+        assert (p == "/" and p_ > p) or p_ < p or p_ == ""
+        assert len(ss) or p == "/"
+
+        ss.extend(ss_)
+        p = p_
+
+    assert len(ss) >= data["favorites"]["length"]
+    assert len({s.id for s in ss}) == len(ss)
+
+    for submission in ss:
+        assert submission.id > 0
+        assert submission.type != ""
+        assert submission.rating != ""
+        assert submission.thumbnail_url != ""
