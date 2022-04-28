@@ -44,7 +44,7 @@ jobs:
           python -m pip install mypy types-beautifulsoup4
           python -m mypy --install-types --non-interactive faapi
 
-  unit_tests:
+  pytest:
     name: pytest
     runs-on: ubuntu-latest
     steps:
