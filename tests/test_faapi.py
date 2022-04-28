@@ -195,4 +195,4 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
         assert submission.type != ""
         assert submission.rating != ""
         assert submission.thumbnail_url != ""
-        assert submission.author.name_url == username_url(data["gallery"]["user"])
+        assert submission.author.name_url == username_url(data["scraps"]["user"])
