@@ -64,5 +64,7 @@ jobs:
           TEST_USER_DISABLED: ${{ secrets.TEST_USER_DISABLED }}
           TEST_SUBMISSION: ${{ secrets.TEST_SUBMISSION }}
           TEST_JOURNAL: ${{ secrets.TEST_JOURNAL }}
-        run: $(poetry env info --path)/bin/python -m pytest tests -v
-
+        run: |
+          $(poetry env info --path)/bin/python -m pytest tests/test_connection -v
+          $(poetry env info --path)/bin/python -m pytest tests/test_parse -v
+          $(poetry env info --path)/bin/python -m pytest tests/test_faapi -v
