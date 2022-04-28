@@ -29,6 +29,11 @@ def cookies(data: dict) -> RequestsCookieJar:
 
 
 @fixture
+def user_test_data() -> dict:
+    return loads(environ["TEST_USER"])
+
+
+@fixture
 def submission_test_data() -> dict:
     return loads(environ["TEST_SUBMISSION"])
 
@@ -64,6 +69,35 @@ def test_login(cookies: RequestsCookieJar):
     api.load_cookies([{"name": "a", "value": "1"}])
     with raises(Unauthorized):
         api.me()
+
+
+def test_user(cookies: RequestsCookieJar, user_test_data: dict):
+    api: FAAPI = FAAPI(cookies)
+
+    user = api.user(user_test_data["name"])
+    user_dict = dict(user)
+
+    assert user.name == user_dict["name"] == user_test_data["name"]
+    assert user.status == user_dict["status"] == user_test_data["status"]
+    assert user.title == user_dict["title"] == user_test_data["title"]
+    assert user.join_date == user_dict["join_date"] == datetime.fromisoformat(user_test_data["join_date"])
+    assert user.stats.views == user_dict["stats"]["views"]
+    assert user_dict["stats"]["views"] >= user_test_data["stats"]["views"]
+    assert user.stats.submissions == user_dict["stats"]["submissions"]
+    assert user_dict["stats"]["submissions"] >= user_test_data["stats"]["submissions"]
+    assert user.stats.favorites == user_dict["stats"]["favorites"]
+    assert user_dict["stats"]["favorites"] >= user_test_data["stats"]["favorites"]
+    assert user.stats.comments_earned == user_dict["stats"]["comments_earned"]
+    assert user_dict["stats"]["comments_earned"] >= user_test_data["stats"]["comments_earned"]
+    assert user.stats.comments_made == user_dict["stats"]["comments_made"]
+    assert user_dict["stats"]["comments_made"] >= user_test_data["stats"]["comments_made"]
+    assert user.stats.journals == user_dict["stats"]["journals"]
+    assert user_dict["stats"]["journals"] >= user_test_data["stats"]["journals"]
+    assert user.info == user_dict["info"] == user_test_data["info"]
+    assert user.contacts == user_dict["contacts"] == user_test_data["contacts"]
+    assert user.user_icon_url == user_dict["user_icon_url"] != ""
+    assert user.profile == user_dict["profile"]
+    assert clean_html(user_dict["profile"]) == clean_html(user_test_data["profile"])
 
 
 # noinspection DuplicatedCode

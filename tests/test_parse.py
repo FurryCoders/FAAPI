@@ -18,6 +18,7 @@ from faapi.parse import parse_journal_page
 from faapi.parse import parse_loggedin_user
 from faapi.parse import parse_page
 from faapi.parse import parse_submission_page
+from faapi.parse import parse_user_page
 from faapi.parse import username_url
 
 
@@ -35,6 +36,11 @@ def session(data: dict) -> CloudflareScraper:
     sess = make_session(data["cookies"])
     sess.headers["User-Agent"] += " test"
     return sess
+
+
+@fixture
+def user_test_data() -> dict:
+    return loads(environ["TEST_USER"])
 
 
 @fixture
@@ -74,6 +80,29 @@ def test_parse_loggedin_user(session: CloudflareScraper, data: dict):
     page = parse_page(res.text)
 
     assert username_url(parse_loggedin_user(page)) == username_url(data["login"]["user"])
+
+
+def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
+    res: Response = session.get(join_url(root, "user", username_url(user_test_data["name"])))
+    assert res.ok
+
+    page = parse_page(res.text)
+    result = parse_user_page(page)
+
+    assert result["name"] == user_test_data["name"]
+    assert result["status"] == user_test_data["status"]
+    assert result["title"] == user_test_data["title"]
+    assert result["join_date"] == datetime.fromisoformat(user_test_data["join_date"])
+    assert result["stats"][0] >= user_test_data["stats"]["views"]
+    assert result["stats"][1] >= user_test_data["stats"]["submissions"]
+    assert result["stats"][2] >= user_test_data["stats"]["favorites"]
+    assert result["stats"][3] >= user_test_data["stats"]["comments_earned"]
+    assert result["stats"][4] >= user_test_data["stats"]["comments_made"]
+    assert result["stats"][5] >= user_test_data["stats"]["journals"]
+    assert result["info"] == user_test_data["info"]
+    assert result["contacts"] == user_test_data["contacts"]
+    assert result["user_icon_url"] != ""
+    assert clean_html(result["profile"]) == clean_html(user_test_data["profile"])
 
 
 def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
