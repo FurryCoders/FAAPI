@@ -162,6 +162,7 @@ def test_gallery(cookies: RequestsCookieJar, data: dict):
         p = p_
 
     assert len(ss) >= data["gallery"]["length"]
+    assert len({s.id for s in ss}) == len(ss)
 
     for submission in ss:
         assert submission.id > 0
@@ -189,6 +190,7 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
         p = p_
 
     assert len(ss) >= data["scraps"]["length"]
+    assert len({s.id for s in ss}) == len(ss)
 
     for submission in ss:
         assert submission.id > 0
