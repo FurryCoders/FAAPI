@@ -307,6 +307,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_infos: list[Tag] = user_page.select("div#userpage-contact-item div.table-row")
     tag_contacts: list[Tag] = user_page.select("div#userpage-contact div.user-contact-user-info")
     tag_user_icon_url: Optional[Tag] = user_page.select_one("img.user-nav-avatar")
+    tag_user_nav_controls: Optional[Tag] = user_page.select_one("div.user-nav-controls")
 
     assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
     assert tag_profile is not None, _raise_exception(ParsingError("Missing profile tag"))
@@ -315,6 +316,10 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_watchlist_to is not None, _raise_exception(ParsingError("Missing watchlist to tag"))
     assert tag_watchlist_by is not None, _raise_exception(ParsingError("Missing watchlist by tag"))
     assert tag_user_icon_url is not None, _raise_exception(ParsingError("Missing user icon URL tag"))
+    assert tag_user_nav_controls is not None, _raise_exception(ParsingError("Missing user nav controls tag"))
+
+    tag_watch: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/watch/'], a[href^='/unwatch/']")
+    tag_block: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/block/'], a[href^='/unblock/']")
 
     status: str = (u := tag_status.text.strip())[0]
     name: str = u[1:]
@@ -344,6 +349,12 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
         contacts[tag_key.text.strip()] = a.attrs["href"] if (a := pc.select_one("a")) else \
             [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
     user_icon_url: str = "https:" + tag_user_icon_url.attrs["src"]
+    tag_watch_href: str = tag_watch.attrs["href"] if tag_watch else ""
+    watch: Optional[str] = f"{root}{tag_watch_href}" if tag_watch_href.startswith("/watch/") else None
+    unwatch: Optional[str] = f"{root}{tag_watch_href}" if tag_watch_href.startswith("/unwatch/") else None
+    tag_block_href: str = tag_block.attrs["href"] if tag_block else ""
+    block: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/block/") else None
+    unblock: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/unblock/") else None
 
     return {
         "name": name,
@@ -355,6 +366,10 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
         "info": info,
         "contacts": contacts,
         "user_icon_url": user_icon_url,
+        "watch": watch,
+        "unwatch": unwatch,
+        "block": block,
+        "unblock": unblock,
     }
 
 
