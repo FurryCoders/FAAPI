@@ -225,3 +225,30 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
         assert submission.type != ""
         assert submission.rating != ""
         assert submission.thumbnail_url != ""
+
+
+# noinspection DuplicatedCode
+def test_journals(cookies: RequestsCookieJar, data: dict):
+    api: FAAPI = FAAPI(cookies)
+
+    js, p = [], 1
+
+    while p:
+        js_, p_ = api.journals(data["journals"]["user"], p)
+        assert isinstance(js, list)
+        assert all(isinstance(s, SubmissionPartial) for s in js)
+        assert isinstance(p_, int)
+        assert p_ > p or p_ == 0
+        assert len(js) or p == 1
+
+        js.extend(js_)
+        p = p_
+
+    assert len(js) >= data["journals"]["length"]
+    assert len({j.id for j in js}) == len(js)
+
+    for journal in js:
+        assert journal.id > 0
+        assert journal.author.join_date.timestamp() > 0
+        assert journal.date.timestamp() > 0
+        assert journal.author.name_url == username_url(data["scraps"]["user"])
