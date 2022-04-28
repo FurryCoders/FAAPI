@@ -60,6 +60,7 @@ jobs:
       - name: Unit test
         env:
           TEST_DATA: ${{ secrets.TEST_DATA }}
+          TEST_USER: ${{ secrets.TEST_USER }}
           TEST_SUBMISSION: ${{ secrets.TEST_SUBMISSION }}
           TEST_JOURNAL: ${{ secrets.TEST_JOURNAL }}
         run: |
