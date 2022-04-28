@@ -10,6 +10,7 @@ import faapi
 from faapi import Comment
 from faapi import FAAPI
 from faapi import SubmissionPartial
+from faapi import UserPartial
 from faapi.exceptions import DisallowedPath
 from faapi.exceptions import Unauthorized
 from faapi.parse import username_url
@@ -262,3 +263,47 @@ def test_journals(cookies: RequestsCookieJar, data: dict):
         assert journal.author.join_date.timestamp() > 0
         assert journal.date.timestamp() > 0
         assert journal.author.name_url == username_url(data["scraps"]["user"])
+
+
+# noinspection DuplicatedCode
+def test_watchlist_to(cookies: RequestsCookieJar, data: dict):
+    api: FAAPI = FAAPI(cookies)
+    assert api.login_status
+
+    ws, p = [], 1
+
+    while p:
+        ws_, p_ = api.watchlist_to(data["watchlist"]["user"], p)
+        assert isinstance(ws, list)
+        assert all(isinstance(s, UserPartial) for s in ws_)
+        assert isinstance(p_, int)
+        assert p_ > p or p_ == 0
+        assert len(ws) or p == 1
+        assert len(ws_) or p_ == 0
+
+        ws.extend(ws_)
+        p = p_
+
+    assert len({w.name_url for w in ws}) == len(ws)
+
+
+# noinspection DuplicatedCode
+def test_watchlist_by(cookies: RequestsCookieJar, data: dict):
+    api: FAAPI = FAAPI(cookies)
+    assert api.login_status
+
+    ws, p = [], 1
+
+    while p:
+        ws_, p_ = api.watchlist_by(data["watchlist"]["user"], p)
+        assert isinstance(ws, list)
+        assert all(isinstance(s, UserPartial) for s in ws_)
+        assert isinstance(p_, int)
+        assert p_ > p or p_ == 0
+        assert len(ws) or p == 1
+        assert len(ws_) or p_ == 0
+
+        ws.extend(ws_)
+        p = p_
+
+    assert len({w.name_url for w in ws}) == len(ws)
