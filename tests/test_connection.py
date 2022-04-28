@@ -1,9 +1,10 @@
+from json import loads
 from os import environ
 from platform import python_version
 from platform import uname
 from urllib.robotparser import RobotFileParser
 
-import pytest
+from pytest import fixture, raises
 from requests import Response
 from requests import Session
 from requests.cookies import RequestsCookieJar
@@ -17,12 +18,14 @@ from faapi.connection import root
 from faapi.exceptions import Unauthorized
 
 
-@pytest.fixture
-def cookies() -> RequestsCookieJar:
-    jar: RequestsCookieJar = RequestsCookieJar()
-    for name, value in map(lambda c: c.split("="), environ["TEST_COOKIES"].split(":")):
-        jar.set(name, value)
-    return jar
+@fixture
+def data() -> dict:
+    return loads(environ["TEST_DATA"])
+
+
+@fixture
+def cookies(data: dict) -> RequestsCookieJar:
+    return data["cookies"]
 
 
 def test_make_session_cookie_jar():
@@ -38,7 +41,7 @@ def test_make_session_list_dict():
 
 
 def test_make_session_error():
-    with pytest.raises(Unauthorized):
+    with raises(Unauthorized):
         make_session([])
 
 

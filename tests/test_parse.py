@@ -1,12 +1,11 @@
 from datetime import datetime
-from functools import cache
 from json import loads
 from os import environ
 from re import sub
 
-import pytest
+from pytest import fixture
+from pytest import raises
 from requests import Response
-from requests.cookies import RequestsCookieJar
 
 from faapi.connection import CloudflareScraper
 from faapi.connection import join_url
@@ -19,40 +18,42 @@ from faapi.parse import parse_journal_page
 from faapi.parse import parse_loggedin_user
 from faapi.parse import parse_page
 from faapi.parse import parse_submission_page
+from faapi.parse import username_url
 
 
 def clean_html(html: str) -> str:
     return sub("</?[^<>]+>", "", html)
 
 
-@pytest.fixture
-@cache
-def session() -> CloudflareScraper:
-    jar: RequestsCookieJar = RequestsCookieJar()
-    for name, value in map(lambda c: c.split("="), environ.get("TEST_COOKIES", "").split(":")):
-        jar.set(name, value)
-    sess = make_session(jar)
+@fixture
+def data() -> dict:
+    return loads(environ["TEST_DATA"])
+
+
+@fixture
+def session(data: dict) -> CloudflareScraper:
+    sess = make_session(data["cookies"])
     sess.headers["User-Agent"] += " test"
     return sess
 
 
-@pytest.fixture
+@fixture
 def submission_test_data() -> dict:
     return loads(environ["TEST_SUBMISSION"])
 
 
-@pytest.fixture
+@fixture
 def journal_test_data() -> dict:
     return loads(environ["TEST_JOURNAL"])
 
 
-def test_check_page_disabled_account(session: CloudflareScraper):
-    res: Response = session.get(join_url(root, "user", environ["TEST_USER_DISABLED"]))
+def test_check_page_disabled_account(session: CloudflareScraper, data: dict):
+    res: Response = session.get(join_url(root, "user", data["disabled"]["user"]))
     assert res.ok
 
     page = parse_page(res.text)
 
-    with pytest.raises(DisabledAccount):
+    with raises(DisabledAccount):
         check_page_raise(page)
 
 
@@ -62,17 +63,17 @@ def test_check_page_not_found(session: CloudflareScraper):
 
     page = parse_page(res.text)
 
-    with pytest.raises(NotFound):
+    with raises(NotFound):
         check_page_raise(page)
 
 
-def test_parse_loggedin_user(session: CloudflareScraper):
-    res: Response = session.get(join_url(root, "user", environ["TEST_USER_LOGIN"]))
+def test_parse_loggedin_user(session: CloudflareScraper, data: dict):
+    res: Response = session.get(join_url(root, "user", data["login"]["user"]))
     assert res.ok
 
     page = parse_page(res.text)
 
-    assert parse_loggedin_user(page).lower() == environ["TEST_USER_LOGIN"].lower()
+    assert username_url(parse_loggedin_user(page)) == username_url(data["login"]["user"])
 
 
 def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
