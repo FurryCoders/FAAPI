@@ -144,6 +144,10 @@ class User(UserBase):
         self.info: dict[str, str] = {}
         self.contacts: dict[str, str] = {}
         self.user_icon_url: str = ""
+        self.watch: Optional[str] = None
+        self.unwatch: Optional[str] = None
+        self.block: Optional[str] = None
+        self.unblock: Optional[str] = None
 
         self.parse()
 
@@ -157,6 +161,10 @@ class User(UserBase):
         yield "info", self.info
         yield "contacts", self.contacts
         yield "user_icon_url", self.user_icon_url
+        yield "watch", self.watch
+        yield "unwatch", self.unwatch
+        yield "block", self.block
+        yield "unblock", self.unblock
 
     def parse(self, user_page: BeautifulSoup = None):
         """
@@ -184,3 +192,7 @@ class User(UserBase):
         self.info = parsed["info"]
         self.contacts = parsed["contacts"]
         self.user_icon_url = parsed["user_icon_url"]
+        self.watch = parsed["watch"]
+        self.unwatch = parsed["unwatch"]
+        self.block = parsed["block"]
+        self.unblock = parsed["unblock"]
