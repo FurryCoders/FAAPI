@@ -10,6 +10,7 @@ import faapi
 from faapi import Comment
 from faapi import FAAPI
 from faapi import SubmissionPartial
+from faapi.exceptions import DisallowedPath
 from faapi.exceptions import Unauthorized
 from faapi.parse import username_url
 from test_parse import clean_html
@@ -49,11 +50,14 @@ def test_robots(cookies: RequestsCookieJar):
     assert api.check_path("/journals")
     assert api.check_path("/watchlist/to")
     assert api.check_path("/watchlist/by")
+    with raises(DisallowedPath):
+        assert not api.check_path("/fav/", raise_for_disallowed=True)
 
 
 def test_login(cookies: RequestsCookieJar):
     api: FAAPI = FAAPI(cookies)
     assert api.login_status
+    assert api.connection_status
 
     api.load_cookies([{"name": "a", "value": "1"}])
     with raises(Unauthorized):
@@ -64,7 +68,7 @@ def test_login(cookies: RequestsCookieJar):
 def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     api: FAAPI = FAAPI(cookies)
 
-    submission, _ = api.submission(submission_test_data["id"], get_file=False)
+    submission, file = api.submission(submission_test_data["id"], get_file=True)
     submission_dict = dict(submission)
 
     assert submission.id == submission_dict["id"] == submission_test_data["id"]
@@ -92,6 +96,8 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.next == submission_dict["next"] == submission_test_data["next"]
     assert clean_html(submission.description) == clean_html(submission_dict["description"]) == \
            clean_html(submission_test_data["description"])
+
+    assert file is not None and len(file) > 0
 
     assert len(faapi.comment.flatten_comments(submission.comments)) == submission.stats.comments
 
