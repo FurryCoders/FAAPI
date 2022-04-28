@@ -12,6 +12,7 @@ from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
+from .connection import root
 from .exceptions import DisabledAccount
 from .exceptions import NoTitle
 from .exceptions import NonePage
@@ -206,6 +207,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
     tag_rating: Optional[Tag] = sub_page.select_one("div.rating span")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
+    tag_fav: Optional[Tag] = sub_page.select_one("div.fav > a")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
 
     assert tag_info is not None, _raise_exception(ParsingError("Missing info tag"))
@@ -230,6 +232,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_favorites is not None, _raise_exception(ParsingError("Missing favorites tag"))
     assert tag_rating is not None, _raise_exception(ParsingError("Missing rating tag"))
     assert tag_type is not None, _raise_exception(ParsingError("Missing type tag"))
+    assert tag_fav is not None, _raise_exception(ParsingError("Missing fav tag"))
     assert tag_category1 is not None, _raise_exception(ParsingError("Missing category1 tag"))
     assert tag_category2 is not None, _raise_exception(ParsingError("Missing category2 tag"))
     assert tag_species is not None, _raise_exception(ParsingError("Missing species tag"))
@@ -265,6 +268,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         tag_prev.attrs["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
     next_sub: Optional[int] = int(
         tag_next.attrs["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
+    fav_link: Optional[str] = f"{root}{href}" if (href := tag_fav.attrs["href"]).startswith("/fav/") else None
+    unfav_link: Optional[str] = f"{root}{href}" if (href := tag_fav.attrs["href"]).startswith("/unfav/") else None
 
     return {
         "id": id_,
@@ -287,6 +292,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         "thumbnail_url": thumbnail_url,
         "prev": prev_sub,
         "next": next_sub,
+        "fav_link": fav_link,
+        "unfav_link": unfav_link,
     }
 
 
