@@ -65,6 +65,6 @@ jobs:
           TEST_SUBMISSION: ${{ secrets.TEST_SUBMISSION }}
           TEST_JOURNAL: ${{ secrets.TEST_JOURNAL }}
         run: |
-          $(poetry env info --path)/bin/python -m pytest tests/test_connection -v
-          $(poetry env info --path)/bin/python -m pytest tests/test_parse -v
-          $(poetry env info --path)/bin/python -m pytest tests/test_faapi -v
+          $(poetry env info --path)/bin/python -m pytest tests/test_connection.py -v
+          $(poetry env info --path)/bin/python -m pytest tests/test_parse.py -v
+          $(poetry env info --path)/bin/python -m pytest tests/test_faapi.py -v
