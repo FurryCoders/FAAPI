@@ -143,6 +143,8 @@ class Submission(SubmissionBase):
         self.thumbnail_url: str = ""
         self.prev: Optional[int] = None
         self.next: Optional[int] = None
+        self.fav_url: Optional[str] = None
+        self.unfav_url: Optional[str] = None
         from .comment import Comment
         self.comments: list[Comment] = []
 
@@ -167,6 +169,8 @@ class Submission(SubmissionBase):
         yield "thumbnail_url", self.thumbnail_url
         yield "prev", self.prev
         yield "next", self.next
+        yield "fav_url", self.fav_url
+        yield "unfav_url", self.unfav_url
         from .comment import _remove_recursion
         yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
@@ -207,5 +211,7 @@ class Submission(SubmissionBase):
         self.thumbnail_url = parsed["thumbnail_url"]
         self.prev = parsed["prev"]
         self.next = parsed["next"]
+        self.fav_url = parsed["fav_link"]
+        self.unfav_url = parsed["unfav_link"]
         from .comment import sort_comments, Comment
         self.comments = sort_comments([Comment(t, self) for t in parse_comments(self.submission_page)])
