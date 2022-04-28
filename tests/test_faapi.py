@@ -9,6 +9,7 @@ from requests.cookies import RequestsCookieJar
 import faapi
 from faapi import Comment
 from faapi import FAAPI
+from faapi import JournalPartial
 from faapi import SubmissionPartial
 from faapi import UserPartial
 from faapi.exceptions import DisallowedPath
@@ -246,7 +247,7 @@ def test_journals(cookies: RequestsCookieJar, data: dict):
     while p:
         js_, p_ = api.journals(data["journals"]["user"], p)
         assert isinstance(js, list)
-        assert all(isinstance(s, SubmissionPartial) for s in js_)
+        assert all(isinstance(s, JournalPartial) for s in js_)
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(js) or p == 1
