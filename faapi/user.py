@@ -144,10 +144,10 @@ class User(UserBase):
         self.info: dict[str, str] = {}
         self.contacts: dict[str, str] = {}
         self.user_icon_url: str = ""
-        self.watch: Optional[str] = None
-        self.unwatch: Optional[str] = None
-        self.block: Optional[str] = None
-        self.unblock: Optional[str] = None
+        self.watched: bool = False
+        self.watched_toggle_link: Optional[str] = None
+        self.blocked: bool = False
+        self.blocked_toggle_link: Optional[str] = None
 
         self.parse()
 
@@ -161,10 +161,10 @@ class User(UserBase):
         yield "info", self.info
         yield "contacts", self.contacts
         yield "user_icon_url", self.user_icon_url
-        yield "watch", self.watch
-        yield "unwatch", self.unwatch
-        yield "block", self.block
-        yield "unblock", self.unblock
+        yield "watched", self.watched
+        yield "watched_toggle_link", self.watched_toggle_link
+        yield "blocked", self.blocked
+        yield "blocked_toggle_link", self.blocked_toggle_link
 
     def parse(self, user_page: BeautifulSoup = None):
         """
@@ -192,7 +192,7 @@ class User(UserBase):
         self.info = parsed["info"]
         self.contacts = parsed["contacts"]
         self.user_icon_url = parsed["user_icon_url"]
-        self.watch = parsed["watch"]
-        self.unwatch = parsed["unwatch"]
-        self.block = parsed["block"]
-        self.unblock = parsed["unblock"]
+        self.watched = parsed["watch"] is None and parsed["unwatch"] is not None
+        self.watched_toggle_link = parsed["watch"] or parsed["unwatch"] or None
+        self.blocked = parsed["block"] is None and parsed["unblock"] is not None
+        self.blocked_toggle_link = parsed["block"] or parsed["unblock"] or None
