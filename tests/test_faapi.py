@@ -159,7 +159,7 @@ def test_gallery(cookies: RequestsCookieJar, data: dict):
     while p:
         ss_, p_ = api.gallery(data["gallery"]["user"], p)
         assert isinstance(ss, list)
-        assert all(isinstance(s, SubmissionPartial) for s in ss)
+        assert all(isinstance(s, SubmissionPartial) for s in ss_)
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(ss) or p == 1
@@ -188,7 +188,7 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
     while p:
         ss_, p_ = api.scraps(data["scraps"]["user"], p)
         assert isinstance(ss, list)
-        assert all(isinstance(s, SubmissionPartial) for s in ss)
+        assert all(isinstance(s, SubmissionPartial) for s in ss_)
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(ss) or p == 1
@@ -217,7 +217,7 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
     while p and len(ss) < data["favorites"]["max_length"]:
         ss_, p_ = api.favorites(data["favorites"]["user"], p)
         assert isinstance(ss, list)
-        assert all(isinstance(s, SubmissionPartial) for s in ss)
+        assert all(isinstance(s, SubmissionPartial) for s in ss_)
         assert isinstance(p_, str)
         assert (p == "/" and p_ > p) or p_ < p or p_ == ""
         assert len(ss) or p == "/"
@@ -245,7 +245,7 @@ def test_journals(cookies: RequestsCookieJar, data: dict):
     while p:
         js_, p_ = api.journals(data["journals"]["user"], p)
         assert isinstance(js, list)
-        assert all(isinstance(s, SubmissionPartial) for s in js)
+        assert all(isinstance(s, SubmissionPartial) for s in js_)
         assert isinstance(p_, int)
         assert p_ > p or p_ == 0
         assert len(js) or p == 1
