@@ -321,6 +321,8 @@ The main class that parses and holds submission metadata.
 * `thumbnail_url: str` the URL to the submission thumbnail
 * `prev: int` the ID of the previous submission (if any)
 * `next: int` the ID of the next submission (if any)
+* `favorite: bool` `True` if the submission is a favorite, `False` otherwise
+* `favorite_toggle_link: str` the link to toggle the favorite status (`/fav/` or `/unfav/` type URL)
 * `comments: list[Comments]` the comments to the submission, organised in a tree structure
 * `submission_page: bs4.BeautifulSoup` the submission page used to parse the object fields
 
@@ -500,6 +502,10 @@ The main class storing all of a user's metadata.
   etc.)
 * `contacts: dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
 * `user_icon_url: str` the URL to the user icon
+* `watched: bool` `True` if the user is watched, `False` otherwise
+* `watched_toggle_link: str | None` The link to toggle the watch status (`/watch/` or `/unwatch/` type link) 
+* `blocked: bool` `True` if the user is blocked, `False` otherwise
+* `blocked_toggle_link: str | None` The link to toggle the block status (`/block/` or `/unblock/` type link) 
 * `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
 
 `User` objects can be directly cast to a dict object and iterated through.
