@@ -1,5 +1,29 @@
 # Changelog
 
+## v3.7.0
+
+### New Features
+
+* Journal headers and footers
+    * The `Journal` class now contains header and footer fields which are parsed from journal pages (`FAAPI.journal`)
+* Submission favorite status and link
+    * The `Submisison` class now contains a boolean `favorite` field that is set to `True` if the submission is a
+      favorite, and a `favorite_toggle_link` containing the link to toggle the favorite status (`/fav/` or `/unfav/`)
+* User watch and block statuses and links
+    * The `User` class now contains boolean `watched` and `blocked` fields that are set to `True` if the user is watched
+      or blocked respectively, and `watched_toggle_link` and `blocked_toggle_link` fields containing the links to toggle
+      the watched (`/watch/` or `/unwatch/`) and blocked (`/block/` or `/unblock/`) statuses respectively.
+
+### Changes
+
+* Remove `parse.check_page` function which had no usage in the library anymore
+
+### Fixes
+
+* Fix an incorrect regular expression that parsed mentions in journals, submissions, and profiles which could cause
+  non-Fur Affinity links to be matched as valid
+    * Security issue [#3](https://github.com/FurryCoders/FAAPI/issues/3)
+
 ## v3.6.1
 
 ### Fixes
