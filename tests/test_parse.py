@@ -132,6 +132,9 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert result["thumbnail_url"] != ""
     assert result["prev"] == submission_test_data["prev"]
     assert result["next"] == submission_test_data["next"]
+    assert bool(result["unfav_link"]) == submission_test_data["favorite"]
+    assert (("/fav/" in submission_test_data["favorite_toggle_link"]) and bool(result["fav_link"])) or \
+           (("/unfav/" in submission_test_data["favorite_toggle_link"]) and bool(result["unfav_link"]))
     assert clean_html(result["description"]) == clean_html(submission_test_data["description"])
 
 

@@ -130,6 +130,9 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.thumbnail_url == submission_dict["thumbnail_url"] != ""
     assert submission.prev == submission_dict["prev"] == submission_test_data["prev"]
     assert submission.next == submission_dict["next"] == submission_test_data["next"]
+    assert submission.favorite == submission_dict["favorite"] == submission_test_data["favorite"]
+    assert bool(submission.favorite_toggle_link) == bool(submission_dict["favorite_toggle_link"]) == \
+           bool(submission_test_data["favorite_toggle_link"])
     assert clean_html(submission.description) == clean_html(submission_dict["description"]) == \
            clean_html(submission_test_data["description"])
 
