@@ -17,6 +17,8 @@
 ### Changes
 
 * Remove `parse.check_page` function which had no usage in the library anymore
+* Remove `parse.parse_search_submissions` function and `FAAPI.search` method
+    * They will be reintroduced once Fur Affinity allows scraping search pages again
 
 ### Fixes
 
