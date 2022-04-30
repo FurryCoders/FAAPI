@@ -174,13 +174,6 @@ in [#Cookies](#cookies).
 * `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int]`<br>
   Returns the list of submissions found on a specific journals page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `search(q: str = "", page: int = 0, **params) -> tuple[list[SubmissionPartial], int, int, int, int]`<br>
-  Parses FA search given the query (and optional other params) and returns the submissions found, and the next page
-  together with basic search statistics: the number of the first submission in the page (0-indexed), the number of the
-  last submission in the page (0-indexed), and the total number of submissions found in the search. For example if the
-  last three returned integers are 0, 47 and 437, then the page contains submissions 1 through 48 of a search that has
-  found a total of 437 submissions.<br>
-  *Note:* as of April 2022 the "/search" path is disallowed by Fur Affinity's robots.txt.
 * `watchlist_to(self, user: str) -> list[User]`<br>
   Given a username, returns a list of `User` objects for each user that is watching the given user.
 * `watchlist_by(self, user: str) -> list[User]`<br>
@@ -264,8 +257,8 @@ If no `journal_page` is passed then the object fields will remain at their defau
 
 ### SubmissionPartial
 
-This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, favorites
-and search pages. It contains only the following fields:
+This lightweight submission object is used to contain the information gathered when parsing gallery, scraps, and
+favorites pages. It contains only the following fields:
 
 * `id: int` submission ID
 * `title: str` submission title
@@ -503,9 +496,9 @@ The main class storing all of a user's metadata.
 * `contacts: dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
 * `user_icon_url: str` the URL to the user icon
 * `watched: bool` `True` if the user is watched, `False` otherwise
-* `watched_toggle_link: str | None` The link to toggle the watch status (`/watch/` or `/unwatch/` type link) 
+* `watched_toggle_link: str | None` The link to toggle the watch status (`/watch/` or `/unwatch/` type link)
 * `blocked: bool` `True` if the user is blocked, `False` otherwise
-* `blocked_toggle_link: str | None` The link to toggle the block status (`/block/` or `/unblock/` type link) 
+* `blocked_toggle_link: str | None` The link to toggle the block status (`/block/` or `/unblock/` type link)
 * `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
 
 `User` objects can be directly cast to a dict object and iterated through.
