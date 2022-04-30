@@ -7,7 +7,7 @@
 * Journal headers and footers
     * The `Journal` class now contains header and footer fields which are parsed from journal pages (`FAAPI.journal`)
 * Submission favorite status and link
-    * The `Submisison` class now contains a boolean `favorite` field that is set to `True` if the submission is a
+    * The `Submission` class now contains a boolean `favorite` field that is set to `True` if the submission is a
       favorite, and a `favorite_toggle_link` containing the link to toggle the favorite status (`/fav/` or `/unfav/`)
 * User watch and block statuses and links
     * The `User` class now contains boolean `watched` and `blocked` fields that are set to `True` if the user is watched
