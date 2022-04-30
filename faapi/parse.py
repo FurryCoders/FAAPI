@@ -495,27 +495,6 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
     }
 
 
-def parse_search_submissions(search_page: BeautifulSoup) -> dict[str, Any]:
-    tag_stats: Optional[Tag] = search_page.select_one("div[id='query-stats']")
-    assert tag_stats is not None, _raise_exception(ParsingError("Missing stats tag"))
-
-    for div in tag_stats.select(""):
-        div.decompose()
-    a, b, tot = 0, 0, 0
-    if s := search(r"(\d+)[^\d]*(\d+)[^\d]*(\d+)", tag_stats.text.strip()):
-        a, b, tot = map(int, s.groups())
-    figures: list[Tag] = search_page.select("figure[id^='sid-']")
-    last_page: bool = not any(b.text.lower() == "next" for b in search_page.select("button.button:not(.disabled)"))
-
-    return {
-        "from": (a or 1) - 1,
-        "to": (b or 1) - 1,
-        "total": tot,
-        "figures": figures,
-        "last_page": last_page
-    }
-
-
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], bool]:
     tags_users: list[Tag] = watch_page.select("div.watch-list-items")
     tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")

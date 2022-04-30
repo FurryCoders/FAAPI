@@ -21,7 +21,6 @@ from .parse import BeautifulSoup
 from .parse import check_page_raise
 from .parse import parse_loggedin_user
 from .parse import parse_page
-from .parse import parse_search_submissions
 from .parse import parse_user_favorites
 from .parse import parse_user_journals
 from .parse import parse_user_submissions
@@ -271,21 +270,6 @@ class FAAPI:
         for j in (journals := list(map(JournalPartial, info_parsed["sections"]))):
             j.author = author
         return journals, (page + 1) * (not info_parsed["last_page"])
-
-    def search(self, q: str, page: int = 1, **params) -> tuple[list[SubmissionPartial], int, tuple[int, int, int]]:
-        """
-        Perform a search request.
-
-        :param q: The search query.
-        :param page: The page to fetch.
-        :param params: Extra query parameters for the request.
-        :return: A list of SubmissionPartial objects, the next page (0 if it is the last), and a tuple containing the
-        from, to, and total results.
-        """
-        page_parsed: BeautifulSoup = self.get_parsed("search", q=q, page=(page := int(page)), **params)
-        info_parsed: dict[str, Any] = parse_search_submissions(page_parsed)
-        return (list(map(SubmissionPartial, info_parsed["figures"])), (page + 1) * (not info_parsed["last_page"]),
-                (info_parsed["from"], info_parsed["to"], info_parsed["total"]))
 
     def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
         """
