@@ -161,7 +161,8 @@ class FAAPI:
         :return: A list of SubmissionPartial objects
         """
         page_parsed: BeautifulSoup = self.get_parsed("/")
-        return sorted((SubmissionPartial(f) for f in parse_submission_figures(page_parsed)), key=lambda s: -s.id)
+        submissions: list[SubmissionPartial] = [SubmissionPartial(f) for f in parse_submission_figures(page_parsed)]
+        return sorted({s.id: s for s in submissions}.values(), reverse=True)
 
     def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: int = None
                    ) -> tuple[Submission, Optional[bytes]]:
