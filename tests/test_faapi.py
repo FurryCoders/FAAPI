@@ -71,6 +71,21 @@ def test_login(cookies: RequestsCookieJar):
         api.me()
 
 
+# noinspection DuplicatedCode
+def test_frontpage(cookies: RequestsCookieJar):
+    api: FAAPI = FAAPI(cookies)
+
+    ss = api.frontpage()
+
+    assert len({s.id for s in ss}) == len(ss)
+
+    for submission in ss:
+        assert submission.id > 0
+        assert submission.type != ""
+        assert submission.rating != ""
+        assert submission.thumbnail_url != ""
+
+
 def test_user(cookies: RequestsCookieJar, user_test_data: dict):
     api: FAAPI = FAAPI(cookies)
 
