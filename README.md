@@ -147,6 +147,8 @@ in [#Cookies](#cookies).
   e.g. non-existing submission). If `skip_auth_check` is set to `True`, the page is not checked for login status.
 * `me() -> User | None`<br>
   Returns the logged-in user as a `User` object if the cookies are from a login session.
+* `frontpage() -> list[SubmissionPartial]`<br>
+  Fetch the latest submissions from Fur Affinity's front page.
 * `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> tuple[Submission, bytes | None]`<br>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
   a `bytes` object with the submission file if `get_file` is passed as `True`. The optional `chunk_size` argument is
