@@ -460,14 +460,17 @@ def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
     }
 
 
+def parse_submission_figures(figures_page: BeautifulSoup) -> list[Tag]:
+    return figures_page.select("figure[id^='sid-']")
+
+
 def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(submissions_page)
-    figures: list[Tag] = submissions_page.select("figure[id^='sid-']")
     last_page: bool = not any(b.text.lower() == "next" for b in submissions_page.select("form button.button"))
 
     return {
         **user_info,
-        "figures": figures,
+        "figures": parse_submission_figures(submissions_page),
         "last_page": last_page,
     }
 
