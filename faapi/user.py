@@ -44,6 +44,34 @@ class UserBase:
             return username_url(other) == self.name_url
         return False
 
+    def __gt__(self, other) -> bool:
+        if isinstance(other, UserBase):
+            return self.name_url > other.name_url
+        elif isinstance(other, str):
+            return self.name_url > username_url(other)
+        return False
+
+    def __ge__(self, other) -> bool:
+        if isinstance(other, UserBase):
+            return self.name_url >= other.name_url
+        elif isinstance(other, str):
+            return self.name_url >= username_url(other)
+        return False
+
+    def __lt__(self, other) -> bool:
+        if isinstance(other, UserBase):
+            return self.name_url < other.name_url
+        elif isinstance(other, str):
+            return self.name_url < username_url(other)
+        return False
+
+    def __le__(self, other) -> bool:
+        if isinstance(other, UserBase):
+            return self.name_url <= other.name_url
+        elif isinstance(other, str):
+            return self.name_url <= username_url(other)
+        return False
+
     def __iter__(self):
         yield "name", self.name
         yield "status", self.status

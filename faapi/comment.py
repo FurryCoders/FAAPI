@@ -42,6 +42,34 @@ class Comment:
             return other == self.id
         return False
 
+    def __gt__(self, other) -> bool:
+        if isinstance(other, Comment):
+            return self.id > other.id
+        elif isinstance(other, int):
+            return self.id > other
+        return False
+
+    def __ge__(self, other) -> bool:
+        if isinstance(other, Comment):
+            return self.id >= other.id
+        elif isinstance(other, int):
+            return self.id >= other
+        return False
+
+    def __lt__(self, other) -> bool:
+        if isinstance(other, Comment):
+            return self.id < other.id
+        elif isinstance(other, int):
+            return self.id < other
+        return False
+
+    def __le__(self, other) -> bool:
+        if isinstance(other, Comment):
+            return self.id <= other.id
+        elif isinstance(other, int):
+            return self.id <= other
+        return False
+
     def __iter__(self):
         yield "id", self.id
         yield "author", dict(self.author)
