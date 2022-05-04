@@ -33,7 +33,7 @@ class JournalBase:
         self.mentions: list[str] = []
 
     def __eq__(self, other) -> bool:
-        if isinstance(other, Journal):
+        if isinstance(other, JournalBase):
             return other.id == self.id
         elif isinstance(other, int):
             return other == self.id
