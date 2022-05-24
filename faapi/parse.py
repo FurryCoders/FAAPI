@@ -298,7 +298,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
-    tag_status: Optional[Tag] = user_page.select_one("div.username span")
+    tag_status: Optional[Tag] = user_page.select_one("div.username h2")
     tag_profile: Optional[Tag] = user_page.select_one("div.userpage-profile")
     tag_title_join_date: Optional[Tag] = user_page.select_one("div.userpage-flex-item.username > span")
     tag_stats: Optional[Tag] = user_page.select_one("div.userpage-section-right div.table")
