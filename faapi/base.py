@@ -154,7 +154,7 @@ class FAAPI:
         """
         return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
 
-    def frontpage(self):
+    def frontpage(self) -> list[SubmissionPartial]:
         """
         Fetch latest submissions from Fur Affinity's front page
 
