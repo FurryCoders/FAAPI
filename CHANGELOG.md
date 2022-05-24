@@ -13,6 +13,8 @@
 ### Fixes
 
 * Fix equality comparison between `Journal` and `JournalPartial`
+* Fix parsing of usernames from user pages returning the title instead
+  * Caused by a change in Fur Affinity's DOM
 
 ## v3.7.0
 
