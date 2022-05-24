@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.7.1
+
+### New Features
+
+* Frontpage
+    * New `FAAPI.frontpage()` method to get submissions from Fur Affinity's front page
+* Sorting of `Journal`, `Submission`, and `User` objects
+    * All data objects now support greater than, greater or equal, lower than, and lower or equal operations for easy
+      sorting
+
+### Fixes
+
+* Fix equality comparison between `Journal` and `JournalPartial`
+
 ## v3.7.0
 
 ### New Features
