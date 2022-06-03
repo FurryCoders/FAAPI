@@ -48,6 +48,7 @@ class FAAPI:
         self.robots: RobotFileParser = get_robots(self.session)  # robots.txt handler
         self.last_get: float = time() - self.crawl_delay  # Time of last get (UNIX time)
         self.raise_for_unauthorized: bool = True  # Control login checks
+        self.timeout: Optional[int] = None  # Timeout for requests
 
     @property
     def user_agent(self) -> str:
@@ -124,7 +125,7 @@ class FAAPI:
         """
         self.check_path(path, raise_for_disallowed=True)
         self.handle_delay()
-        return get(self.session, path, **params)
+        return get(self.session, path, timeout=self.timeout, params=params)
 
     def get_parsed(self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params
                    ) -> BeautifulSoup:

@@ -4,6 +4,7 @@ from http.cookiejar import CookieJar
 from platform import python_version
 from platform import uname
 from re import compile as re_compile
+from typing import Any
 from typing import Optional
 from typing import Union
 from urllib.robotparser import RobotFileParser
@@ -44,8 +45,8 @@ def get_robots(session: Session) -> RobotFileParser:
     return robots
 
 
-def get(session: CloudflareScraper, path: str, **params) -> Response:
-    return session.get(join_url(root, path), params=params)
+def get(session: CloudflareScraper, path: str, *, timeout: int = None, params: dict[str, Any] = None) -> Response:
+    return session.get(join_url(root, path), params=params, timeout=timeout)
 
 
 def stream_binary(session: CloudflareScraper, url: str, *, chunk_size: Optional[int] = None) -> bytes:
