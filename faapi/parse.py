@@ -60,11 +60,8 @@ def username_url(username: str) -> str:
 
 
 def parse_mentions(tag: Tag) -> list[str]:
-    return sorted(set(ms := list(filter(bool, (
-        username_url(m.group(1).lower())
-        for a in tag.select("a")
-        if (m := match(mentions_regexp, a["href"])) is not None
-    )))), key=ms.index)
+    mentions: list[str] = [username_url(m[1]) for a in tag.select("a") if (m := match(mentions_regexp, a["href"]))]
+    return sorted(set([m for m in mentions if m]), key=mentions.index)
 
 
 def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
