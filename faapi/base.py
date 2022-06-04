@@ -188,7 +188,7 @@ class FAAPI:
         :return: The submission file as a bytes object.
         """
         self.handle_delay()
-        return stream_binary(self.session, submission.file_url, chunk_size=chunk_size)
+        return stream_binary(self.session, submission.file_url, chunk_size=chunk_size, timeout=self.timeout)
 
     def journal(self, journal_id: int) -> Journal:
         """

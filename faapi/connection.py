@@ -49,8 +49,9 @@ def get(session: CloudflareScraper, path: str, *, timeout: int = None,
     return session.get(join_url(root, path), params=params, timeout=timeout)
 
 
-def stream_binary(session: CloudflareScraper, url: str, *, chunk_size: Optional[int] = None) -> bytes:
-    stream: Response = session.get(url, stream=True)
+def stream_binary(session: CloudflareScraper, url: str, *, chunk_size: Optional[int] = None,
+                  timeout: Optional[int] = None) -> bytes:
+    stream: Response = session.get(url, stream=True, timeout=timeout)
     stream.raise_for_status()
 
     file_binary: bytes = bytes().join(stream.iter_content(chunk_size))
