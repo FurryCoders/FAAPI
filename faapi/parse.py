@@ -56,7 +56,7 @@ def check_page_raise(page: BeautifulSoup) -> None:
 
 
 def username_url(username: str) -> str:
-    return sub(r"[^a-z0-9.~-]", "", username.lower())
+    return sub(r"[^a-z\d.~-]", "", username.lower())
 
 
 def parse_mentions(tag: Tag) -> list[str]:
