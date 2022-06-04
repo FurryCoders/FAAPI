@@ -113,7 +113,7 @@ class FAAPI:
         """
         return parse_loggedin_user(self.get_parsed("login", skip_auth_check=True)) is not None
 
-    def get(self, path: str, **params) -> Response:
+    def get(self, path: str, **params: Union[str, bytes, int, float]) -> Response:
         """
         Fetch a path with a GET request.
         The path is checked against the robots.txt before the request is made.
@@ -127,8 +127,8 @@ class FAAPI:
         self.handle_delay()
         return get(self.session, path, timeout=self.timeout, params=params)
 
-    def get_parsed(self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params
-                   ) -> BeautifulSoup:
+    def get_parsed(self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False,
+                   **params: Union[str, bytes, int, float]) -> BeautifulSoup:
         """
         Fetch a path with a GET request and parse it using BeautifulSoup.
 
