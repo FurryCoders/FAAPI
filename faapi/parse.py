@@ -28,6 +28,10 @@ not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found",
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
 
 
+def get_attr(tag: Tag, attr: str) -> str:
+    return value[0] if isinstance(value := tag.attrs[attr], list) else value
+
+
 def parse_page(text: str) -> BeautifulSoup:
     return BeautifulSoup(text, "lxml")
 
@@ -60,12 +64,13 @@ def username_url(username: str) -> str:
 
 
 def parse_mentions(tag: Tag) -> list[str]:
-    mentions: list[str] = [username_url(m[1]) for a in tag.select("a") if (m := match(mentions_regexp, a["href"]))]
+    mentions: list[str] = [username_url(m[1]) for a in tag.select("a")
+                           if (m := match(mentions_regexp, get_attr(a, "href")))]
     return sorted(set([m for m in mentions if m]), key=mentions.index)
 
 
 def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
-    return avatar.attrs["alt"] if (avatar := page.select_one("img.loggedin_user_avatar")) else None
+    return get_attr(avatar, "alt") if (avatar := page.select_one("img.loggedin_user_avatar")) else None
 
 
 def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
@@ -138,7 +143,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
-    id_: int = int(figure_tag.attrs["id"][4:])
+    id_: int = int(get_attr(figure_tag, "id")[4:])
     tag_title: Optional[Tag] = figure_tag.select_one("figcaption a[href^='/view/']")
     tag_author: Optional[Tag] = figure_tag.select_one("figcaption a[href^='/user/']")
     tag_thumbnail: Optional[Tag] = figure_tag.select_one("img")
@@ -147,11 +152,11 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
     assert tag_author is not None, _raise_exception(ParsingError("Missing author tag"))
     assert tag_thumbnail is not None, _raise_exception(ParsingError("Missing thumbnail tag"))
 
-    title: str = tag_title.attrs["title"]
-    author: str = tag_author.attrs["title"]
+    title: str = get_attr(tag_title, "title")
+    author: str = get_attr(tag_author, "title")
     rating: str = next(c for c in figure_tag["class"] if c.startswith("r-"))[2:]
     type_: str = next(c for c in figure_tag["class"] if c.startswith("t-"))[2:]
-    thumbnail_url: str = "https:" + tag_thumbnail.attrs["src"]
+    thumbnail_url: str = "https:" + get_attr(tag_thumbnail, "src")
 
     return {
         "id": id_,
@@ -180,7 +185,7 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
                                          if isinstance(child, NavigableString)][3:])] or [""])[-1]
     author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
     author_title = author_title.strip("\xA0 ")  # NBSP
-    author_icon_url: str = "https:" + tag_author_icon.attrs["src"]
+    author_icon_url: str = "https:" + get_attr(tag_author_icon, "src")
 
     return {
         "author": author_name,
@@ -240,11 +245,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_prev is not None, _raise_exception(ParsingError("Missing prev tag"))
     assert tag_next is not None, _raise_exception(ParsingError("Missing next tag"))
 
-    id_: int = int(tag_id.attrs["content"].strip("/").split("/")[-1])
+    id_: int = int(get_attr(tag_id, "content").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     date: datetime = parse_date(
-        tag_date.attrs["title"].strip()
-        if match(r"^[A-Za-z]+ \d+,.*$", tag_date.attrs["title"])
+        get_attr(tag_date, "title").strip()
+        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
         else tag_date.text.strip()
     )
     tags: list[str] = [t.text.strip() for t in tag_tags]
@@ -258,15 +263,15 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     type_: str = tag_type["class"][0][18:]
     description: str = "".join(map(str, tag_description.children)).strip()
     mentions: list[str] = parse_mentions(tag_description)
-    folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", tag_folder.attrs["href"])) else ""
-    file_url: str = "https:" + tag_file_url.attrs["href"]
-    thumbnail_url: str = ("https:" + tag_thumbnail_url.attrs["data-preview-src"]) if tag_thumbnail_url else ""
+    folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", get_attr(tag_folder, "href"))) else ""
+    file_url: str = "https:" + get_attr(tag_file_url, "href")
+    thumbnail_url: str = ("https:" + get_attr(tag_thumbnail_url, "data-preview-src")) if tag_thumbnail_url else ""
     prev_sub: Optional[int] = int(
-        tag_prev.attrs["href"].split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
+        get_attr(tag_prev, "href").split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
     next_sub: Optional[int] = int(
-        tag_next.attrs["href"].split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
-    fav_link: Optional[str] = f"{root}{href}" if (href := tag_fav.attrs["href"]).startswith("/fav/") else None
-    unfav_link: Optional[str] = f"{root}{href}" if (href := tag_fav.attrs["href"]).startswith("/unfav/") else None
+        get_attr(tag_next, "href").split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
+    fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
+    unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
 
     return {
         "id": id_,
@@ -343,13 +348,13 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     for pc in tag_contacts:
         if (tag_key := pc.select_one("span")) is None:
             continue
-        contacts[tag_key.text.strip()] = a.attrs["href"] if (a := pc.select_one("a")) else \
+        contacts[tag_key.text.strip()] = get_attr(a, "href") if (a := pc.select_one("a")) else \
             [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
-    user_icon_url: str = "https:" + tag_user_icon_url.attrs["src"]
-    tag_watch_href: str = tag_watch.attrs["href"] if tag_watch else ""
+    user_icon_url: str = "https:" + get_attr(tag_user_icon_url, "src")
+    tag_watch_href: str = get_attr(tag_watch, "href") if tag_watch else ""
     watch: Optional[str] = f"{root}{tag_watch_href}" if tag_watch_href.startswith("/watch/") else None
     unwatch: Optional[str] = f"{root}{tag_watch_href}" if tag_watch_href.startswith("/unwatch/") else None
-    tag_block_href: str = tag_block.attrs["href"] if tag_block else ""
+    tag_block_href: str = get_attr(tag_block, "href") if tag_block else ""
     block: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/block/") else None
     unblock: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/unblock/") else None
 
@@ -453,7 +458,7 @@ def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_user_icon is not None, _raise_exception(ParsingError("Missing user icon tag"))
     return {
         **parse_user_tag(tag_username),
-        "user_icon_url": "https:" + tag_user_icon.attrs["src"],
+        "user_icon_url": "https:" + get_attr(tag_user_icon, "src"),
     }
 
 
@@ -475,7 +480,7 @@ def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Any]:
     parsed_submissions = parse_user_submissions(favorites_page)
     tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
-    next_page: str = tag_next_page.attrs["href"].split("/", 3)[-1] if tag_next_page else ""
+    next_page: str = get_attr(tag_next_page, "href").split("/", 3)[-1] if tag_next_page else ""
 
     return {
         **parsed_submissions,
@@ -500,5 +505,5 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], b
     tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")
     return (
         [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users],
-        watchlist_next_regexp.match(tag_next["action"]) is not None if tag_next else False
+        watchlist_next_regexp.match(get_attr(tag_next, "action")) is not None if tag_next else False
     )
