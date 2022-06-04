@@ -115,6 +115,7 @@ It holds 6 different fields:
 * `last_get: float` time of last get (UNIX time)
 * `raise_for_unauthorized: bool = True` if set to `True`, raises an exception if a request is made and the resulting
   page is not from a login session
+* `timeout: int | None = None` requests timeout in seconds for both page requests (e.g. submissions) and files
 
 #### Init
 
