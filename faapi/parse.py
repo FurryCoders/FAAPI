@@ -63,7 +63,7 @@ def parse_mentions(tag: Tag) -> list[str]:
     return sorted(set(ms := list(filter(bool, (
         username_url(m.group(1).lower())
         for a in tag.select("a")
-        if (m := match(mentions_regexp, a.attrs.get("href"))) is not None
+        if (m := match(mentions_regexp, a["href"])) is not None
     )))), key=ms.index)
 
 
