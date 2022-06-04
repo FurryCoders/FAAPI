@@ -1,5 +1,17 @@
 # Changelog
 
+## v3.7.2
+
+### New Features
+
+* Requests timeout
+  * New `FAAPI.timeout: int | None` variable to set request timeout in seconds
+  * Timeout is used for both page requests (e.g. submissions) and file requests
+
+### Fixes
+
+* Fix possible parsing error arising from multiple attributes in one tag
+
 ## v3.7.1
 
 ### New Features
