@@ -87,7 +87,11 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     assert tag_comments is not None, _raise_exception(ParsingError("Missing comments tag"))
 
     title: str = tag_title.text.strip()
-    date: datetime = parse_date((t[0] if isinstance(t := tag_date["title"], list) else t).strip())
+    date: datetime = parse_date(
+        get_attr(tag_date, "title").strip()
+        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
+        else tag_date.text.strip()
+    )
     content: str = "".join(map(str, tag_content.children))
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
@@ -120,7 +124,11 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
 
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    date: datetime = parse_date(tag_date.attrs["title"].strip())
+    date: datetime = parse_date(
+        get_attr(tag_date, "title").strip()
+        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
+        else tag_date.text.strip()
+    )
     header: str = "".join(map(str, tag_header.children)).strip() if tag_header else ""
     footer: str = "".join(map(str, tag_footer.children)).strip() if tag_footer else ""
     content: str = "".join(map(str, tag_content.children)).strip()
