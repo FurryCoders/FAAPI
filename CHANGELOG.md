@@ -12,8 +12,8 @@
 ### New Features
 
 * Requests timeout
-  * New `FAAPI.timeout: int | None` variable to set request timeout in seconds
-  * Timeout is used for both page requests (e.g. submissions) and file requests
+    * New `FAAPI.timeout: int | None` variable to set request timeout in seconds
+    * Timeout is used for both page requests (e.g. submissions) and file requests
 
 ### Fixes
 
