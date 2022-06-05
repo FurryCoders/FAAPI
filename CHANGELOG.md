@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.7.3
+
+### Fixes
+
+* Fix error when parsing journals folders and journal pages caused by date format set to full on Fur Affinity's site
+  settings
+
 ## v3.7.2
 
 ### New Features
@@ -26,7 +33,7 @@
 
 * Fix equality comparison between `Journal` and `JournalPartial`
 * Fix parsing of usernames from user pages returning the title instead
-  * Caused by a change in Fur Affinity's DOM
+    * Caused by a change in Fur Affinity's DOM
 
 ## v3.7.0
 
