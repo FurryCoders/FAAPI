@@ -34,3 +34,6 @@ ENV/
 
 # System folders/files
 .DS_Store
+
+# Local test data
+tests/test_*.json
