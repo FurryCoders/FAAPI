@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.7.4
+
+### Dependencies
+
+* Use [lxml ^4.9.1](https://pypi.org/project/lxml/4.9.1)
+    * Fix [CVE-2022-2309](https://cve.report/CVE-2022-2309.pdf) issue
+
 ## v3.7.3
 
 ### Fixes
