@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.8.0
+
+### New Features
+
+* BBCode conversion
+    * New properties have been added to the `User`, `Submission`, `Journal`, `JournalPartial`, and `Comment` objects to
+      provide BBCode versions of HTML fields
+    * The generated BBCode tags follow the Fur Affinity standard found on
+      their [support page](https://www.furaffinity.net/help/#tags-and-codes)
+
 ## v3.7.4
 
 ### Dependencies
