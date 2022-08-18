@@ -58,10 +58,9 @@ jobs:
       - run: |
           poetry install
       - name: Unit test
-        env:
-          TEST_DATA: ${{ secrets.TEST_DATA }}
-          TEST_USER: ${{ secrets.TEST_USER }}
-          TEST_SUBMISSION: ${{ secrets.TEST_SUBMISSION }}
-          TEST_JOURNAL: ${{ secrets.TEST_JOURNAL }}
         run: |
+          echo "${{ secrets.TEST_DATA }}" > tests/test_data.json
+          echo "${{ secrets.TEST_USER }}" > tests/test_user.json
+          echo "${{ secrets.TEST_SUBMISSION }}" > tests/test_submission.json
+          echo "${{ secrets.TEST_JOURNAL }}" > tests/test_journal.json
           $(poetry env info --path)/bin/python -m pytest tests/test_connection.py tests/test_parse.py tests/test_faapi.py -v --tb=short
