@@ -193,6 +193,7 @@ This object contains partial information gathered when parsing a journals folder
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
 * `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
 * `content: str` journal content in HTML format
+* `content_bbcode: str` journal content in BBCode format
 * `mentions: list[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `journal_tag: bs4.element.Tag` the journal tag used to parse the object fields
@@ -232,6 +233,7 @@ as `JournalPartial` with the addition of comments:
 * `header: str` journal header in HTML format (if present)
 * `footer: str` journal footer in HTML format (if present)
 * `content: str` journal content in HTML format
+* `content_bbcode: str` journal content in BBCode format
 * `mentions: list[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `comments: list[Comments]` the comments to the journal, organised in a tree structure
@@ -310,6 +312,7 @@ The main class that parses and holds submission metadata.
 * `stats: SubmissionStats` submission statistics stored in a named tuple (`views`, `comments` (count), `favorites`)
 * `type: str` submission type (text, image, etc...)
 * `description: str` description in HTML format
+* `description_bbcode: str` description in BBCode format
 * `mentions: list[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `folder: str` the submission folder (gallery or scraps)
@@ -352,6 +355,7 @@ This object class contains comment metadata and is used to build a tree structur
 * `author: UserPartial` the user who posted the comment
 * `date: datetime` the date the comment was posted
 * `text: str` the comment text in HTML format
+* `text_bbcode: str` the comment text in BBCode format
 * `replies: list[Comment]` list of replies to the comment
 * `reply_to: Comment | int | None` the parent comment, if the comment is a reply. The variable type is `int` only if the
   comment is parsed outside the parse method of a `Submission` or `Journal` (e.g. by creating a new comment with a
@@ -492,6 +496,7 @@ The main class storing all of a user's metadata.
 * `title: str` the user title as it appears on their userpage
 * `join_date: datetime` the date the user joined (defaults to timestamp 0)
 * `profile: str` profile text in HTML format
+* `profile_bbcode: str` profile text in BBCode format
 * `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favorites`, `comments_earned`
   , `comments_made`, `journals`, `watched_by`, `watching`)
 * `info: dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
