@@ -154,7 +154,7 @@ def html_to_bbcode(html: str) -> str:
 
     html = body.text.strip()
 
-    for char, substitution in (("©", "(c)"), ("™", "(tm)"), ("®", "(r)"), ("&lt;", "<"), ("&gt;", ">")):
+    for char, substitution in (("©", "(c)"), ("™", "(tm)"), ("®", "(r)"), ("&lt;", "<"), ("&gt;", ">"), ("\r", "")):
         html = sub(char, substitution, html, flags=IGNORECASE)
 
     return html
