@@ -7,7 +7,6 @@ from re import search
 from re import sub
 from typing import Any
 from typing import Optional
-from urllib.parse import quote
 
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
@@ -83,7 +82,7 @@ def html_to_bbcode(html: str) -> str:
         usernameicon.replaceWith(f":{username}icon:")
 
     for img in body.select("img"):
-        img.replaceWith(f"[img={quote(img.attrs.get('src', ''))}/]")
+        img.replaceWith(f"[img={img.attrs.get('src', '')}/]")
 
     for hr in body.select("hr"):
         hr.replaceWith("-----")
@@ -114,7 +113,7 @@ def html_to_bbcode(html: str) -> str:
     for a in body.select("a"):
         for child in a.select("*"):
             child.replaceWith(html_to_bbcode(str(child)))
-        a.replaceWith(f"[url={quote(a.attrs.get('href', ''))}]{a.text.strip()}[/url]")
+        a.replaceWith(f"[url={a.attrs.get('href', '')}]{a.text.strip()}[/url]")
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
         yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
