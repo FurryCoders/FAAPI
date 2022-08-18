@@ -79,9 +79,8 @@ def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
     for usernameicon in body.select("a.usernameicon"):
         username: str = usernameicon.attrs.get('href', '').strip('/').split('/')[-1]
         if icon := usernameicon.select_one("img"):
-            usernameicon.replaceWith(f":{icon.attrs.get('alt', '').strip() or username}icon:")
-        else:
-            usernameicon.replaceWith(f":{username}icon:")
+            username = icon.attrs.get('alt', '').strip() or username
+        usernameicon.replaceWith(f":{username}icon:")
 
     for img in body.select("img"):
         img.replaceWith(f"[img={quote(img.attrs.get('src', ''))}/]")
@@ -92,13 +91,15 @@ def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
     for smilie in body.select("i.smilie"):
         smilie_class: list[str] = list(smilie.attrs.get("class", []))
         smilie_name: str = next(filter(lambda c: c not in ["smilie", ""], smilie_class), "")
-        smilie.replaceWith(f":{smilie_name}:" if smilie_name else "")
+        smilie.replaceWith(f":{smilie_name or 'smilie'}:")
 
     for span in body.select("span.bbcode[style*=color]"):
         for child in span.select("*"):
             child.replaceWith(html_to_bbcode(str(child)))
         if m := match(r".*color: ?([^ ;]+).*", span.attrs["style"]):
             span.replaceWith(f"[color={m[1]}]{span.text.strip()}[/color]")
+        else:
+            span.replaceWith(span.text.strip())
 
     for nav_link in body.select("span.parsed_nav_links"):
         a_tags = nav_link.select("a")
