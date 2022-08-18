@@ -1,4 +1,5 @@
 from datetime import datetime
+from re import IGNORECASE
 from re import Pattern
 from re import compile as re_compile
 from re import match
@@ -6,6 +7,7 @@ from re import search
 from re import sub
 from typing import Any
 from typing import Optional
+from urllib.parse import quote
 
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
@@ -61,6 +63,100 @@ def check_page_raise(page: BeautifulSoup) -> None:
 
 def username_url(username: str) -> str:
     return sub(r"[^a-z\d.~-]", "", username.lower())
+
+
+def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
+    body: Tag | None = parse_page(html).select_one("html > body")
+    if not body:
+        return ""
+
+    for linkusername in body.select("a.linkusername"):
+        linkusername.replaceWith(f"@{linkusername.text.strip()}")
+
+    for iconusername in body.select("a.iconusername"):
+        iconusername.replaceWith(f":icon{iconusername.text.strip()}:")
+
+    for usernameicon in body.select("a.usernameicon"):
+        username: str = usernameicon.attrs.get('href', '').strip('/').split('/')[-1]
+        if icon := usernameicon.select_one("img"):
+            usernameicon.replaceWith(f":{icon.attrs.get('alt', '').strip() or username}icon:")
+        else:
+            usernameicon.replaceWith(f":{username}icon:")
+
+    for img in body.select("img"):
+        img.replaceWith(f"[img={quote(img.attrs.get('src', ''))}/]")
+
+    for hr in body.select("hr"):
+        hr.replaceWith(f"-----")
+
+    for smilie in body.select("i.smilie"):
+        smilie_class: list[str] = list(smilie.attrs.get("class", []))
+        smilie_name: str = next(filter(lambda c: c not in ["i", "smilie", ""], smilie_class), "")
+        smilie.replaceWith(f":{smilie_name}:" if smilie_name else "")
+
+    for span in body.select("span.bbcode[style*=color]"):
+        for child in span.select("*"):
+            child.replaceWith(html_to_bbcode(str(child)))
+        if m := match(r".*color: ?([^ ;]+).*", span.attrs["style"]):
+            span.replaceWith(f"[color={m[1]}]{span.text.strip()}[/color]")
+
+    for nav_link in body.select("span.parsed_nav_links"):
+        a_tags = nav_link.select("a")
+        a_prev_tag = next(filter(lambda t: t.text.strip().upper() == "<<<\xA0PREV", a_tags), None)
+        a_frst_tag = next(filter(lambda t: t.text.strip().upper() == "FIRST", a_tags), None)
+        a_last_tag = next(filter(lambda t: t.text.strip().upper() == "NEXT\xA0>>>", a_tags), None)
+        a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_prev_tag else ""
+        a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_frst_tag else ""
+        a_last = a_last_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_last_tag else ""
+        nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_last or '-'}]")
+
+    for a in body.select("a"):
+        for child in a.select("*"):
+            child.replaceWith(html_to_bbcode(str(child), newlines=False))
+        a.replaceWith(f"[url={quote(a.attrs.get('href', ''))}]{a.text.strip()}[/url]")
+
+    for yt in body.select("iframe[src*='youtube.com/embed']"):
+        yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
+
+    for quote_ in body.select("span.bbcode.bbcode_quote"):
+        quote_name_tag: Optional[Tag] = quote_.select_one("span.bbcode_quote_name")
+        quote_name: str = quote_name_tag.text.strip().removesuffix('wrote:').strip() if quote_name_tag else ""
+        if quote_name_tag:
+            quote_name_tag.replaceWith("")
+        for child in quote_.select("*"):
+            child.replaceWith(html_to_bbcode(str(child)))
+        quote_.replaceWith(f"[quote{('=' + quote_name) if quote_name else ''}]{quote_.text.strip()}[/quote]")
+
+    for [selector, bbcode] in (
+            ("i", "i"),
+            ("b", "b"),
+            ("strong", "b"),
+            ("u", "u"),
+            ("s", "s"),
+            ("code.bbcode_left", "left"),
+            ("code.bbcode_center", "center"),
+            ("code.bbcode_right", "right"),
+            ("span.bbcode_spoiler", "spoiler"),
+            ("sub", "sub"),
+            ("sup", "sup"),
+            ("h1", "h1"),
+            ("h2", "h2"),
+            ("h3", "h3"),
+            ("h4", "h4"),
+            ("h5", "h5"),
+            ("h6", "h6"),
+    ):
+        for tag in body.select(selector):
+            for child in tag.select("*"):
+                child.replaceWith(html_to_bbcode(str(child), newlines=False))
+            tag.replaceWith(f"[{bbcode}]{tag.text}[/{bbcode}]")
+
+    html = sub(r"</?p>", "", "".join(map(str, body.children)).strip())
+
+    for char, substitution in (("©", "(c)"), ("™", "(tm)"), ("®", "(r)"), ("&lt;", "<"), ("&gt;", ">")):
+        html = sub(char, substitution, html, flags=IGNORECASE)
+
+    return sub(r"<br/?>", "\n", sub(r"[\n\r]", "", html)) if newlines else html
 
 
 def parse_mentions(tag: Tag) -> list[str]:
