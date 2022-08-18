@@ -24,6 +24,15 @@ class SubmissionStats(namedtuple("SubmissionStats", ["views", "comments", "favor
     """
 
 
+class SubmissionUserFolder(namedtuple("SubmissionUserFolder", ["name", "url", "group"])):
+    """
+    This object contains a submission's folder details:
+    * name: str the name of the folder
+    * url: str the URL to the folder
+    * group: str the group the folder belongs to
+    """
+
+
 class SubmissionBase:
     """
     Base class for the submission objects.
@@ -168,6 +177,7 @@ class Submission(SubmissionBase):
         self.description: str = ""
         self.mentions: list[str] = []
         self.folder: str = ""
+        self.user_folders: list[SubmissionUserFolder] = []
         self.file_url: str = ""
         self.thumbnail_url: str = ""
         self.prev: Optional[int] = None
@@ -194,6 +204,7 @@ class Submission(SubmissionBase):
         yield "description", self.description
         yield "mentions", self.mentions
         yield "folder", self.folder
+        yield "user_folders", [f._asdict() for f in self.user_folders]
         yield "file_url", self.file_url
         yield "thumbnail_url", self.thumbnail_url
         yield "prev", self.prev
@@ -240,6 +251,7 @@ class Submission(SubmissionBase):
         self.description = parsed["description"]
         self.mentions = parsed["mentions"]
         self.folder = parsed["folder"]
+        self.user_folders = [SubmissionUserFolder(*f) for f in parsed["user_folders"]]
         self.file_url = parsed["file_url"]
         self.thumbnail_url = parsed["thumbnail_url"]
         self.prev = parsed["prev"]
