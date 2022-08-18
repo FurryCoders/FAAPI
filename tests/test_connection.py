@@ -1,10 +1,11 @@
-from json import loads
-from os import environ
+from json import load
+from pathlib import Path
 from platform import python_version
 from platform import uname
 from urllib.robotparser import RobotFileParser
 
-from pytest import fixture, raises
+from pytest import fixture
+from pytest import raises
 from requests import Response
 from requests import Session
 from requests.cookies import RequestsCookieJar
@@ -17,10 +18,12 @@ from faapi.connection import make_session
 from faapi.connection import root
 from faapi.exceptions import Unauthorized
 
+__root__: Path = Path(__file__).resolve().parent
+
 
 @fixture
 def data() -> dict:
-    return loads(environ["TEST_DATA"])
+    return load((__root__ / "test_data.json").open())
 
 
 @fixture

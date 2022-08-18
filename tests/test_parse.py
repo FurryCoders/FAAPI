@@ -1,6 +1,6 @@
 from datetime import datetime
-from json import loads
-from os import environ
+from json import load
+from pathlib import Path
 from re import sub
 
 from pytest import fixture
@@ -22,6 +22,8 @@ from faapi.parse import parse_submission_page
 from faapi.parse import parse_user_page
 from faapi.parse import username_url
 
+__root__: Path = Path(__file__).resolve().parent
+
 
 def clean_html(html: str) -> str:
     return sub("</?[^<>]+>", "", html)
@@ -29,7 +31,7 @@ def clean_html(html: str) -> str:
 
 @fixture
 def data() -> dict:
-    return loads(environ["TEST_DATA"])
+    return load((__root__ / "test_data.json").open())
 
 
 @fixture
@@ -41,17 +43,17 @@ def session(data: dict) -> CloudflareScraper:
 
 @fixture
 def user_test_data() -> dict:
-    return loads(environ["TEST_USER"])
+    return load((__root__ / "test_user.json").open())
 
 
 @fixture
 def submission_test_data() -> dict:
-    return loads(environ["TEST_SUBMISSION"])
+    return load((__root__ / "test_submission.json").open())
 
 
 @fixture
 def journal_test_data() -> dict:
-    return loads(environ["TEST_JOURNAL"])
+    return load((__root__ / "test_journal.json").open())
 
 
 def test_check_page_disabled_account(session: CloudflareScraper, data: dict):

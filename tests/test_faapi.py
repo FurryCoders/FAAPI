@@ -1,6 +1,6 @@
 from datetime import datetime
-from json import loads
-from os import environ
+from json import load
+from pathlib import Path
 
 from pytest import fixture
 from pytest import raises
@@ -18,10 +18,12 @@ from faapi.parse import html_to_bbcode
 from faapi.parse import username_url
 from test_parse import clean_html
 
+__root__: Path = Path(__file__).resolve().parent
+
 
 @fixture
 def data() -> dict:
-    return loads(environ["TEST_DATA"])
+    return load((__root__ / "test_data.json").open())
 
 
 @fixture
@@ -31,17 +33,17 @@ def cookies(data: dict) -> RequestsCookieJar:
 
 @fixture
 def user_test_data() -> dict:
-    return loads(environ["TEST_USER"])
+    return load((__root__ / "test_user.json").open())
 
 
 @fixture
 def submission_test_data() -> dict:
-    return loads(environ["TEST_SUBMISSION"])
+    return load((__root__ / "test_submission.json").open())
 
 
 @fixture
 def journal_test_data() -> dict:
-    return loads(environ["TEST_JOURNAL"])
+    return load((__root__ / "test_journal.json").open())
 
 
 def test_robots(cookies: RequestsCookieJar):
