@@ -91,7 +91,7 @@ def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
 
     for smilie in body.select("i.smilie"):
         smilie_class: list[str] = list(smilie.attrs.get("class", []))
-        smilie_name: str = next(filter(lambda c: c not in ["i", "smilie", ""], smilie_class), "")
+        smilie_name: str = next(filter(lambda c: c not in ["smilie", ""], smilie_class), "")
         smilie.replaceWith(f":{smilie_name}:" if smilie_name else "")
 
     for span in body.select("span.bbcode[style*=color]"):
