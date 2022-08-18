@@ -4,6 +4,9 @@
 
 ### New Features
 
+* Submission user folders
+    * Submission folders are now parsed and stored in a dedicated `user_folders` field in the `Submission` object
+    * Each folder is stored in a `namedtuple` with fields for `name`, `url`, and `group` (if any)
 * BBCode conversion
     * New properties have been added to the `User`, `Submission`, `Journal`, `JournalPartial`, and `Comment` objects to
       provide BBCode versions of HTML fields
