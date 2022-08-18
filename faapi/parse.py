@@ -1,8 +1,8 @@
 from datetime import datetime
-from re import IGNORECASE
-from re import Pattern
 from re import compile as re_compile
+from re import IGNORECASE
 from re import match
+from re import Pattern
 from re import search
 from re import sub
 from typing import Any
@@ -15,14 +15,14 @@ from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
 from .connection import root
+from .exceptions import _raise_exception
 from .exceptions import DisabledAccount
-from .exceptions import NoTitle
 from .exceptions import NonePage
 from .exceptions import NotFound
 from .exceptions import NoticeMessage
+from .exceptions import NoTitle
 from .exceptions import ParsingError
 from .exceptions import ServerError
-from .exceptions import _raise_exception
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
@@ -316,6 +316,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_fav: Optional[Tag] = sub_page.select_one("div.fav > a")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
+    tag_user_folders: list[Tag] = sub_page.select("section.folder-list-container > div > a")
 
     assert tag_info is not None, _raise_exception(ParsingError("Missing info tag"))
 
@@ -377,6 +378,16 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         get_attr(tag_next, "href").split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
     fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
     unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
+    user_folders: list[tuple[str, str, str]] = []
+    for a in tag_user_folders:
+        tag_folder_name: Optional[Tag] = a.select_one("span")
+        tag_folder_group: Optional[Tag] = a.select_one("strong")
+        assert tag_folder_name is not None, _raise_exception(ParsingError("Missing folder name tag"))
+        user_folders.append((
+            tag_folder_name.text.strip(),
+            a.attrs.get("href", ""),
+            tag_folder_group.text.strip() if tag_folder_group else ""
+        ))
 
     return {
         "id": id_,
@@ -395,6 +406,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         "description": description,
         "mentions": mentions,
         "folder": folder,
+        "user_folders": user_folders,
         "file_url": file_url,
         "thumbnail_url": thumbnail_url,
         "prev": prev_sub,
