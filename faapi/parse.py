@@ -87,7 +87,7 @@ def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
         img.replaceWith(f"[img={quote(img.attrs.get('src', ''))}/]")
 
     for hr in body.select("hr"):
-        hr.replaceWith(f"-----")
+        hr.replaceWith("-----")
 
     for smilie in body.select("i.smilie"):
         smilie_class: list[str] = list(smilie.attrs.get("class", []))
