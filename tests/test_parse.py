@@ -130,7 +130,7 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert result["type"] == submission_test_data["type"]
     assert result["mentions"] == submission_test_data["mentions"]
     assert result["folder"] == submission_test_data["folder"]
-    assert result["user_folders"] == submission_test_data["user_folders"]
+    assert [list(f) for f in result["user_folders"]] == submission_test_data["user_folders_tuples"]
     assert result["file_url"] != ""
     assert result["thumbnail_url"] != ""
     assert result["prev"] == submission_test_data["prev"]
