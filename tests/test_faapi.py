@@ -14,6 +14,7 @@ from faapi import SubmissionPartial
 from faapi import UserPartial
 from faapi.exceptions import DisallowedPath
 from faapi.exceptions import Unauthorized
+from faapi.parse import html_to_bbcode
 from faapi.parse import username_url
 from test_parse import clean_html
 
@@ -113,6 +114,7 @@ def test_user(cookies: RequestsCookieJar, user_test_data: dict):
     assert user.user_icon_url == user_dict["user_icon_url"] != ""
     assert user.profile == user_dict["profile"]
     assert clean_html(user_dict["profile"]) == clean_html(user_test_data["profile"])
+    assert html_to_bbcode(user.profile) == user_test_data["profile_bbcode"]
 
 
 # noinspection DuplicatedCode
@@ -150,6 +152,7 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
            bool(submission_test_data["favorite_toggle_link"])
     assert clean_html(submission.description) == clean_html(submission_dict["description"]) == \
            clean_html(submission_test_data["description"])
+    assert html_to_bbcode(submission.description) == submission_test_data["description_bbcode"]
 
     assert file is not None and len(file) > 0
 
@@ -187,6 +190,7 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
     assert journal.mentions == journal_dict["mentions"] == journal_test_data["mentions"]
     assert clean_html(journal.content) == clean_html(journal_dict["content"]) == \
            clean_html(journal_test_data["content"])
+    assert html_to_bbcode(journal.content) == journal_test_data["content_bbcode"]
 
     assert len(faapi.comment.flatten_comments(journal.comments)) == journal.stats.comments
 

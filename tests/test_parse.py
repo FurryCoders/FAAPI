@@ -14,6 +14,7 @@ from faapi.connection import root
 from faapi.exceptions import DisabledAccount
 from faapi.exceptions import NotFound
 from faapi.parse import check_page_raise
+from faapi.parse import html_to_bbcode
 from faapi.parse import parse_journal_page
 from faapi.parse import parse_loggedin_user
 from faapi.parse import parse_page
@@ -103,6 +104,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["contacts"] == user_test_data["contacts"]
     assert result["user_icon_url"] != ""
     assert clean_html(result["profile"]) == clean_html(user_test_data["profile"])
+    assert html_to_bbcode(result["profile"]) == user_test_data["profile_bbcode"]
 
 
 def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
@@ -128,6 +130,7 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert result["type"] == submission_test_data["type"]
     assert result["mentions"] == submission_test_data["mentions"]
     assert result["folder"] == submission_test_data["folder"]
+    assert result["user_folders"] == submission_test_data["user_folders"]
     assert result["file_url"] != ""
     assert result["thumbnail_url"] != ""
     assert result["prev"] == submission_test_data["prev"]
@@ -136,6 +139,7 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert (("/fav/" in submission_test_data["favorite_toggle_link"]) and bool(result["fav_link"])) or \
            (("/unfav/" in submission_test_data["favorite_toggle_link"]) and bool(result["unfav_link"]))
     assert clean_html(result["description"]) == clean_html(submission_test_data["description"])
+    assert html_to_bbcode(result["description"]) == submission_test_data["description_bbcode"]
 
 
 def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict):
@@ -154,3 +158,4 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]
     assert clean_html(result["content"]) == clean_html(journal_test_data["content"])
+    assert html_to_bbcode(result["content"]) == journal_test_data["content_bbcode"]
