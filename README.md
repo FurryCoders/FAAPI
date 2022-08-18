@@ -317,7 +317,7 @@ The main class that parses and holds submission metadata.
   `@username`, etc.)
 * `folder: str` the submission folder (gallery or scraps)
 * `user_folders: list[SubmissionUserFolder]` user folders stored in a list of named tuples (`name`, `url`, `group` (
-  optional))
+  if any))
 * `file_url: str` the URL to the submission file
 * `thumbnail_url: str` the URL to the submission thumbnail
 * `prev: int` the ID of the previous submission (if any)
