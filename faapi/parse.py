@@ -385,7 +385,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         assert tag_folder_name is not None, _raise_exception(ParsingError("Missing folder name tag"))
         user_folders.append((
             tag_folder_name.text.strip(),
-            a.attrs.get("href", ""),
+            (root + href) if (href := a.attrs.get("href", "")) else "",
             tag_folder_group.text.strip() if tag_folder_group else ""
         ))
 
