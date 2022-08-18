@@ -66,7 +66,7 @@ def username_url(username: str) -> str:
 
 
 def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
-    body: Tag | None = parse_page(html).select_one("html > body")
+    body: Optional[Tag] = parse_page(html).select_one("html > body")
     if not body:
         return ""
 
