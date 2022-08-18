@@ -7,11 +7,12 @@ from .connection import join_url
 from .connection import root
 from .exceptions import _raise_exception
 from .parse import BeautifulSoup
-from .parse import Tag
 from .parse import check_page_raise
+from .parse import html_to_bbcode
 from .parse import parse_comments
 from .parse import parse_journal_page
 from .parse import parse_journal_section
+from .parse import Tag
 from .user import UserPartial
 
 
@@ -81,6 +82,10 @@ class JournalBase:
 
     def __str__(self):
         return f"{self.id} {self.author} {self.title}"
+
+    @property
+    def content_bbcode(self) -> str:
+        return html_to_bbcode(self.content)
 
     @property
     def url(self) -> str:

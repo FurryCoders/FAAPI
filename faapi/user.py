@@ -6,10 +6,11 @@ from .connection import join_url
 from .connection import root
 from .exceptions import _raise_exception
 from .parse import BeautifulSoup
-from .parse import Tag
 from .parse import check_page_raise
+from .parse import html_to_bbcode
 from .parse import parse_user_page
 from .parse import parse_user_tag
+from .parse import Tag
 from .parse import username_url
 
 
@@ -193,6 +194,10 @@ class User(UserBase):
         yield "watched_toggle_link", self.watched_toggle_link
         yield "blocked", self.blocked
         yield "blocked_toggle_link", self.blocked_toggle_link
+
+    @property
+    def profile_bbcode(self) -> str:
+        return html_to_bbcode(self.profile)
 
     def parse(self, user_page: BeautifulSoup = None):
         """

@@ -6,11 +6,12 @@ from .connection import join_url
 from .connection import root
 from .exceptions import _raise_exception
 from .parse import BeautifulSoup
-from .parse import Tag
 from .parse import check_page_raise
+from .parse import html_to_bbcode
 from .parse import parse_comments
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
+from .parse import Tag
 from .user import UserPartial
 
 
@@ -201,6 +202,10 @@ class Submission(SubmissionBase):
         yield "favorite_toggle_link", self.favorite_toggle_link
         from .comment import _remove_recursion
         yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
+
+    @property
+    def description_bbcode(self) -> str:
+        return html_to_bbcode(self.description)
 
     def parse(self, submission_page: BeautifulSoup = None):
         """

@@ -6,6 +6,7 @@ from bs4.element import Tag
 
 import faapi
 from .exceptions import _raise_exception
+from .parse import html_to_bbcode
 from .parse import parse_comment_tag
 
 
@@ -87,6 +88,10 @@ class Comment:
 
     def __str__(self):
         return f"{self.id} {self.author}".rstrip()
+
+    @property
+    def text_bbcode(self) -> str:
+        return html_to_bbcode(self.text)
 
     @property
     def url(self):
