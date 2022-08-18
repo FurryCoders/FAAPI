@@ -65,7 +65,7 @@ def username_url(username: str) -> str:
     return sub(r"[^a-z\d.~-]", "", username.lower())
 
 
-def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
+def html_to_bbcode(html: str) -> str:
     body: Optional[Tag] = parse_page(html).select_one("html > body")
     if not body:
         return ""
@@ -113,7 +113,7 @@ def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
 
     for a in body.select("a"):
         for child in a.select("*"):
-            child.replaceWith(html_to_bbcode(str(child), newlines=False))
+            child.replaceWith(html_to_bbcode(str(child)))
         a.replaceWith(f"[url={quote(a.attrs.get('href', ''))}]{a.text.strip()}[/url]")
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
@@ -149,15 +149,15 @@ def html_to_bbcode(html: str, *, newlines: bool = True) -> str:
     ):
         for tag in body.select(selector):
             for child in tag.select("*"):
-                child.replaceWith(html_to_bbcode(str(child), newlines=False))
+                child.replaceWith(html_to_bbcode(str(child)))
             tag.replaceWith(f"[{bbcode}]{tag.text}[/{bbcode}]")
 
-    html = sub(r"</?p>", "", "".join(map(str, body.children)).strip())
+    html = body.text.strip()
 
     for char, substitution in (("©", "(c)"), ("™", "(tm)"), ("®", "(r)"), ("&lt;", "<"), ("&gt;", ">")):
         html = sub(char, substitution, html, flags=IGNORECASE)
 
-    return sub(r"<br/?>", "\n", sub(r"[\n\r]", "", html)) if newlines else html
+    return html
 
 
 def parse_mentions(tag: Tag) -> list[str]:
