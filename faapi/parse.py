@@ -64,6 +64,10 @@ def username_url(username: str) -> str:
     return sub(r"[^a-z\d.~-]", "", username.lower())
 
 
+def inner_html(tag: Tag) -> str:
+    return sub(rf"</{tag.name}>$", "", sub(rf"^<{tag.name}[^>]*>", "", str(tag).strip())).strip()
+
+
 def html_to_bbcode(html: str) -> str:
     body: Optional[Tag] = parse_page(html).select_one("html > body")
     if not body:
@@ -182,13 +186,14 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     assert tag_content is not None, _raise_exception(ParsingError("Missing content tag"))
     assert tag_comments is not None, _raise_exception(ParsingError("Missing comments tag"))
 
+    # noinspection DuplicatedCode
     title: str = tag_title.text.strip()
     date: datetime = parse_date(
         get_attr(tag_date, "title").strip()
         if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
         else tag_date.text.strip()
     )
-    content: str = "".join(map(str, tag_content.children))
+    content: str = inner_html(tag_content)
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
 
@@ -219,15 +224,16 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_comments is not None, _raise_exception(ParsingError("Missing comments tag"))
 
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
+    # noinspection DuplicatedCode
     title: str = tag_title.text.strip()
     date: datetime = parse_date(
         get_attr(tag_date, "title").strip()
         if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
         else tag_date.text.strip()
     )
-    header: str = "".join(map(str, tag_header.children)).strip() if tag_header else ""
-    footer: str = "".join(map(str, tag_footer.children)).strip() if tag_footer else ""
-    content: str = "".join(map(str, tag_content.children)).strip()
+    header: str = inner_html(tag_header)
+    footer: str = inner_html(tag_footer)
+    content: str = inner_html(tag_content)
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
 
@@ -366,7 +372,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     comment_count: int = int(tag_comment_count.text.strip())
     favorites: int = int(tag_favorites.text.strip())
     type_: str = tag_type["class"][0][18:]
-    description: str = "".join(map(str, tag_description.children)).strip()
+    description: str = inner_html(tag_description)
     mentions: list[str] = parse_mentions(tag_description)
     folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", get_attr(tag_folder, "href"))) else ""
     file_url: str = "https:" + get_attr(tag_file_url, "href")
@@ -443,7 +449,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     name: str = u[1:]
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
-    profile: str = "".join(map(str, tag_profile.children)).strip()
+    profile: str = inner_html(tag_profile)
     stats: tuple[int, ...] = (
         *map(lambda s: int(s.split(":")[1]), filter(bool, map(str.strip, tag_stats.text.split("\n")))),
         int(m[1]) if (m := search(r"(\d+)", tag_watchlist_to.text)) else 0,
@@ -508,7 +514,7 @@ def parse_comment_tag(tag: Tag) -> dict:
     assert attr_id is not None, _raise_exception(ParsingError("Missing id attribute"))
 
     comment_id: int = int(attr_id.removeprefix("cid:"))
-    comment_text: str = "".join(map(str, tag_body.children)).strip()
+    comment_text: str = inner_html(tag_body)
 
     if tag_username is None:
         return {
