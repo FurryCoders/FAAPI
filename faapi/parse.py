@@ -247,8 +247,8 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
         if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
         else tag_date.text.strip()
     )
-    header: str = inner_html(tag_header)
-    footer: str = inner_html(tag_footer)
+    header: str = inner_html(tag_header) if tag_header else ""
+    footer: str = inner_html(tag_footer) if tag_footer else ""
     content: str = clean_html(inner_html(tag_content))
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
