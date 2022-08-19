@@ -68,6 +68,10 @@ def inner_html(tag: Tag) -> str:
     return tag.decode_contents()
 
 
+def clean_html(html: str) -> str:
+    return sub(r" {2,}", " ", sub(r"[\r\n]", "", html))
+
+
 def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> str:
     if "<" not in html:
         print(html, end="\n\n==========\n")
