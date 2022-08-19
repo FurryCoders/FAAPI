@@ -202,7 +202,7 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
         if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
         else tag_date.text.strip()
     )
-    content: str = inner_html(tag_content)
+    content: str = clean_html(inner_html(tag_content))
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
 
@@ -242,7 +242,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     )
     header: str = inner_html(tag_header)
     footer: str = inner_html(tag_footer)
-    content: str = inner_html(tag_content)
+    content: str = clean_html(inner_html(tag_content))
     mentions: list[str] = parse_mentions(tag_content)
     comments: int = int(tag_comments.text.strip())
 
@@ -381,7 +381,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     comment_count: int = int(tag_comment_count.text.strip())
     favorites: int = int(tag_favorites.text.strip())
     type_: str = tag_type["class"][0][18:]
-    description: str = inner_html(tag_description)
+    description: str = clean_html(inner_html(tag_description))
     mentions: list[str] = parse_mentions(tag_description)
     folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", get_attr(tag_folder, "href"))) else ""
     file_url: str = "https:" + get_attr(tag_file_url, "href")
@@ -458,7 +458,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     name: str = u[1:]
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
-    profile: str = inner_html(tag_profile)
+    profile: str = clean_html(inner_html(tag_profile))
     stats: tuple[int, ...] = (
         *map(lambda s: int(s.split(":")[1]), filter(bool, map(str.strip, tag_stats.text.split("\n")))),
         int(m[1]) if (m := search(r"(\d+)", tag_watchlist_to.text)) else 0,
@@ -523,7 +523,7 @@ def parse_comment_tag(tag: Tag) -> dict:
     assert attr_id is not None, _raise_exception(ParsingError("Missing id attribute"))
 
     comment_id: int = int(attr_id.removeprefix("cid:"))
-    comment_text: str = inner_html(tag_body)
+    comment_text: str = clean_html(inner_html(tag_body))
 
     if tag_username is None:
         return {
