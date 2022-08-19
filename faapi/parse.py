@@ -104,12 +104,10 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
         smilie.replaceWith(f":{smilie_name or 'smilie'}:")
 
     for span in body.select("span.bbcode[style*=color]"):
-        for child in span.select("*"):
-            child.replaceWith(html_to_bbcode(str(child)))
         if m := match(r".*color: ?([^ ;]+).*", span.attrs["style"]):
-            span.replaceWith(f"[color={m[1]}]{span.text.strip()}[/color]")
+            span.replaceWith(f"[color={m[1]}]{html_to_bbcode(inner_html(span))}[/color]")
         else:
-            span.replaceWith(span.text.strip())
+            span.replaceWith(html_to_bbcode(inner_html(span)))
 
     for nav_link in body.select("span.parsed_nav_links"):
         a_tags = nav_link.select("a")
@@ -122,21 +120,24 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
         nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_last or '-'}]")
 
     for a in body.select("a"):
-        for child in a.select("*"):
-            child.replaceWith(html_to_bbcode(str(child)))
-        a.replaceWith(f"[url={a.attrs.get('href', '')}]{a.text.strip()}[/url]")
+        a.replaceWith(f"[url={a.attrs.get('href', '')}]{html_to_bbcode(inner_html(a))}[/url]")
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
         yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
 
-    for quote_ in body.select("span.bbcode.bbcode_quote"):
-        quote_name_tag: Optional[Tag] = quote_.select_one("span.bbcode_quote_name")
-        quote_name: str = quote_name_tag.text.strip().removesuffix('wrote:').strip() if quote_name_tag else ""
-        if quote_name_tag:
-            quote_name_tag.replaceWith("")
-        for child in quote_.select("*"):
-            child.replaceWith(html_to_bbcode(str(child)))
-        quote_.replaceWith(f"[quote{('=' + quote_name) if quote_name else ''}]{quote_.text.strip()}[/quote]")
+    for quote_name_tag in body.select("span.bbcode.bbcode_quote > span.bbcode_quote_name"):
+        quote_author: str = quote_name_tag.text.strip().removesuffix('wrote:').strip()
+        quote_tag = quote_name_tag.parent
+        if not quote_tag:
+            quote_name_tag.replaceWith(quote_author)
+            continue
+        quote_name_tag.decompose()
+        quote_tag.replaceWith(f"[quote{('=' + quote_author) if quote_author else ''}]"
+                              f"{html_to_bbcode(inner_html(quote_tag))}"
+                              "[/quote]")
+
+    for quote_tag in body.select("span.bbcode.bbcode_quote"):
+        quote_tag.replaceWith(f"[quote]{html_to_bbcode(inner_html(quote_tag))}[/quote]")
 
     for [selector, bbcode] in (
             ("i", "i"),
@@ -158,9 +159,7 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
             ("h6", "h6"),
     ):
         for tag in body.select(selector):
-            for child in tag.select("*"):
-                child.replaceWith(html_to_bbcode(str(child)))
-            tag.replaceWith(f"[{bbcode}]{tag.text}[/{bbcode}]")
+            tag.replaceWith(f"[{bbcode}]{html_to_bbcode(inner_html(tag))}[/{bbcode}]")
 
     html = body.text.strip()
 
