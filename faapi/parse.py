@@ -155,12 +155,14 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
         for tag in body.select(selector):
             tag.replaceWith(f"[{bbcode}]{html_to_bbcode(inner_html(tag))}[/{bbcode}]")
 
+    for p in body.select("p"):
+        p.replaceWith(p.decode_contents())
+
     html = body.decode_contents()
 
     if convert_special_characters:
         for char, substitution in (
                 (r"<br/?>", "\n"),
-                (r"</?p[^>]*>", ""),
                 ("©", "(c)"),
                 ("™", "(tm)"),
                 ("®", "(r)"),
