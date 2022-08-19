@@ -68,7 +68,7 @@ def inner_html(tag: Tag) -> str:
     return sub(rf"</{tag.name}>$", "", sub(rf"^<{tag.name}[^>]*>", "", str(tag).strip())).strip()
 
 
-def html_to_bbcode(html: str) -> str:
+def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> str:
     if "<" not in html:
         print(html, end="\n\n==========\n")
         return html.strip()
@@ -161,8 +161,9 @@ def html_to_bbcode(html: str) -> str:
 
     html = body.text.strip()
 
-    for char, substitution in (("©", "(c)"), ("™", "(tm)"), ("®", "(r)"), ("&lt;", "<"), ("&gt;", ">"), ("\r", "")):
-        html = sub(char, substitution, html, flags=IGNORECASE)
+    if convert_special_characters:
+        for char, substitution in (("©", "(c)"), ("™", "(tm)"), ("®", "(r)"), ("&lt;", "<"), ("&gt;", ">"), ("\r", "")):
+            html = sub(char, substitution, html, flags=IGNORECASE)
 
     return html
 
