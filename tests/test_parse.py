@@ -1,7 +1,6 @@
 from datetime import datetime
 from json import load
 from pathlib import Path
-from re import sub
 
 from pytest import fixture
 from pytest import raises
@@ -14,6 +13,7 @@ from faapi.connection import root
 from faapi.exceptions import DisabledAccount
 from faapi.exceptions import NotFound
 from faapi.parse import check_page_raise
+from faapi.parse import clean_html
 from faapi.parse import html_to_bbcode
 from faapi.parse import parse_journal_page
 from faapi.parse import parse_loggedin_user
@@ -23,10 +23,6 @@ from faapi.parse import parse_user_page
 from faapi.parse import username_url
 
 __root__: Path = Path(__file__).resolve().parent
-
-
-def clean_html(html: str) -> str:
-    return sub("</?[^<>]+>", "", html)
 
 
 @fixture
@@ -141,7 +137,8 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert (("/fav/" in submission_test_data["favorite_toggle_link"]) and bool(result["fav_link"])) or \
            (("/unfav/" in submission_test_data["favorite_toggle_link"]) and bool(result["unfav_link"]))
     assert clean_html(result["description"]) == clean_html(submission_test_data["description"])
-    assert html_to_bbcode(result["description"]) == submission_test_data["description_bbcode"]
+    assert html_to_bbcode(result["description"], convert_special_characters=True) \
+           == submission_test_data["description_bbcode"]
 
 
 def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict):
@@ -160,4 +157,4 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]
     assert clean_html(result["content"]) == clean_html(journal_test_data["content"])
-    assert html_to_bbcode(result["content"]) == journal_test_data["content_bbcode"]
+    assert html_to_bbcode(result["content"], convert_special_characters=True) == journal_test_data["content_bbcode"]
