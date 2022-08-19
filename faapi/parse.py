@@ -159,6 +159,8 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
 
     if convert_special_characters:
         for char, substitution in (
+                (r"<br/?>", "\n"),
+                (r"</?p[^>]*>", ""),
                 ("©", "(c)"),
                 ("™", "(tm)"),
                 ("®", "(r)"),
@@ -168,8 +170,6 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
                 ("&lt;", "<"),
                 ("&gt;", ">"),
                 ("&amp;", "&"),
-                (r"<br/?>", "\n"),
-                (r"</?p[^>]*>", ""),
         ):
             html = sub(char, substitution, html, flags=IGNORECASE)
 
