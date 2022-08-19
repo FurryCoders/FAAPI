@@ -83,14 +83,11 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
     for linkusername in body.select("a.linkusername"):
         linkusername.replaceWith(f"@{linkusername.text.strip()}")
 
-    for iconusername in body.select("a.iconusername"):
-        iconusername.replaceWith(f":icon{iconusername.text.strip()}:")
-
-    for usernameicon in body.select("a.usernameicon"):
-        username: str = usernameicon.attrs.get('href', '').strip('/').split('/')[-1]
-        if icon := usernameicon.select_one("img"):
+    for iconusername in body.select("a.iconusername,a.usernameicon"):
+        username: str = iconusername.text.strip() or iconusername.attrs.get('href', '').strip('/').split('/')[-1]
+        if icon := iconusername.select_one("img"):
             username = icon.attrs.get('alt', '').strip() or username
-        usernameicon.replaceWith(f":{username}icon:")
+        iconusername.replaceWith(f":icon{username}:" if iconusername.text.strip() else f":{username}icon:")
 
     for img in body.select("img"):
         img.replaceWith(f"[img={img.attrs.get('src', '')}/]")
