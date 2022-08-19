@@ -554,6 +554,12 @@ for the exceptions, so that it can be analysed when caught.
     * `ServerError(ParsingError)` The page contains a server error notice.
     * `NoticeMessage(ParsingError)` A notice of unknown type was found in the page.
 
+## Beautiful Soup Warnings
+
+When parsing some pages or converting HTML to BBCode, the [Beautiful Soup](https://pypi.org/project/beautifulsoup4/)
+library may give some warnings, for example `MarkupResemblesLocatorWarning`. These warnings are left enabled for
+clarity, but can be disabled manually using the `warnings.filterwarnings` function.
+
 ## Contributing
 
 All contributions and suggestions are welcome!
