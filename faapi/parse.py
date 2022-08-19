@@ -69,6 +69,10 @@ def inner_html(tag: Tag) -> str:
 
 
 def html_to_bbcode(html: str) -> str:
+    if "<" not in html:
+        print(html, end="\n\n==========\n")
+        return html.strip()
+
     body: Optional[Tag] = parse_page(html).select_one("html > body")
     if not body:
         return ""
