@@ -176,7 +176,7 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
         ):
             html = sub(char, substitution, html, flags=IGNORECASE)
 
-    return html
+    return html.strip()
 
 
 def parse_mentions(tag: Tag) -> list[str]:
