@@ -158,7 +158,7 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
         for tag in body.select(selector):
             tag.replaceWith(f"[{bbcode}]{html_to_bbcode(inner_html(tag))}[/{bbcode}]")
 
-    html = body.text.strip()
+    html = body.decode_contents()
 
     if convert_special_characters:
         for char, substitution in (
