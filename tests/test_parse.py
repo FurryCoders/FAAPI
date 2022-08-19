@@ -102,7 +102,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["contacts"] == user_test_data["contacts"]
     assert result["user_icon_url"] != ""
     assert clean_html(result["profile"]) == clean_html(user_test_data["profile"])
-    assert html_to_bbcode(result["profile"]) == user_test_data["profile_bbcode"]
+    assert html_to_bbcode(result["profile"], convert_special_characters=True) == user_test_data["profile_bbcode"]
 
 
 def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
