@@ -69,7 +69,7 @@ def inner_html(tag: Tag) -> str:
 
 
 def clean_html(html: str) -> str:
-    return sub(r" {2,}", " ", sub(r"[\r\n]", "", html))
+    return sub(r" {2,}", " ", sub(r"[\r\n]", "", html)).strip()
 
 
 def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> str:
