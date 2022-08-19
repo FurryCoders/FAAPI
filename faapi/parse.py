@@ -65,7 +65,7 @@ def username_url(username: str) -> str:
 
 
 def inner_html(tag: Tag) -> str:
-    return sub(rf"</{tag.name}>$", "", sub(rf"^<{tag.name}[^>]*>", "", str(tag).strip())).strip()
+    return tag.decode_contents()
 
 
 def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> str:
