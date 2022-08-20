@@ -133,6 +133,14 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
     for quote_tag in body.select("span.bbcode.bbcode_quote"):
         quote_tag.replaceWith(f"[quote]{html_to_bbcode(inner_html(quote_tag))}[/quote]")
 
+    for tag in body.select("*"):
+        if not (div_class := tag.attrs.get("class", None)):
+            tag.replaceWith(f"[tag.{tag.name}]{html_to_bbcode(inner_html(tag))}[/tag.{tag.name}]")
+        else:
+            tag.replaceWith(f"[tag.{tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]"
+                            f"{html_to_bbcode(inner_html(tag))}"
+                            f"[/tag.{tag.name}]")
+
     for [selector, bbcode] in (
             ("i", "i"),
             ("b", "b"),
