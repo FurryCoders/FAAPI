@@ -73,7 +73,7 @@ def clean_html(html: str) -> str:
 
 
 def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> str:
-    body: Optional[Tag] = parse_page(f"<div>{html}</div>").select_one("html > body > div")
+    body: Optional[Tag] = parse_page(f"<html><body>{html}</body></html>").select_one("html > body")
     if not body:
         return ""
 
