@@ -73,7 +73,7 @@ def clean_html(html: str) -> str:
 
 
 def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> str:
-    body: Optional[Tag] = parse_page(html).select_one("html > body")
+    body: Optional[Tag] = parse_page(f"<div>{html}</div>").select_one("html > body > div")
     if not body:
         return ""
 
@@ -155,7 +155,7 @@ def html_to_bbcode(html: str, *, convert_special_characters: bool = False) -> st
         for tag in body.select(selector):
             tag.replaceWith(f"[{bbcode}]{html_to_bbcode(inner_html(tag))}[/{bbcode}]")
 
-    html = sub(r"</?p[^>]*>", "", body.decode_contents())
+    html = body.decode_contents()
 
     if convert_special_characters:
         for char, substitution in (
