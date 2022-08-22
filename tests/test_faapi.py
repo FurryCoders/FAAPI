@@ -14,7 +14,6 @@ from faapi import SubmissionPartial
 from faapi import UserPartial
 from faapi.exceptions import DisallowedPath
 from faapi.exceptions import Unauthorized
-from faapi.parse import html_to_bbcode
 from faapi.parse import username_url
 from test_parse import clean_html
 
