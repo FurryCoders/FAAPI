@@ -85,7 +85,7 @@ class JournalBase:
 
     @property
     def content_bbcode(self) -> str:
-        return html_to_bbcode(self.content, convert_special_characters=True)
+        return html_to_bbcode(self.content, special_characters=True)
 
     @property
     def url(self) -> str:

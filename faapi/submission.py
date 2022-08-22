@@ -216,7 +216,7 @@ class Submission(SubmissionBase):
 
     @property
     def description_bbcode(self) -> str:
-        return html_to_bbcode(self.description, convert_special_characters=True)
+        return html_to_bbcode(self.description, special_characters=True)
 
     def parse(self, submission_page: BeautifulSoup = None):
         """

@@ -91,7 +91,7 @@ class Comment:
 
     @property
     def text_bbcode(self) -> str:
-        return html_to_bbcode(self.text, convert_special_characters=True)
+        return html_to_bbcode(self.text, special_characters=True)
 
     @property
     def url(self):

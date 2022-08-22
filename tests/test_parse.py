@@ -102,7 +102,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["contacts"] == user_test_data["contacts"]
     assert result["user_icon_url"] != ""
     assert clean_html(result["profile"]) == clean_html(user_test_data["profile"])
-    assert html_to_bbcode(result["profile"], convert_special_characters=True) == user_test_data["profile_bbcode"]
+    assert html_to_bbcode(result["profile"], special_characters=True) == user_test_data["profile_bbcode"]
 
 
 def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
@@ -137,7 +137,7 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert (("/fav/" in submission_test_data["favorite_toggle_link"]) and bool(result["fav_link"])) or \
            (("/unfav/" in submission_test_data["favorite_toggle_link"]) and bool(result["unfav_link"]))
     assert clean_html(result["description"]) == clean_html(submission_test_data["description"])
-    assert html_to_bbcode(result["description"], convert_special_characters=True) \
+    assert html_to_bbcode(result["description"], special_characters=True) \
            == submission_test_data["description_bbcode"]
 
 
@@ -157,4 +157,4 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]
     assert clean_html(result["content"]) == clean_html(journal_test_data["content"])
-    assert html_to_bbcode(result["content"], convert_special_characters=True) == journal_test_data["content_bbcode"]
+    assert html_to_bbcode(result["content"], special_characters=True) == journal_test_data["content_bbcode"]

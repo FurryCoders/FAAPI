@@ -197,7 +197,7 @@ class User(UserBase):
 
     @property
     def profile_bbcode(self) -> str:
-        return html_to_bbcode(self.profile, convert_special_characters=True)
+        return html_to_bbcode(self.profile, special_characters=True)
 
     def parse(self, user_page: BeautifulSoup = None):
         """
