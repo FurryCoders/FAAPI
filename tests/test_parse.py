@@ -1,6 +1,7 @@
 from datetime import datetime
 from json import load
 from pathlib import Path
+from re import sub
 
 from pytest import fixture
 from pytest import raises
@@ -52,6 +53,10 @@ def journal_test_data() -> dict:
     return load((__root__ / "test_journal.json").open())
 
 
+def remove_user_icons(html: str) -> str:
+    return sub(r"a\.furaffinity\.net/\d{8}/[^. ]+.gif", "", html)
+
+
 def test_check_page_disabled_account(session: CloudflareScraper, data: dict):
     res: Response = session.get(join_url(root, "user", data["disabled"]["user"]))
     assert res.ok
@@ -101,7 +106,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["info"] == user_test_data["info"]
     assert result["contacts"] == user_test_data["contacts"]
     assert result["user_icon_url"] != ""
-    assert clean_html(result["profile"]) == clean_html(user_test_data["profile"])
+    assert remove_user_icons(clean_html(result["profile"])) == remove_user_icons(clean_html(user_test_data["profile"]))
     assert html_to_bbcode(result["profile"], special_characters=True) == user_test_data["profile_bbcode"]
 
 
@@ -136,9 +141,10 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert bool(result["unfav_link"]) == submission_test_data["favorite"]
     assert (("/fav/" in submission_test_data["favorite_toggle_link"]) and bool(result["fav_link"])) or \
            (("/unfav/" in submission_test_data["favorite_toggle_link"]) and bool(result["unfav_link"]))
-    assert clean_html(result["description"]) == clean_html(submission_test_data["description"])
-    assert html_to_bbcode(result["description"], special_characters=True) \
-           == submission_test_data["description_bbcode"]
+    assert remove_user_icons(clean_html(result["description"])) == \
+           remove_user_icons(clean_html(submission_test_data["description"]))
+    assert html_to_bbcode(result["description"], special_characters=True) == \
+           submission_test_data["description_bbcode"]
 
 
 def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict):
@@ -156,5 +162,6 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["date"] == datetime.fromisoformat(journal_test_data["date"])
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]
-    assert clean_html(result["content"]) == clean_html(journal_test_data["content"])
+    assert remove_user_icons(clean_html(result["content"])) == remove_user_icons(
+        clean_html(journal_test_data["content"]))
     assert html_to_bbcode(result["content"], special_characters=True) == journal_test_data["content_bbcode"]

@@ -1,6 +1,7 @@
 from datetime import datetime
 from json import load
 from pathlib import Path
+from re import sub
 
 from pytest import fixture
 from pytest import raises
@@ -43,6 +44,10 @@ def submission_test_data() -> dict:
 @fixture
 def journal_test_data() -> dict:
     return load((__root__ / "test_journal.json").open())
+
+
+def remove_user_icons(html: str) -> str:
+    return sub(r"a\.furaffinity\.net/\d{8}/[^. ]+.gif", "", html)
 
 
 def test_robots(cookies: RequestsCookieJar):
@@ -113,7 +118,9 @@ def test_user(cookies: RequestsCookieJar, user_test_data: dict):
     assert user.info == user_dict["info"] == user_test_data["info"]
     assert user.contacts == user_dict["contacts"] == user_test_data["contacts"]
     assert user.user_icon_url == user_dict["user_icon_url"] != ""
-    assert clean_html(user.profile) == clean_html(user_dict["profile"]) == clean_html(user_test_data["profile"])
+    assert remove_user_icons(clean_html(user.profile)) == \
+           remove_user_icons(clean_html(user_dict["profile"])) == \
+           remove_user_icons(clean_html(user_test_data["profile"]))
     assert user.profile_bbcode == user_test_data["profile_bbcode"]
 
 
@@ -150,8 +157,9 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.favorite == submission_dict["favorite"] == submission_test_data["favorite"]
     assert bool(submission.favorite_toggle_link) == bool(submission_dict["favorite_toggle_link"]) == \
            bool(submission_test_data["favorite_toggle_link"])
-    assert clean_html(submission.description) == clean_html(submission_dict["description"]) == \
-           clean_html(submission_test_data["description"])
+    assert remove_user_icons(clean_html(submission.description)) == \
+           remove_user_icons(clean_html(submission_dict["description"])) == \
+           remove_user_icons(clean_html(submission_test_data["description"]))
     assert submission.description_bbcode == submission_test_data["description_bbcode"]
 
     assert file is not None and len(file) > 0
@@ -188,8 +196,9 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
     assert journal.date == journal_dict["date"] == datetime.fromisoformat(journal_test_data["date"])
     assert journal.stats.comments == journal_dict["stats"]["comments"] >= journal_test_data["stats"]["comments"]
     assert journal.mentions == journal_dict["mentions"] == journal_test_data["mentions"]
-    assert clean_html(journal.content) == clean_html(journal_dict["content"]) == \
-           clean_html(journal_test_data["content"])
+    assert remove_user_icons(clean_html(journal.content)) == \
+           remove_user_icons(clean_html(journal_dict["content"])) == \
+           remove_user_icons(clean_html(journal_test_data["content"]))
     assert journal.content_bbcode == journal_test_data["content_bbcode"]
 
     assert len(faapi.comment.flatten_comments(journal.comments)) == journal.stats.comments
