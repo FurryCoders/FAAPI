@@ -1,5 +1,25 @@
 # Changelog
 
+## v3.8.1
+
+### Changes
+
+* Improved HTML extraction for specific tags to avoid encoding issues
+* HTML fields are cleaned up (i.e., removed newlines, carriage returns, and extra spaces)
+    * None of the parsed pages use tags with _pre_ white space rendering, so no information is lost
+* Improvements to BBCode conversion
+    * Do not quote URLs when converting to BBCode
+    * Support nested quote blocks
+    * Support non-specific tags (e.g. `div.submission-footer`) and convert them
+      to `[tag.<tag name>.<tag class>][/tag.<tag.name>]`
+
+### Fixes
+
+* Fix incorrect encoding of special characters (`<`, `>`, etc.) in HTML fields
+    * Was caused by the previous method of extracting the inner HTML of a tag
+* Fix HTML paragraph tags (`<p>`) sometimes appearing in BBCode-converted content
+* Fix BBCode conversion of `:usernameicon:` links (i.e., user icon links without the username)
+
 ## v3.8.0
 
 ### New Features
