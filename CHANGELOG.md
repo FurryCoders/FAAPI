@@ -17,6 +17,7 @@
 
 * Fix incorrect encoding of special characters (`<`, `>`, etc.) in HTML fields
     * Was caused by the previous method of extracting the inner HTML of a tag
+* Fix URLs automatically shortened by Fur Affinity being converted to BBCode with the wrong text content
 * Fix HTML paragraph tags (`<p>`) sometimes appearing in BBCode-converted content
 * Fix BBCode conversion of `:usernameicon:` links (i.e., user icon links without the username)
 
