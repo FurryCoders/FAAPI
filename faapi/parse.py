@@ -379,6 +379,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_prev is not None, _raise_exception(ParsingError("Missing prev tag"))
     assert tag_next is not None, _raise_exception(ParsingError("Missing next tag"))
 
+    tag_footer: Optional[Tag] = tag_description.select_one("div.submission-footer")
+
     id_: int = int(get_attr(tag_id, "content").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
     date: datetime = parse_date(
@@ -395,6 +397,12 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     comment_count: int = int(tag_comment_count.text.strip())
     favorites: int = int(tag_favorites.text.strip())
     type_: str = tag_type["class"][0][18:]
+    footer: str = ""
+    if tag_footer:
+        if tag_footer_hr := tag_footer.select_one("hr"):
+            tag_footer_hr.decompose()
+        footer = clean_html(inner_html(tag_footer))
+        tag_footer.decompose()
     description: str = clean_html(inner_html(tag_description))
     mentions: list[str] = parse_mentions(tag_description)
     folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", get_attr(tag_folder, "href"))) else ""
@@ -431,6 +439,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         "comment_count": comment_count,
         "favorites": favorites,
         "type": type_,
+        "footer": footer,
         "description": description,
         "mentions": mentions,
         "folder": folder,
