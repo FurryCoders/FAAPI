@@ -311,6 +311,7 @@ The main class that parses and holds submission metadata.
 * `rating: str` rating
 * `stats: SubmissionStats` submission statistics stored in a named tuple (`views`, `comments` (count), `favorites`)
 * `type: str` submission type (text, image, etc...)
+* `footer: str` footer in HTML format
 * `description: str` description in HTML format
 * `description_bbcode: str` description in BBCode format
 * `mentions: list[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
