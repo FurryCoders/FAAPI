@@ -230,10 +230,10 @@ as `JournalPartial` with the addition of comments:
   timestamp 0)
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
 * `stats: JournalStats` journal statistics stored in a named tuple (`comments` (count))
-* `header: str` journal header in HTML format (if present)
-* `footer: str` journal footer in HTML format (if present)
 * `content: str` journal content in HTML format
 * `content_bbcode: str` journal content in BBCode format
+* `header: str` journal header in HTML format (if present)
+* `footer: str` journal footer in HTML format (if present)
 * `mentions: list[str]` the users mentioned in the content (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `comments: list[Comments]` the comments to the journal, organised in a tree structure
@@ -311,9 +311,9 @@ The main class that parses and holds submission metadata.
 * `rating: str` rating
 * `stats: SubmissionStats` submission statistics stored in a named tuple (`views`, `comments` (count), `favorites`)
 * `type: str` submission type (text, image, etc...)
-* `footer: str` footer in HTML format
 * `description: str` description in HTML format
 * `description_bbcode: str` description in BBCode format
+* `footer: str` footer in HTML format
 * `mentions: list[str]` the users mentioned in the description (if they were mentioned as links, e.g. `:iconusername:`,
   `@username`, etc.)
 * `folder: str` the submission folder (gallery or scraps)

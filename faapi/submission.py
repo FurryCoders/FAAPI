@@ -174,8 +174,8 @@ class Submission(SubmissionBase):
         self.rating: str = ""
         self.stats: SubmissionStats = SubmissionStats(0, 0, 0)
         self.type: str = ""
-        self.footer: str = ""
         self.description: str = ""
+        self.footer: str = ""
         self.mentions: list[str] = []
         self.folder: str = ""
         self.user_folders: list[SubmissionUserFolder] = []
@@ -202,8 +202,8 @@ class Submission(SubmissionBase):
         yield "rating", self.rating
         yield "stats", self.stats._asdict()
         yield "type", self.type
-        yield "footer", self.footer
         yield "description", self.description
+        yield "footer", self.footer
         yield "mentions", self.mentions
         yield "folder", self.folder
         yield "user_folders", [f._asdict() for f in self.user_folders]
@@ -250,8 +250,8 @@ class Submission(SubmissionBase):
         self.rating = parsed["rating"]
         self.stats = SubmissionStats(parsed["views"], parsed["comment_count"], parsed["favorites"])
         self.type = parsed["type"]
-        self.footer = parsed["footer"]
         self.description = parsed["description"]
+        self.footer = parsed["footer"]
         self.mentions = parsed["mentions"]
         self.folder = parsed["folder"]
         self.user_folders = [SubmissionUserFolder(*f) for f in parsed["user_folders"]]

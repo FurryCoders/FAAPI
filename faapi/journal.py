@@ -200,9 +200,9 @@ class Journal(JournalBase):
         self.author.user_icon_url = parsed.get("user_icon_url", "")
         self.stats = JournalStats(parsed["comments"])
         self.date = parsed["date"]
+        self.content = parsed["content"]
         self.header = parsed["header"]
         self.footer = parsed["footer"]
-        self.content = parsed["content"]
         self.mentions = parsed["mentions"]
         from .comment import sort_comments, Comment
         self.comments = sort_comments([Comment(t, self) for t in parse_comments(self.journal_page)])
