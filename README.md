@@ -177,10 +177,16 @@ in [#Cookies](#cookies).
 * `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int]`<br>
   Returns the list of submissions found on a specific journals page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `watchlist_to(self, user: str) -> list[User]`<br>
-  Given a username, returns a list of `User` objects for each user that is watching the given user.
-* `watchlist_by(self, user: str) -> list[User]`<br>
-  Given a username, returns a list of `User` objects for each user that is watched by the given user.
+* `watchlist_to(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br>
+  Given a username, returns a list of `UserPartial` objects for each user that is watching the given user and the next
+  page, if it is not the last.
+* `watchlist_by(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br>
+  Given a username, returns a list of `UserPartial` objects for each user that is watched by the given user and the next
+  page, if it is not the last.
+
+*Note:* The last page returned by the `watchlist_to` and `watchlist_by` may not be correct as Fur Affinity doesn't seem
+to have a consistent behaviour when rendering the next page button, as such it is safer to use an external algorithm to
+check whether the method is advancing the page but returning the same/no users.
 
 ### JournalPartial
 
