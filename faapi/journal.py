@@ -173,6 +173,14 @@ class Journal(JournalBase):
         from .comment import _remove_recursion
         yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
 
+    @property
+    def header_bbcode(self) -> str:
+        return html_to_bbcode(self.header, special_characters=True)
+
+    @property
+    def footer_bbcode(self) -> str:
+        return html_to_bbcode(self.footer, special_characters=True)
+
     def parse(self, journal_page: Union[Tag, BeautifulSoup] = None):
         """
         Parse a journal page, overrides any information already present in the object.

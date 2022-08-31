@@ -220,6 +220,10 @@ class Submission(SubmissionBase):
     def description_bbcode(self) -> str:
         return html_to_bbcode(self.description, special_characters=True)
 
+    @property
+    def footer_bbcode(self) -> str:
+        return html_to_bbcode(self.footer, special_characters=True)
+
     def parse(self, submission_page: BeautifulSoup = None):
         """
         Parse a submission page, overrides any information already present in the object.
