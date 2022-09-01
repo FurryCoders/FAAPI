@@ -102,6 +102,11 @@ class UserBase:
         return join_url(root, "user", self.name_url)
 
     def generate_user_icon_url(self) -> str:
+        """
+        Generate the URl for the current user icon.
+
+        :return: The URL to the user icon
+        """
         return f"https://a.furaffinity.net/{datetime.now() - timedelta(days=1):%Y%m%d}/{self.name_url}.gif"
 
 
