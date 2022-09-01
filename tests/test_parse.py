@@ -2,6 +2,7 @@ from datetime import datetime
 from json import load
 from pathlib import Path
 from re import sub
+from typing import Optional
 
 from pytest import fixture
 from pytest import raises
@@ -82,8 +83,10 @@ def test_parse_loggedin_user(session: CloudflareScraper, data: dict):
     assert res.ok
 
     page = parse_page(res.text)
+    login_user: Optional[str] = parse_loggedin_user(page)
+    assert login_user is not None
 
-    assert username_url(parse_loggedin_user(page)) == username_url(data["login"]["user"])
+    assert username_url(login_user) == username_url(data["login"]["user"])
 
 
 def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
