@@ -100,6 +100,11 @@ class Comment:
 
     @property
     def url(self):
+        """
+        Compose the full URL to the comment.
+
+        :return: The URL to the comment.
+        """
         return "" if self.parent is None else f"{self.parent.url}#cid:{self.id}"
 
     def parse(self, comment_tag: Tag = None):
