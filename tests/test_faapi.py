@@ -233,7 +233,8 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
 def test_gallery(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
-    ss, p = [], 1
+    ss: list[SubmissionPartial] = []
+    p: int = 1
 
     while p:
         ss_, p_ = api.gallery(data["gallery"]["user"], p)
@@ -262,7 +263,8 @@ def test_gallery(cookies: RequestsCookieJar, data: dict):
 def test_scraps(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
-    ss, p = [], 1
+    ss: list[SubmissionPartial] = []
+    p: int = 1
 
     while p:
         ss_, p_ = api.scraps(data["scraps"]["user"], p)
@@ -291,7 +293,8 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
 def test_favorites(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
-    ss, p = [], "/"
+    ss: list[SubmissionPartial] = []
+    p: str = "/"
 
     while p and len(ss) < data["favorites"]["max_length"]:
         ss_, p_ = api.favorites(data["favorites"]["user"], p)
@@ -319,7 +322,8 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
 def test_journals(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
-    js, p = [], 1
+    js: list[JournalPartial] = []
+    p: int = 1
 
     while p:
         js_, p_ = api.journals(data["journals"]["user"], p)
@@ -348,7 +352,8 @@ def test_watchlist_to(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
     assert api.login_status
 
-    ws, p = [], 1
+    ws: list[UserPartial] = []
+    p: int = 1
 
     while p:
         ws_, p_ = api.watchlist_to(data["watchlist"]["user"], p)
@@ -370,7 +375,8 @@ def test_watchlist_by(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
     assert api.login_status
 
-    ws, p = [], 1
+    ws: list[UserPartial] = []
+    p: int = 1
 
     while p:
         ws_, p_ = api.watchlist_by(data["watchlist"]["user"], p)
