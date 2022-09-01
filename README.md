@@ -493,6 +493,8 @@ If no `user_tag` is passed then the object fields will remain at their default -
   Property method that returns the URL-safe username
 * `url -> str`<br>
   Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
+* `generate_user_icon_url() -> str`<br>
+  Generates the URl for the current user icon.
 * `parse(user_page: bs4.BeautifulSoup = None)`<br>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
@@ -538,6 +540,8 @@ If no `user_page` is passed then the object fields will remain at their default 
   Property method that returns the URL-safe username
 * `url -> str`<br>
   Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
+* `generate_user_icon_url() -> str`<br>
+  Generates the URl for the current user icon.
 * `parse(user_page: bs4.BeautifulSoup = None)`<br>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
