@@ -1,5 +1,5 @@
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from .connection import join_url
@@ -100,6 +100,9 @@ class UserBase:
         :return: The URL to the user.
         """
         return join_url(root, "user", self.name_url)
+
+    def generate_user_icon_url(self) -> str:
+        return f"https://a.furaffinity.net/{datetime.now() - timedelta(days=1):%Y%m%d}/{self.name_url}.gif"
 
 
 class UserPartial(UserBase):
