@@ -85,6 +85,11 @@ class JournalBase:
 
     @property
     def content_bbcode(self) -> str:
+        """
+        The journal content formatted to BBCode
+
+        :return: BBCode content
+        """
         return html_to_bbcode(self.content, special_characters=True)
 
     @property
@@ -175,10 +180,20 @@ class Journal(JournalBase):
 
     @property
     def header_bbcode(self) -> str:
+        """
+        The journal header formatted to BBCode
+
+        :return: BBCode header
+        """
         return html_to_bbcode(self.header, special_characters=True)
 
     @property
     def footer_bbcode(self) -> str:
+        """
+        The journal footer formatted to BBCode
+
+        :return: BBCode footer
+        """
         return html_to_bbcode(self.footer, special_characters=True)
 
     def parse(self, journal_page: Union[Tag, BeautifulSoup] = None):

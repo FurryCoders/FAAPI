@@ -91,6 +91,11 @@ class Comment:
 
     @property
     def text_bbcode(self) -> str:
+        """
+        The comment text formatted to BBCode
+
+        :return: BBCode text
+        """
         return html_to_bbcode(self.text, special_characters=True)
 
     @property

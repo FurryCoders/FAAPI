@@ -218,10 +218,20 @@ class Submission(SubmissionBase):
 
     @property
     def description_bbcode(self) -> str:
+        """
+        The submission description formatted to BBCode
+
+        :return: BBCode description
+        """
         return html_to_bbcode(self.description, special_characters=True)
 
     @property
     def footer_bbcode(self) -> str:
+        """
+        The submission footer formatted to BBCode
+
+        :return: BBCode footer
+        """
         return html_to_bbcode(self.footer, special_characters=True)
 
     def parse(self, submission_page: BeautifulSoup = None):

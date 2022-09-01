@@ -205,6 +205,11 @@ class User(UserBase):
 
     @property
     def profile_bbcode(self) -> str:
+        """
+        The user profile text formatted to BBCode
+
+        :return: BBCode profile
+        """
         return html_to_bbcode(self.profile, special_characters=True)
 
     def parse(self, user_page: BeautifulSoup = None):
