@@ -175,7 +175,7 @@
 ### Changes
 
 * Raise `DisabledAccount` for users pending deletion
-* Error messages from server are not lowercased
+* Error messages from server are not lowercase
 
 ## v3.4.1
 
