@@ -160,7 +160,11 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert remove_user_icons(clean_html(submission.description)) == \
            remove_user_icons(clean_html(submission_dict["description"])) == \
            remove_user_icons(clean_html(submission_test_data["description"]))
+    assert remove_user_icons(clean_html(submission.footer)) == \
+           remove_user_icons(clean_html(submission_dict["footer"])) == \
+           remove_user_icons(clean_html(submission_test_data["footer"]))
     assert submission.description_bbcode == submission_test_data["description_bbcode"]
+    assert submission.footer_bbcode == submission_test_data["footer_bbcode"]
 
     assert file is not None and len(file) > 0
 
@@ -199,7 +203,15 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
     assert remove_user_icons(clean_html(journal.content)) == \
            remove_user_icons(clean_html(journal_dict["content"])) == \
            remove_user_icons(clean_html(journal_test_data["content"]))
+    assert remove_user_icons(clean_html(journal.header)) == \
+           remove_user_icons(clean_html(journal_dict["header"])) == \
+           remove_user_icons(clean_html(journal_test_data["header"]))
+    assert remove_user_icons(clean_html(journal.footer)) == \
+           remove_user_icons(clean_html(journal_dict["footer"])) == \
+           remove_user_icons(clean_html(journal_test_data["footer"]))
     assert journal.content_bbcode == journal_test_data["content_bbcode"]
+    assert journal.header_bbcode == journal_test_data["header_bbcode"]
+    assert journal.footer_bbcode == journal_test_data["footer_bbcode"]
 
     assert len(faapi.comment.flatten_comments(journal.comments)) == journal.stats.comments
 

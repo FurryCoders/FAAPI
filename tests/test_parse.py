@@ -143,8 +143,12 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
            (("/unfav/" in submission_test_data["favorite_toggle_link"]) and bool(result["unfav_link"]))
     assert remove_user_icons(clean_html(result["description"])) == \
            remove_user_icons(clean_html(submission_test_data["description"]))
+    assert remove_user_icons(clean_html(result["footer"])) == \
+           remove_user_icons(clean_html(submission_test_data["footer"]))
     assert html_to_bbcode(result["description"], special_characters=True) == \
            submission_test_data["description_bbcode"]
+    assert html_to_bbcode(result["footer"], special_characters=True) == \
+           submission_test_data["footer_bbcode"]
 
 
 def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict):
@@ -164,4 +168,10 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["mentions"] == journal_test_data["mentions"]
     assert remove_user_icons(clean_html(result["content"])) == remove_user_icons(
         clean_html(journal_test_data["content"]))
+    assert remove_user_icons(clean_html(result["header"])) == remove_user_icons(
+        clean_html(journal_test_data["header"]))
+    assert remove_user_icons(clean_html(result["footer"])) == remove_user_icons(
+        clean_html(journal_test_data["footer"]))
     assert html_to_bbcode(result["content"], special_characters=True) == journal_test_data["content_bbcode"]
+    assert html_to_bbcode(result["header"], special_characters=True) == journal_test_data["header_bbcode"]
+    assert html_to_bbcode(result["footer"], special_characters=True) == journal_test_data["footer_bbcode"]
