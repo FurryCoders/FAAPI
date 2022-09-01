@@ -1,5 +1,22 @@
 # Changelog
 
+## v3.9.0
+
+### New Features
+
+* Submission footers
+    * Submission footers are now separated from the submission description and stored in the `Submission.footer` field
+    * The BBCode of the footer can be accessed with the `Submission.footer_bbcode` property 
+
+### Changes
+
+* Added `Journal.header_bbcode` and `Journal.footer_bbcode` properties to convert `Journal.header` and `Journal.footer`
+  to BBCode
+
+### Fixes
+
+* Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode 
+
 ## v3.8.1
 
 ### Changes
