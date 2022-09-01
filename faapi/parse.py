@@ -166,11 +166,13 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
                             f"{html_to_bbcode(inner_html(tag))}"
                             f"[/tag.{tag.name}]")
 
+    for br in body.select("br"):
+        br.replaceWith("\n")
+
     html = body.decode_contents()
 
     if special_characters:
         for char, substitution in (
-                (r"<br/?>", "\n"),
                 ("©", "(c)"),
                 ("™", "(tm)"),
                 ("®", "(r)"),
@@ -183,7 +185,7 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
         ):
             html = sub(char, substitution, html, flags=IGNORECASE)
 
-    return html.strip()
+    return html.strip(" ")
 
 
 def parse_mentions(tag: Tag) -> list[str]:
