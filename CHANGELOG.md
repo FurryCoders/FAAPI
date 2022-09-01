@@ -6,7 +6,10 @@
 
 * Submission footers
     * Submission footers are now separated from the submission description and stored in the `Submission.footer` field
-    * The BBCode of the footer can be accessed with the `Submission.footer_bbcode` property 
+    * The BBCode of the footer can be accessed with the `Submission.footer_bbcode` property
+* Generate user icon URLs
+    * New `generate_user_icon_url()` method added to `UserPartial` and `User` to create the URL for the current user
+      icon
 
 ### Changes
 
@@ -15,7 +18,7 @@
 
 ### Fixes
 
-* Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode 
+* Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode
 
 ## v3.8.1
 
