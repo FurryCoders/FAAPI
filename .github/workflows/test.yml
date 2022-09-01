@@ -41,7 +41,7 @@ jobs:
       - name: Types test
         id: test
         run: |
-          python -m pip install mypy types-beautifulsoup4
+          python -m pip install mypy pytest types-beautifulsoup4
           python -m mypy --install-types --non-interactive faapi
           python -m mypy --install-types --non-interactive tests
 
