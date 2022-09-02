@@ -104,13 +104,10 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
             span.replaceWith(html_to_bbcode(inner_html(span)))
 
     for nav_link in body.select("span.parsed_nav_links"):
-        a_tags = nav_link.select("a")
-        a_prev_tag = next(filter(lambda t: t.text.strip().upper() == "<<<\xA0PREV", a_tags), None)
-        a_frst_tag = next(filter(lambda t: t.text.strip().upper() == "FIRST", a_tags), None)
-        a_last_tag = next(filter(lambda t: t.text.strip().upper() == "NEXT\xA0>>>", a_tags), None)
-        a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_prev_tag else ""
-        a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_frst_tag else ""
-        a_last = a_last_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_last_tag else ""
+        a_prev_tag, a_frst_tag, a_last_tag, *_ = [*nav_link.children, None, None, None]
+        a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1] if isinstance(a_prev_tag, Tag) else ""
+        a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1] if isinstance(a_frst_tag, Tag) else ""
+        a_last = a_last_tag.attrs.get("href", "").strip("/").split("/")[-1] if isinstance(a_last_tag, Tag) else ""
         nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_last or '-'}]")
 
     for a in body.select("a.auto_link_shortened"):
