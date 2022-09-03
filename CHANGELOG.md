@@ -15,11 +15,15 @@
 
 * Added `Journal.header_bbcode` and `Journal.footer_bbcode` properties to convert `Journal.header` and `Journal.footer`
   to BBCode
-* Improved cleanup of HTML fields
+* Improved cleanup of HTML fields by using [htmlmin](https://pypi.org/project/htmlmin)
 
 ### Fixes
 
 * Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode
+
+### Dependencies
+
+* Use [htmlmin ^0.1.12](https://pypi.org/project/htmlmin/0.1.12)
 
 ## v3.8.1
 
