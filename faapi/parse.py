@@ -9,6 +9,7 @@ from typing import Any
 from typing import Optional
 
 from bs4 import BeautifulSoup
+from bs4 import PageElement
 from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
@@ -108,9 +109,13 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
 
     for nav_link in body.select("span.parsed_nav_links"):
         a_prev_tag, a_frst_tag, a_last_tag, *_ = [*nav_link.children, None, None, None]
-        a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1] if isinstance(a_prev_tag, Tag) else ""
-        a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1] if isinstance(a_frst_tag, Tag) else ""
-        a_last = a_last_tag.attrs.get("href", "").strip("/").split("/")[-1] if isinstance(a_last_tag, Tag) else ""
+        a_prev, a_frst, a_last = "", "", ""
+        if isinstance(a_prev_tag, Tag):
+            a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1]
+        if isinstance(a_frst_tag, Tag):
+            a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1]
+        if isinstance(a_last_tag, Tag):
+            a_last = a_last_tag.attrs.get("href", "").strip("/").split("/")[-1]
         nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_last or '-'}]")
 
     for a in body.select("a.auto_link_shortened"):
