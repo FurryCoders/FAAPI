@@ -15,6 +15,7 @@
 
 * Added `Journal.header_bbcode` and `Journal.footer_bbcode` properties to convert `Journal.header` and `Journal.footer`
   to BBCode
+* Improved cleanup of HTML fields
 
 ### Fixes
 
