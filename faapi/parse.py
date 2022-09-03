@@ -8,11 +8,11 @@ from re import sub
 from typing import Any
 from typing import Optional
 
-from htmlmin import minify
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
+from htmlmin import minify  # type:ignore
 
 from .connection import root
 from .exceptions import DisabledAccount
