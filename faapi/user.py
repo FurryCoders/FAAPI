@@ -108,7 +108,7 @@ class UserBase:
 
         :return: The URL to the user icon
         """
-        return f"https://a.furaffinity.net/{datetime.now() - timedelta(days=1):%Y%m%d}/{self.name_url}.gif"
+        return f"https://a.furaffinity.net/{datetime.now():%Y%m%d}/{self.name_url}.gif"
 
 
 class UserPartial(UserBase):
