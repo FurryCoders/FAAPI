@@ -1,8 +1,8 @@
 from datetime import datetime
-from re import compile as re_compile
 from re import IGNORECASE
-from re import match
 from re import Pattern
+from re import compile as re_compile
+from re import match
 from re import search
 from re import sub
 from typing import Any
@@ -14,14 +14,14 @@ from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 
 from .connection import root
-from .exceptions import _raise_exception
 from .exceptions import DisabledAccount
+from .exceptions import NoTitle
 from .exceptions import NonePage
 from .exceptions import NotFound
 from .exceptions import NoticeMessage
-from .exceptions import NoTitle
 from .exceptions import ParsingError
 from .exceptions import ServerError
+from .exceptions import _raise_exception
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")

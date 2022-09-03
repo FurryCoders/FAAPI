@@ -1,16 +1,17 @@
 from collections import namedtuple
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 from typing import Optional
 
 from .connection import join_url
 from .connection import root
 from .exceptions import _raise_exception
 from .parse import BeautifulSoup
+from .parse import Tag
 from .parse import check_page_raise
 from .parse import html_to_bbcode
 from .parse import parse_user_page
 from .parse import parse_user_tag
-from .parse import Tag
 from .parse import username_url
 
 
