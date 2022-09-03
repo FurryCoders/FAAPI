@@ -1,6 +1,5 @@
 from collections import namedtuple
 from datetime import datetime
-from datetime import timedelta
 from typing import Optional
 
 from .connection import join_url
