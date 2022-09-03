@@ -8,6 +8,7 @@ from re import sub
 from typing import Any
 from typing import Optional
 
+from htmlmin import minify
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from bs4.element import Tag
@@ -69,10 +70,7 @@ def inner_html(tag: Tag) -> str:
 
 
 def clean_html(html: str) -> str:
-    html = sub(r" *\n *", "\n", html)
-    html = sub(r"[\r\n]", "", html)
-    html = sub(r" {2,}", " ", html)
-    return html.strip()
+    return sub(r" *(<br/?>) *", r"\1", minify(html, remove_comments=True, reduce_boolean_attributes=True)).strip()
 
 
 def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
