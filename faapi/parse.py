@@ -9,7 +9,6 @@ from typing import Any
 from typing import Optional
 
 from bs4 import BeautifulSoup
-from bs4 import PageElement
 from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
