@@ -118,7 +118,7 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
         nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_last or '-'}]")
 
     for a in body.select("a.auto_link_shortened"):
-        a.replaceWith(f"[url={a.attrs.get('href', '')}]{a.attrs.get('href', '')}[/url]")
+        a.replaceWith(a.attrs.get('href', ''))
 
     for a in body.select("a"):
         a.replaceWith(f"[url={a.attrs.get('href', '')}]{html_to_bbcode(inner_html(a))}[/url]")
