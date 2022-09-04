@@ -20,6 +20,7 @@
 ### Fixes
 
 * Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode
+* Fix errors when converting nav links (e.g. `[2,1,3]`) to BBCode 
 
 ### Dependencies
 
