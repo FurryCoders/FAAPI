@@ -33,8 +33,9 @@ lxml = "^4.9.1"
 python-dateutil = "^2.8.2"
 htmlmin = "^0.1.12"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.test.dependencies]
 pytest = "^7.1.3"
+mypy = "^0.971"
 
 [build-system]
 requires = ["poetry>=0.12"]
