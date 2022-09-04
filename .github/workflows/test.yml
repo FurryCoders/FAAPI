@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  PYTHON_VERSION: 3.10.5
-  POETRY_VERSION: 1.1.15
+  PYTHON_VERSION: 3.10.6
+  POETRY_VERSION: 1.2.0
 
 jobs:
   flake8:
