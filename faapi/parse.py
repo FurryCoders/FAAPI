@@ -105,15 +105,14 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
             span.replaceWith(html_to_bbcode(inner_html(span)))
 
     for nav_link in body.select("span.parsed_nav_links"):
-        a_prev_tag, a_frst_tag, a_last_tag, *_ = [*nav_link.children, None, None, None]
-        a_prev, a_frst, a_last = "", "", ""
-        if isinstance(a_prev_tag, Tag):
-            a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1]
-        if isinstance(a_frst_tag, Tag):
-            a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1]
-        if isinstance(a_last_tag, Tag):
-            a_last = a_last_tag.attrs.get("href", "").strip("/").split("/")[-1]
-        nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_last or '-'}]")
+        a_tags = nav_link.select("a")
+        a_prev_tag: Optional[Tag] = next((a for a in a_tags if "prev" in a.text.lower()), None)
+        a_frst_tag: Optional[Tag] = next((a for a in a_tags if "first" in a.text.lower()), None)
+        a_next_tag: Optional[Tag] = next((a for a in a_tags if "next" in a.text.lower()), None)
+        a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_prev_tag else ""
+        a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_frst_tag else ""
+        a_next = a_next_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_next_tag else ""
+        nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_next or '-'}]")
 
     for a in body.select("a.auto_link_shortened"):
         a.replaceWith(a.attrs.get('href', ''))
