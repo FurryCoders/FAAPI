@@ -1,5 +1,6 @@
 from datetime import datetime
 from re import IGNORECASE
+from re import Match
 from re import Pattern
 from re import compile as re_compile
 from re import match
@@ -25,7 +26,7 @@ from .exceptions import ServerError
 from .exceptions import _raise_exception
 
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity.net)?/user/([^/#]+).*$")
-watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(by|to)/[^/]+/\d+")
+watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(?:by|to)/[^/]+/(\d+)")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
 
@@ -657,10 +658,11 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
     }
 
 
-def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], bool]:
+def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], int]:
     tags_users: list[Tag] = watch_page.select("div.watch-list-items")
     tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")
+    match_next: Optional[Match] = watchlist_next_regexp.match(get_attr(tag_next, "action")) if tag_next else None
     return (
         [((u := t.text.strip().replace(" ", ""))[0], u[1:]) for t in tags_users],
-        watchlist_next_regexp.match(get_attr(tag_next, "action")) is not None if tag_next else False
+        int(match_next[1]) if match_next else 0,
     )
