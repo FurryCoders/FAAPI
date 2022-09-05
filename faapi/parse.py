@@ -25,7 +25,7 @@ from .exceptions import ParsingError
 from .exceptions import ServerError
 from .exceptions import _raise_exception
 
-mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity.net)?/user/([^/#]+).*$")
+mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(?:by|to)/[^/]+/(\d+)")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
