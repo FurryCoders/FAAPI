@@ -16,11 +16,13 @@
 * Added `Journal.header_bbcode` and `Journal.footer_bbcode` properties to convert `Journal.header` and `Journal.footer`
   to BBCode
 * Improved cleanup of HTML fields by using [htmlmin](https://pypi.org/project/htmlmin)
+* Fur Affinity URLs are now properly converted to relative `[url=<path>]` tags in BBCode
 
 ### Fixes
 
 * Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode
-* Fix errors when converting nav links (e.g. `[2,1,3]`) to BBCode 
+* Fix errors when converting nav links (e.g. `[2,1,3]`) to BBCode
+* Fix incorrect detection of last page in `FAAPI.watchlist_by()` and `FAAPI.watchlist_by()`
 
 ### Dependencies
 
