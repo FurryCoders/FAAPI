@@ -25,6 +25,7 @@ from .exceptions import ParsingError
 from .exceptions import ServerError
 from .exceptions import _raise_exception
 
+relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(?:by|to)/[^/]+/(\d+)")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
@@ -119,7 +120,10 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
         a.replaceWith(a.attrs.get('href', ''))
 
     for a in body.select("a"):
-        a.replaceWith(f"[url={a.attrs.get('href', '')}]{html_to_bbcode(inner_html(a))}[/url]")
+        href_match: Optional[Match] = relative_url.match(a.attrs.get('href', ''))
+        a.replaceWith(f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]"
+                      f"{html_to_bbcode(inner_html(a))}"
+                      "[/url]")
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
         yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
