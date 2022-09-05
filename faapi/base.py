@@ -299,7 +299,7 @@ class FAAPI:
             _user.name = u
             _user.status = s
             users.append(_user)
-        return users, (page + 1) if np else 0
+        return users, np if np and np != str(page) else 0
 
     def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
         """
@@ -316,4 +316,4 @@ class FAAPI:
             _user.name = u
             _user.status = s
             users.append(_user)
-        return users, (page + 1) if np else 0
+        return users, np if np and np != page else 0
