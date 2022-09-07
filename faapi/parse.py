@@ -143,9 +143,9 @@ def html_to_bbcode(html: str) -> str:
                               "[/quote]")
 
     for quote_tag in body.select("span.bbcode.bbcode_quote"):
-        quote_tag.replaceWith(f"[quote]", *quote_tag.children, "[/quote]")
+        quote_tag.replaceWith("[quote]", *quote_tag.children, "[/quote]")
 
-    for [selector, bbcode] in (
+    for [selector, bbcode_tag] in (
             ("i", "i"),
             ("b", "b"),
             ("strong", "b"),
@@ -165,7 +165,7 @@ def html_to_bbcode(html: str) -> str:
             ("h6", "h6"),
     ):
         for tag in body.select(selector):
-            tag.replaceWith(f"[{bbcode}]", *tag.children, f"[/{bbcode}]")
+            tag.replaceWith(f"[{bbcode_tag}]", *tag.children, f"[/{bbcode_tag}]")
 
     for br in body.select("br"):
         br.replaceWith("\n")
