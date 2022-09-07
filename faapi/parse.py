@@ -167,10 +167,14 @@ def html_to_bbcode(html: str) -> str:
         for tag in body.select(selector):
             tag.replaceWith(f"[{bbcode}]", *tag.children, f"[/{bbcode}]")
 
-    for tag in body.select(":not(br)"):
-        if tag.name == "p":
-            tag.replaceWith(*tag.children)
-        elif not (div_class := tag.attrs.get("class", None)):
+    for br in body.select("br"):
+        br.replaceWith("\n")
+
+    for p in body.select("p"):
+        p.replaceWith(*p.children)
+
+    for tag in body.select("*"):
+        if not (div_class := tag.attrs.get("class", None)):
             tag.replaceWith(f"[tag={tag.name}]", *tag.children, "[/tag.{tag.name}]")
         else:
             tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
