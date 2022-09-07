@@ -188,6 +188,90 @@ in [#Cookies](#cookies).
 to have a consistent behaviour when rendering the next page button, as such it is safer to use an external algorithm to
 check whether the method is advancing the page but returning the same/no users.
 
+### UserPartial
+
+A stripped-down class that holds basic user information. It is used to hold metadata gathered when parsing a submission,
+journal, gallery, scraps, etc.
+
+* `name: str` display name with capital letters and extra characters such as "_"
+* `status: str` user status (~, !, etc.)
+* `title: str` the user title as it appears on their userpage
+* `join_date: datetime` the date the user joined (defaults to timestamp 0)
+* `user_tag: bs4.element.Tag` the user element used to parse information (placeholder, `UserPartial` is filled
+  externally)
+
+`UserPartial` objects can be directly cast to a dict object and iterated through.
+
+Comparison with `UserPartial` can be made with either another `UserPartial` or `User` object (the URL names are
+compared), or a string (the URL name is compared to the given string).
+
+#### Init
+
+`__init__(user_tag: bs4.element.Tag = None)`
+
+To initialise the object, an optional `bs4.element.Tag` object is needed containing the user element from a user page or
+user folder.
+
+If no `user_tag` is passed then the object fields will remain at their default - empty - value.
+
+#### Methods
+
+* `name_url -> str`<br>
+  Property method that returns the URL-safe username
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
+* `generate_user_icon_url() -> str`<br>
+  Generates the URl for the current user icon.
+* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+  Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
+
+### User
+
+The main class storing all of a user's metadata.
+
+* `name: str` display name with capital letters and extra characters such as "_"
+* `status: str` user status (~, !, etc.)
+* `title: str` the user title as it appears on their userpage
+* `join_date: datetime` the date the user joined (defaults to timestamp 0)
+* `profile: str` profile text in HTML format
+* `profile_bbcode: str` profile text in BBCode format
+* `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favorites`, `comments_earned`
+  , `comments_made`, `journals`, `watched_by`, `watching`)
+* `info: dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
+  etc.)
+* `contacts: dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
+* `user_icon_url: str` the URL to the user icon
+* `watched: bool` `True` if the user is watched, `False` otherwise
+* `watched_toggle_link: str | None` The link to toggle the watch status (`/watch/` or `/unwatch/` type link)
+* `blocked: bool` `True` if the user is blocked, `False` otherwise
+* `blocked_toggle_link: str | None` The link to toggle the block status (`/block/` or `/unblock/` type link)
+* `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
+
+`User` objects can be directly cast to a dict object and iterated through.
+
+Comparison with `User` can be made with either another `User` or `UserPartial` object (the URL names are compared), or a
+string (the URL name is compared to the given string).
+
+#### Init
+
+`__init__(user_page: bs4.BeautifulSoup = None)`
+
+To initialise the object, an optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission
+page.
+
+If no `user_page` is passed then the object fields will remain at their default - empty - value.
+
+#### Methods
+
+* `name_url -> str`<br>
+  Property method that returns the URL-safe username
+* `url -> str`<br>
+  Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
+* `generate_user_icon_url() -> str`<br>
+  Generates the URl for the current user icon.
+* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+  Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
+
 ### JournalPartial
 
 This object contains partial information gathered when parsing a journals folder. It contains the following fields:
@@ -460,90 +544,6 @@ digraph {
 <img alt="comments tree graph" width="400" src="https://quickchart.io/graphviz?graph=digraph%7B%0Aparent-%3E157990848%0Aparent-%3E157993838%0Aparent-%3E157997294%0A157990848-%3E158014077%0A158014077-%3E158014816%0A158014816-%3E158093180%0A158093180-%3E158097024%0A157993838-%3E157998464%0A157993838-%3E158014126%0A157997294-%3E158014135%0A158014135-%3E158014470%0A158014135-%3E158030074%0A158014470-%3E158093185%0A158030074-%3E158093199%0A%7D">
 
 _The graph above was generated with [quickchart.io](https://quickchart.io/documentation/graphviz-api/)_
-
-### UserPartial
-
-A stripped-down class that holds basic user information. It is used to hold metadata gathered when parsing a submission,
-journal, gallery, scraps, etc.
-
-* `name: str` display name with capital letters and extra characters such as "_"
-* `status: str` user status (~, !, etc.)
-* `title: str` the user title as it appears on their userpage
-* `join_date: datetime` the date the user joined (defaults to timestamp 0)
-* `user_tag: bs4.element.Tag` the user element used to parse information (placeholder, `UserPartial` is filled
-  externally)
-
-`UserPartial` objects can be directly cast to a dict object and iterated through.
-
-Comparison with `UserPartial` can be made with either another `UserPartial` or `User` object (the URL names are
-compared), or a string (the URL name is compared to the given string).
-
-#### Init
-
-`__init__(user_tag: bs4.element.Tag = None)`
-
-To initialise the object, an optional `bs4.element.Tag` object is needed containing the user element from a user page or
-user folder.
-
-If no `user_tag` is passed then the object fields will remain at their default - empty - value.
-
-#### Methods
-
-* `name_url -> str`<br>
-  Property method that returns the URL-safe username
-* `url -> str`<br>
-  Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
-* `generate_user_icon_url() -> str`<br>
-  Generates the URl for the current user icon.
-* `parse(user_page: bs4.BeautifulSoup = None)`<br>
-  Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
-
-### User
-
-The main class storing all of a user's metadata.
-
-* `name: str` display name with capital letters and extra characters such as "_"
-* `status: str` user status (~, !, etc.)
-* `title: str` the user title as it appears on their userpage
-* `join_date: datetime` the date the user joined (defaults to timestamp 0)
-* `profile: str` profile text in HTML format
-* `profile_bbcode: str` profile text in BBCode format
-* `stats: UserStats` user statistics sorted in a `namedtuple` (`views`, `submissions`, `favorites`, `comments_earned`
-  , `comments_made`, `journals`, `watched_by`, `watching`)
-* `info: dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
-  etc.)
-* `contacts: dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
-* `user_icon_url: str` the URL to the user icon
-* `watched: bool` `True` if the user is watched, `False` otherwise
-* `watched_toggle_link: str | None` The link to toggle the watch status (`/watch/` or `/unwatch/` type link)
-* `blocked: bool` `True` if the user is blocked, `False` otherwise
-* `blocked_toggle_link: str | None` The link to toggle the block status (`/block/` or `/unblock/` type link)
-* `user_page: bs4.BeautifulSoup` the user page used to parse the object fields
-
-`User` objects can be directly cast to a dict object and iterated through.
-
-Comparison with `User` can be made with either another `User` or `UserPartial` object (the URL names are compared), or a
-string (the URL name is compared to the given string).
-
-#### Init
-
-`__init__(user_page: bs4.BeautifulSoup = None)`
-
-To initialise the object, an optional `bs4.BeautifulSoup` object is needed containing the parsed HTML of a submission
-page.
-
-If no `user_page` is passed then the object fields will remain at their default - empty - value.
-
-#### Methods
-
-* `name_url -> str`<br>
-  Property method that returns the URL-safe username
-* `url -> str`<br>
-  Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
-* `generate_user_icon_url() -> str`<br>
-  Generates the URl for the current user icon.
-* `parse(user_page: bs4.BeautifulSoup = None)`<br>
-  Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
 ## BBCode Conversion
 
