@@ -314,7 +314,7 @@ def bbcode_to_html(bbcode: str) -> str:
     parser.add_formatter("quote", render_quote)
     parser.add_formatter("tag", render_tag)
 
-    bbcode = sub(r"^-{5,}$", "[hr]", bbcode, flags=MULTILINE)
+    bbcode = sub(r"-{5,}", "[hr]", bbcode)
     bbcode = sub(r":icon([^ :]+):", r"[iconusername]\1[/iconusername]", bbcode, flags=IGNORECASE)
     bbcode = sub(r":([^ :]+)icon:", r"[usernameicon]\1[/usernameicon]", bbcode, flags=IGNORECASE)
     bbcode = sub(r":link([^ :]+):", r'[linkusername]\1[/linkusername]', bbcode, flags=IGNORECASE)
