@@ -32,6 +32,7 @@ cfscrape = "^2.1.1"
 lxml = "^4.9.1"
 python-dateutil = "^2.8.2"
 htmlmin = "^0.1.12"
+bbcode = "^1.1.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.3"
