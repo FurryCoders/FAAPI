@@ -192,6 +192,9 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
     ):
         html = html.replace(char, substitution)
 
+    html = sub(" *$", "", html, flags=MULTILINE)
+    html = sub("^ *", "", html, flags=MULTILINE)
+
     if special_characters:
         for char, substitution in (
                 ("&lt;", "<"),
