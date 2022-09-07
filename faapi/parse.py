@@ -10,6 +10,7 @@ from re import sub
 from typing import Any
 from typing import Optional
 
+from bbcode import Parser as BBCodeParser  # type:ignore
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from bs4.element import Tag
@@ -203,6 +204,127 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
             html = html.replace(char, substitution)
 
     return html.strip(" ")
+
+
+def bbcode_to_html(bbcode: str) -> str:
+    def render_url(_tag_name, value: str, options: dict[str, str], _parent, _context) -> str:
+        return f'<a class="auto_link named_url" href="{options.get("url", "#")}">{value}</a>'
+
+    def render_color(_tag_name, value, options, _parent, _context) -> str:
+        return f'<span class=bbcode style="color:{options.get("color", "inherit")};">{value}</span>'
+
+    def render_quote(_tag_name, value: str, options: dict[str, str], _parent, _context) -> str:
+        author: str = options.get("quote", "")
+        author = f"<span class=bbcode_quote_name>{author} wrote:</span>" if author else ""
+        return f'<span class="bbcode bbcode_quote">{author}{value}</span>'
+
+    def render_tags(tag_name: str, value: str, options: dict[str, str], _parent, _context) -> str:
+        print(f"<{tag_name}>")
+        if not options and tag_name.islower():
+            return f"<{tag_name}>{value}</{tag_name}>"
+        return f"[{tag_name} {' '.join(f'{k}={v}' if v else k for k, v in options.items())}]{value}"
+
+    def render_tag(_tag_name, value: str, options: dict[str, str], _parent, _context) -> str:
+        name, *classes = options["tag"].split(".")
+        return f'<{name} class="{" ".join(classes)}">{value}</{name}>'
+
+    def parse_extra(page: BeautifulSoup) -> BeautifulSoup:
+        child: NavigableString
+        child_new: Tag
+        has_match: bool = True
+        while has_match:
+            has_match = False
+            for child in [c for e in page.select("*:not(a)") for c in e.children if isinstance(c, NavigableString)]:
+                if m_ := match(r"(.*)@([a-zA-Z0-9.~_-]+)(.*)", child):
+                    has_match = True
+                    child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2]}"})
+                    child_new.insert(0, m_[2])
+                    child.replaceWith(m_[1], child_new, m_[3])
+                elif m_ := match(r"(.*):(?:icon([a-zA-Z0-9.~_-]+)|([a-zA-Z0-9.~_-]+)icon):(.*)", child):
+                    has_match = True
+                    user: str = m_[2] or m_[3] or ""
+                    child_new = Tag(name="a", attrs={"class": "iconusername", "href": f"/user/{user}"})
+                    child_new_img: Tag = Tag(name="img",
+                                             attrs={"alt": user, "title": user,
+                                                    "src": f"//a.furaffinity.net/{datetime.now():%Y%m%d}/{user}.gif"})
+                    child_new.insert(0, child_new_img)
+                    if m_[2]:
+                        child_new.insert(0, m_[2])
+                    child.replaceWith(m_[1], child_new, m_[2])
+                elif m_ := match(r"(.*)\[ *(?:(\d+)|-)?, *(?:(\d+)|-)? *, *(?:(\d+)|-)? *](.*)", child):
+                    has_match = True
+                    child_new = Tag(name="span", attrs={"class": "parsed_nav_links"})
+                    child_new_1: Tag | str = "<<<\xA0PREV"
+                    child_new_2: Tag | str = "FIRST"
+                    child_new_3: Tag | str = "NEXT\xA0>>>"
+                    if m_[2]:
+                        child_new_1 = Tag(name="a", attrs={"href": f"/view/{m_[2]}"})
+                        child_new_1.insert(0, "<<<\xA0PREV")
+                    if m_[3]:
+                        child_new_2 = Tag(name="a", attrs={"href": f"/view/{m_[3]}"})
+                        child_new_2.insert(0, "<<<\xA0FIRST")
+                    if m_[4]:
+                        child_new_3 = Tag(name="a", attrs={"href": f"/view/{m_[4]}"})
+                        child_new_3.insert(0, "NEXT\xA0>>>")
+                    child_new.insert(0, child_new_1)
+                    child_new.insert(1, "\xA0|\xA0")
+                    child_new.insert(2, child_new_2)
+                    child_new.insert(3, "\xA0|\xA0")
+                    child_new.insert(4, child_new_3)
+                    child.replaceWith(m_[1], child_new, m_[5])
+
+        for p in page.select("p"):
+            p.replaceWith(*p.children)
+
+        return page
+
+    parser: BBCodeParser = BBCodeParser(install_defaults=False, replace_links=False, replace_cosmetic=True)
+    parser.REPLACE_ESCAPE = (
+        ("&", "&amp;"),
+        ("<", "&lt;"),
+        (">", "&gt;"),
+    )
+    parser.REPLACE_COSMETIC = (
+        ("(c)", "&copy;"),
+        ("(r)", "&reg;"),
+        ("(tm)", "&trade;"),
+    )
+
+    for tag in ("i", "b", "u", "s", "sub", "sup", "h1", "h2", "h3", "h3", "h4", "h5", "h6"):
+        parser.add_formatter(tag, render_tags)
+    for align in ("left", "center", "right"):
+        parser.add_simple_formatter(align, f'<code class="bbcode bbcode_{align}">%(value)s</code>')
+
+    parser.add_simple_formatter("spoiler", '<span class="bbcode bbcode_spoiler">%(value)s</span>')
+    parser.add_simple_formatter("url", '<a class="auto_link named_link">%(value)s</a>')
+    parser.add_simple_formatter(
+        "iconusername",
+        f'<a class=iconusername href="/user/%(value)s">'
+        f'<img alt="%(value)s" title="%(value)s" src="//a.furaffinity.net/{datetime.now():%Y%m%d}/%(value)s.gif">'
+        f'%(value)s'
+        f'</a>'
+    )
+    parser.add_simple_formatter(
+        "usernameicon",
+        f'<a class=iconusername href="/user/%(value)s">'
+        f'<img alt="%(value)s" title="%(value)s" src="//a.furaffinity.net/{datetime.now():%Y%m%d}/%(value)s.gif">'
+        f'</a>'
+    )
+    parser.add_simple_formatter("linkusername", '<a class=linkusername href="/user/%(value)s">%(value)s</a>')
+    parser.add_simple_formatter("hr", "<hr>", standalone=True)
+
+    parser.add_formatter("url", render_url)
+    parser.add_formatter("color", render_color)
+    parser.add_formatter("quote", render_quote)
+    parser.add_formatter("tag", render_tag)
+
+    bbcode = sub(r"^-{5,}$", "[hr]", bbcode, flags=MULTILINE)
+    bbcode = sub(r":icon([^ :]+):", r"[iconusername]\1[/iconusername]", bbcode, flags=IGNORECASE)
+    bbcode = sub(r":([^ :]+)icon:", r"[usernameicon]\1[/usernameicon]", bbcode, flags=IGNORECASE)
+    bbcode = sub(r":link([^ :]+):", r'[linkusername]\1[/linkusername]', bbcode, flags=IGNORECASE)
+
+    result_page: BeautifulSoup = parse_extra(parse_page(parser.format(bbcode)))
+    return (result_page.select_one("html > body") or result_page).decode_contents()
 
 
 def parse_mentions(tag: Tag) -> list[str]:
