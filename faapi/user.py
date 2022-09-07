@@ -210,7 +210,7 @@ class User(UserBase):
 
         :return: BBCode profile
         """
-        return html_to_bbcode(self.profile, special_characters=True)
+        return html_to_bbcode(self.profile)
 
     def parse(self, user_page: BeautifulSoup = None):
         """

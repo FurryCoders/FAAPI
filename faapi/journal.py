@@ -90,7 +90,7 @@ class JournalBase:
 
         :return: BBCode content
         """
-        return html_to_bbcode(self.content, special_characters=True)
+        return html_to_bbcode(self.content)
 
     @property
     def url(self) -> str:
@@ -185,7 +185,7 @@ class Journal(JournalBase):
 
         :return: BBCode header
         """
-        return html_to_bbcode(self.header, special_characters=True)
+        return html_to_bbcode(self.header)
 
     @property
     def footer_bbcode(self) -> str:
@@ -194,7 +194,7 @@ class Journal(JournalBase):
 
         :return: BBCode footer
         """
-        return html_to_bbcode(self.footer, special_characters=True)
+        return html_to_bbcode(self.footer)
 
     def parse(self, journal_page: Union[Tag, BeautifulSoup] = None):
         """

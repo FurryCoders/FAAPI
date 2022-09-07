@@ -223,7 +223,7 @@ class Submission(SubmissionBase):
 
         :return: BBCode description
         """
-        return html_to_bbcode(self.description, special_characters=True)
+        return html_to_bbcode(self.description)
 
     @property
     def footer_bbcode(self) -> str:
@@ -232,7 +232,7 @@ class Submission(SubmissionBase):
 
         :return: BBCode footer
         """
-        return html_to_bbcode(self.footer, special_characters=True)
+        return html_to_bbcode(self.footer)
 
     def parse(self, submission_page: BeautifulSoup = None):
         """

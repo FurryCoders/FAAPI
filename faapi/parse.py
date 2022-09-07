@@ -78,7 +78,7 @@ def clean_html(html: str) -> str:
     return sub(r" *(<br/?>) *", r"\1", minify(html, remove_comments=True, reduce_boolean_attributes=True)).strip()
 
 
-def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
+def html_to_bbcode(html: str) -> str:
     body: Optional[Tag] = parse_page(f"<html><body>{html}</body></html>").select_one("html > body")
     if not body:
         return ""
@@ -105,9 +105,9 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
 
     for span in body.select("span.bbcode[style*=color]"):
         if m := match(r".*color: ?([^ ;]+).*", span.attrs["style"]):
-            span.replaceWith(f"[color={m[1]}]{html_to_bbcode(inner_html(span))}[/color]")
+            span.replaceWith(f"[color={m[1]}]", *span.children, "[/color]")
         else:
-            span.replaceWith(html_to_bbcode(inner_html(span)))
+            span.replaceWith(*span.children)
 
     for nav_link in body.select("span.parsed_nav_links"):
         a_tags = nav_link.select("a")
@@ -124,8 +124,8 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
 
     for a in body.select("a"):
         href_match: Optional[Match] = relative_url.match(a.attrs.get('href', ''))
-        a.replaceWith(f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]"
-                      f"{html_to_bbcode(inner_html(a))}"
+        a.replaceWith(f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]",
+                      *a.children,
                       "[/url]")
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
@@ -138,12 +138,12 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
             quote_name_tag.replaceWith(quote_author)
             continue
         quote_name_tag.decompose()
-        quote_tag.replaceWith(f"[quote{('=' + quote_author) if quote_author else ''}]"
-                              f"{html_to_bbcode(inner_html(quote_tag))}"
+        quote_tag.replaceWith(f"[quote{('=' + quote_author) if quote_author else ''}]",
+                              *quote_tag.children,
                               "[/quote]")
 
     for quote_tag in body.select("span.bbcode.bbcode_quote"):
-        quote_tag.replaceWith(f"[quote]{html_to_bbcode(inner_html(quote_tag))}[/quote]")
+        quote_tag.replaceWith(f"[quote]", *quote_tag.children, "[/quote]")
 
     for [selector, bbcode] in (
             ("i", "i"),
@@ -165,22 +165,22 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
             ("h6", "h6"),
     ):
         for tag in body.select(selector):
-            tag.replaceWith(f"[{bbcode}]{html_to_bbcode(inner_html(tag))}[/{bbcode}]")
+            tag.replaceWith(f"[{bbcode}]", *tag.children, f"[/{bbcode}]")
 
     for tag in body.select(":not(br)"):
         if tag.name == "p":
-            tag.replaceWith(html_to_bbcode(inner_html(tag)))
+            tag.replaceWith(*tag.children)
         elif not (div_class := tag.attrs.get("class", None)):
-            tag.replaceWith(f"[tag={tag.name}]{html_to_bbcode(inner_html(tag))}[/tag.{tag.name}]")
+            tag.replaceWith(f"[tag={tag.name}]", *tag.children, "[/tag.{tag.name}]")
         else:
-            tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]"
-                            f"{html_to_bbcode(inner_html(tag))}"
+            tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
+                            *tag.children,
                             f"[/tag.{tag.name}]")
 
-    for br in body.select("br"):
-        br.replaceWith("\n")
+    bbcode: str = body.decode_contents()
 
-    html = body.decode_contents().replace("&amp;", "&")
+    bbcode = sub(" *$", "", bbcode, flags=MULTILINE)
+    bbcode = sub("^ *", "", bbcode, flags=MULTILINE)
 
     for char, substitution in (
             ("©", "(c)"),
@@ -191,20 +191,11 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
             ("&trade;", "(r)"),
             ("&lt;", "<"),
             ("&gt;", ">"),
+            ("&amp;", "&"),
     ):
-        html = html.replace(char, substitution)
+        bbcode = bbcode.replace(char, substitution)
 
-    html = sub(" *$", "", html, flags=MULTILINE)
-    html = sub("^ *", "", html, flags=MULTILINE)
-
-    if special_characters:
-        for char, substitution in (
-                ("&lt;", "<"),
-                ("&gt;", ">"),
-        ):
-            html = html.replace(char, substitution)
-
-    return html.strip(" ")
+    return bbcode.strip(" ")
 
 
 def bbcode_to_html(bbcode: str) -> str:

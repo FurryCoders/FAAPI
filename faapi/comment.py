@@ -96,7 +96,7 @@ class Comment:
 
         :return: BBCode text
         """
-        return html_to_bbcode(self.text, special_characters=True)
+        return html_to_bbcode(self.text)
 
     @property
     def url(self):
