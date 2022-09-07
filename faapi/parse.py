@@ -9,6 +9,7 @@ from re import search
 from re import sub
 from typing import Any
 from typing import Optional
+from typing import Union
 
 from bbcode import Parser as BBCodeParser  # type:ignore
 from bs4 import BeautifulSoup
@@ -254,9 +255,9 @@ def bbcode_to_html(bbcode: str) -> str:
                 elif m_ := match(r"(.*)\[ *(?:(\d+)|-)?, *(?:(\d+)|-)? *, *(?:(\d+)|-)? *](.*)", child):
                     has_match = True
                     child_new = Tag(name="span", attrs={"class": "parsed_nav_links"})
-                    child_new_1: Tag | str = "<<<\xA0PREV"
-                    child_new_2: Tag | str = "FIRST"
-                    child_new_3: Tag | str = "NEXT\xA0>>>"
+                    child_new_1: Union[Tag, str] = "<<<\xA0PREV"
+                    child_new_2: Union[Tag, str] = "FIRST"
+                    child_new_3: Union[Tag, str] = "NEXT\xA0>>>"
                     if m_[2]:
                         child_new_1 = Tag(name="a", attrs={"href": f"/view/{m_[2]}"})
                         child_new_1.insert(0, "<<<\xA0PREV")
