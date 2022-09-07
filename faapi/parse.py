@@ -1,5 +1,6 @@
 from datetime import datetime
 from re import IGNORECASE
+from re import MULTILINE
 from re import Match
 from re import Pattern
 from re import compile as re_compile
@@ -116,7 +117,7 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
         a_next = a_next_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_next_tag else ""
         nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_next or '-'}]")
 
-    for a in body.select("a.auto_link_shortened"):
+    for a in body.select("a.auto_link_shortened:not(.named_url), a.auto_link:not(.named_url)"):
         a.replaceWith(a.attrs.get('href', ''))
 
     for a in body.select("a"):
@@ -175,21 +176,26 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
     for br in body.select("br"):
         br.replaceWith("\n")
 
-    html = body.decode_contents()
+    html = body.decode_contents().replace("&amp;", "&")
+
+    for char, substitution in (
+            ("©", "(c)"),
+            ("™", "(tm)"),
+            ("®", "(r)"),
+            ("&copy;", "(c)"),
+            ("&reg;", "(tm)"),
+            ("&trade;", "(r)"),
+            ("&lt;", "<"),
+            ("&gt;", ">"),
+    ):
+        html = html.replace(char, substitution)
 
     if special_characters:
         for char, substitution in (
-                ("©", "(c)"),
-                ("™", "(tm)"),
-                ("®", "(r)"),
-                ("&copy;", "(c)"),
-                ("&reg;", "(tm)"),
-                ("&trade;", "(r)"),
                 ("&lt;", "<"),
                 ("&gt;", ">"),
-                ("&amp;", "&"),
         ):
-            html = sub(char, substitution, html, flags=IGNORECASE)
+            html = html.replace(char, substitution)
 
     return html.strip(" ")
 
