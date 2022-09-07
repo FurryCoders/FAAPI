@@ -545,6 +545,16 @@ If no `user_page` is passed then the object fields will remain at their default 
 * `parse(user_page: bs4.BeautifulSoup = None)`<br>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
+## BBCode Conversion
+
+Using the BBCode fields allows to convert between the raw HTMl recovered from Fur Affinity and BBCode tags that follow
+FA's guidelines. Conversion from HTML to BBCode covers all known tags and preserves all newlines and spacing.
+
+BBCode text can be converted to Fur Affinity's HTMl using the `faapi.parse.bbcode_to_html()` function. The majority of
+submissions can be converted back and forth between HTML and BBCode without any information loss, however, the parser
+rules are still a work in progress and there are many edge cases where unusual text and formatting cause the parser to
+generate incorrect HTML.
+
 ## Exceptions
 
 The following are the exceptions explicitly raised by the FAAPI functions. The exceptions deriving from `ParsingError`
