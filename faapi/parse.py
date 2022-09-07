@@ -169,9 +169,9 @@ def html_to_bbcode(html: str, *, special_characters: bool = False) -> str:
         if tag.name == "p":
             tag.replaceWith(html_to_bbcode(inner_html(tag)))
         elif not (div_class := tag.attrs.get("class", None)):
-            tag.replaceWith(f"[tag.{tag.name}]{html_to_bbcode(inner_html(tag))}[/tag.{tag.name}]")
+            tag.replaceWith(f"[tag={tag.name}]{html_to_bbcode(inner_html(tag))}[/tag.{tag.name}]")
         else:
-            tag.replaceWith(f"[tag.{tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]"
+            tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]"
                             f"{html_to_bbcode(inner_html(tag))}"
                             f"[/tag.{tag.name}]")
 
