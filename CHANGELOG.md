@@ -11,10 +11,10 @@
     * New `generate_user_icon_url()` method added to `UserPartial` and `User` to create the URL for the current user
       icon
 * BBCode to HTML conversion
-    * Work-in-progress version of a BBCode converter based on the [bbcode](https://pypi.org/project/bbcode) package
+    * Work-in-progress version of a BBCode converter based on the [bbcode](https://pypi.org/project/bbcode) library
     * The majority of HTML fields (submission descriptions, journal contents, comments, etc.) can be converted back and
       forth between HTML and BBCode without loosing information
-    * If a submission contains incorrect very unusual BBCode tags or text, the BBCode to HTML conversion may create
+    * If a submission contains incorrect or very unusual BBCode tags or text, the BBCode to HTML conversion may create
       artifacts and tags that did not exist in the original content
 
 ### Changes
@@ -31,7 +31,9 @@
 * Fix errors when converting nav links (e.g. `[2,1,3]`) to BBCode
 * Fix incorrect detection of last page in `FAAPI.watchlist_by()` and `FAAPI.watchlist_by()`
 * Fix errors when converting special characters (e.g. `&`)
-* Fix trailing spaced around newlines remaining after converting to BBCode
+* Fix trailing spaces around newlines remaining after converting to BBCode
+* Fix horizontal lines not being correctly converted from BBCode if the dashes (`-----` or longer) were not surrounded
+  by newlines
 
 ### Dependencies
 
