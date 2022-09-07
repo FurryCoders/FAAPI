@@ -110,7 +110,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["contacts"] == user_test_data["contacts"]
     assert result["user_icon_url"] != ""
     assert remove_user_icons(clean_html(result["profile"])) == remove_user_icons(clean_html(user_test_data["profile"]))
-    assert html_to_bbcode(result["profile"], special_characters=True) == user_test_data["profile_bbcode"]
+    assert html_to_bbcode(result["profile"]) == user_test_data["profile_bbcode"]
 
 
 def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
@@ -148,10 +148,8 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
            remove_user_icons(clean_html(submission_test_data["description"]))
     assert remove_user_icons(clean_html(result["footer"])) == \
            remove_user_icons(clean_html(submission_test_data["footer"]))
-    assert html_to_bbcode(result["description"], special_characters=True) == \
-           submission_test_data["description_bbcode"]
-    assert html_to_bbcode(result["footer"], special_characters=True) == \
-           submission_test_data["footer_bbcode"]
+    assert html_to_bbcode(result["description"]) == submission_test_data["description_bbcode"]
+    assert html_to_bbcode(result["footer"]) == submission_test_data["footer_bbcode"]
 
 
 def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict):
@@ -175,6 +173,6 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
         clean_html(journal_test_data["header"]))
     assert remove_user_icons(clean_html(result["footer"])) == remove_user_icons(
         clean_html(journal_test_data["footer"]))
-    assert html_to_bbcode(result["content"], special_characters=True) == journal_test_data["content_bbcode"]
-    assert html_to_bbcode(result["header"], special_characters=True) == journal_test_data["header_bbcode"]
-    assert html_to_bbcode(result["footer"], special_characters=True) == journal_test_data["footer_bbcode"]
+    assert html_to_bbcode(result["content"]) == journal_test_data["content_bbcode"]
+    assert html_to_bbcode(result["header"]) == journal_test_data["header_bbcode"]
+    assert html_to_bbcode(result["footer"]) == journal_test_data["footer_bbcode"]
