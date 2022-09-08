@@ -46,7 +46,7 @@ def make_session(cookies: Union[list[CookieDict], CookieJar]) -> CloudflareScrap
 
 def get_robots(session: Session) -> RobotFileParser:
     robots: RobotFileParser = RobotFileParser(url := join_url(root, "robots.txt"))
-    robots.parse(filter(re_compile(r"^[^#].*").match, session.get(url).text.splitlines()))
+    robots.parse(filter(re_compile(r"^[^#\s].+").match, map(str.strip, session.get(url).text.splitlines())))
     return robots
 
 
