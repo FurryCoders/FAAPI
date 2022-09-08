@@ -43,6 +43,9 @@ class SubmissionBase:
         self.title: str = ""
         self.author: UserPartial = UserPartial()
 
+    def __hash__(self) -> int:
+        return hash(self.id)
+
     def __eq__(self, other) -> bool:
         if isinstance(other, SubmissionBase):
             return other.id == self.id

@@ -38,6 +38,9 @@ class UserBase:
         self.name: str = ""
         self.status: str = ""
 
+    def __hash__(self) -> int:
+        return hash(self.name_url)
+
     def __eq__(self, other) -> bool:
         if isinstance(other, UserBase):
             return other.name_url == self.name_url

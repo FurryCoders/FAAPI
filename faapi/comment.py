@@ -36,6 +36,9 @@ class Comment:
 
         self.parse()
 
+    def __hash__(self) -> int:
+        return hash((self.id, type(self.parent), self.parent))
+
     def __eq__(self, other) -> bool:
         if isinstance(other, Comment):
             return other.id == self.id and self.parent == other.parent

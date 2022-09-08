@@ -33,6 +33,9 @@ class JournalBase:
         self.content: str = ""
         self.mentions: list[str] = []
 
+    def __hash__(self) -> int:
+        return hash(self.id)
+
     def __eq__(self, other) -> bool:
         if isinstance(other, JournalBase):
             return other.id == self.id
