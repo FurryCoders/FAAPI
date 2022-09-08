@@ -38,7 +38,7 @@ class Comment:
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Comment):
-            return other.id == self.id
+            return other.id == self.id and self.parent == other.parent
         elif isinstance(other, int):
             return other == self.id
         return False
