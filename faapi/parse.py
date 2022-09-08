@@ -183,7 +183,7 @@ def html_to_bbcode(html: str) -> str:
         else:
             tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
                             *tag.children,
-                            f"[/tag]")
+                            "[/tag]")
 
     bbcode: str = body.decode_contents()
 
