@@ -214,7 +214,6 @@ def bbcode_to_html(bbcode: str) -> str:
         return f'<span class="bbcode bbcode_quote">{author}{value}</span>'
 
     def render_tags(tag_name: str, value: str, options: dict[str, str], _parent, _context) -> str:
-        print(f"<{tag_name}>")
         if not options and tag_name.islower():
             return f"<{tag_name}>{value}</{tag_name}>"
         return f"[{tag_name} {' '.join(f'{k}={v}' if v else k for k, v in options.items())}]{value}"
