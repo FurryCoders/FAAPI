@@ -32,6 +32,11 @@ mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(?:by|to)/[^/]+/(\d+)")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
+smilie_icons: tuple[str, ...] = (
+    "crying", "derp", "dunno", "embarrassed", "evil", "gift", "huh", "lmao", "love", "nerd", "note", "oooh", "pleased",
+    "rollingeyes", "sad", "sarcastic", "serious", "sleepy", "smile", "teeth", "tongue", "veryhappy", "wink", "yelling",
+    "zipped", "angel", "badhairday", "cd", "coffee", "cool", "whatever"
+)
 
 
 def get_attr(tag: Tag, attr: str) -> str:
@@ -229,7 +234,11 @@ def bbcode_to_html(bbcode: str) -> str:
         while has_match:
             has_match = False
             for child in [c for e in page.select("*:not(a)") for c in e.children if isinstance(c, NavigableString)]:
-                if m_ := match(r"(.*)(?:@([a-zA-Z0-9.~_-]+)|:link([a-zA-Z0-9.~_-]+):)(.*)", child):
+                if m_ := match(rf"(.*):({'|'.join(smilie_icons)}):(.*)", child):
+                    has_match = True
+                    child_new = Tag(name="i", attrs={"class": f"smilie {m_[2]}"})
+                    child.replaceWith(m_[1], child_new, m_[3])
+                elif m_ := match(r"(.*)(?:@([a-zA-Z0-9.~_-]+)|:link([a-zA-Z0-9.~_-]+):)(.*)", child):
                     has_match = True
                     child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2] or m_[3]}"})
                     child_new.insert(0, m_[2] or m_[3])
