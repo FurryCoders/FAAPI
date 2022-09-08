@@ -92,7 +92,7 @@ cookies.set("b", "356f5962-5a60-0922-1c11-65003b703038")
 
 To access session cookies, consult the manual of the browser used to log in.
 
-*Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.
+*Note:* it is important to not logout of the session the cookies belong to, otherwise they will no longer work.<br/>
 *Note:* as of April 2022 only cookies `a` and `b` are needed.
 
 ### User Agent
@@ -126,61 +126,61 @@ in [#Cookies](#cookies).
 
 #### Methods & Properties
 
-* `load_cookies(cookies: list[dict[str, str]] | CookieJar)`<br>
-  Load new cookies and create a new session.<br>
+* `load_cookies(cookies: list[dict[str, str]] | CookieJar)`<br/>
+  Load new cookies and create a new session.<br/>
   *Note:* This method removes any cookies currently in use, to update/add single cookies access them from the session
   object.
-* `handle_delay()`<br>
+* `handle_delay()`<br/>
   Handles the crawl delay as set in the robots.txt
-* `check_path(path: str, *, raise_for_disallowed: bool = False) -> bool`<br>
+* `check_path(path: str, *, raise_for_disallowed: bool = False) -> bool`<br/>
   Checks whether a given path is allowed by the robots.txt. If `raise_for_disallowed` is set to `True`
   a `DisallowedPath` exception is raised on non-allowed paths.
-* `connection_status -> bool`<br>
+* `connection_status -> bool`<br/>
   Returns the status of the connection.
-* `login_status -> bool`<br>
+* `login_status -> bool`<br/>
   Returns the login status.
-* `get(path: str, **params) -> requests.Response`<br>
+* `get(path: str, **params) -> requests.Response`<br/>
   This returns a response object containing the result of the get operation on the given URL with the
   optional `**params` added to it (url provided is considered as path from 'https://www.furaffinity.net/').
-* `get_parsed(path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params) -> bs4.BeautifulSoup`<br>
+* `get_parsed(path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False, **params) -> bs4.BeautifulSoup`<br/>
   Similar to `get()` but returns the parsed HTML from the normal get operation. If the GET request encountered an error,
   an `HTTPError` exception is raised. If `skip_page_check` is set to `True`, the parsed page is not checked for errors (
   e.g. non-existing submission). If `skip_auth_check` is set to `True`, the page is not checked for login status.
-* `me() -> User | None`<br>
+* `me() -> User | None`<br/>
   Returns the logged-in user as a `User` object if the cookies are from a login session.
-* `frontpage() -> list[SubmissionPartial]`<br>
+* `frontpage() -> list[SubmissionPartial]`<br/>
   Fetch the latest submissions from Fur Affinity's front page.
-* `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> tuple[Submission, bytes | None]`<br>
+* `submission(submission_id: int, get_file: bool = False, *, chunk_size: int = None) -> tuple[Submission, bytes | None]`<br/>
   Given a submission ID, it returns a `Submission` object containing the various metadata of the submission itself and
   a `bytes` object with the submission file if `get_file` is passed as `True`. The optional `chunk_size` argument is
-  used for the request; if left to `None` or set to 0 the download is performed directly without streaming.<br>
+  used for the request; if left to `None` or set to 0 the download is performed directly without streaming.<br/>
   *Note:* the author `UserPartial` object of the submission does not contain the `join_date` field as it does not appear
   on submission pages.
-* `submission_file(submission: Submission, *, chunk_size: int = None) -> bytes`<br>
+* `submission_file(submission: Submission, *, chunk_size: int = None) -> bytes`<br/>
   Given a submission object, it downloads its file and returns it as a `bytes` object. The optional `chunk_size`
   argument is used for the request; if left to `None` or set to 0 the download is performed directly without streaming.
-* `journal(journal_id: int) -> Journal`<br>
+* `journal(journal_id: int) -> Journal`<br/>
   Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
-* `user(user: str) -> User`<br>
+* `user(user: str) -> User`<br/>
   Given a username, it returns a `User` object containing information regarding the user.
-* `gallery(user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]`<br>
+* `gallery(user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]`<br/>
   Returns the list of submissions found on a specific gallery page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `scraps(user: str, page: int = 1) -> -> tuple[list[SubmissionPartial], int]`<br>
+* `scraps(user: str, page: int = 1) -> -> tuple[list[SubmissionPartial], int]`<br/>
   Returns the list of submissions found on a specific scraps page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `favorites(user: str, page: str = "") -> tuple[list[SubmissionPartial], str]`<br>
+* `favorites(user: str, page: str = "") -> tuple[list[SubmissionPartial], str]`<br/>
   Downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one
   returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page
-  value as argument is equivalent to page 1.<br>
+  value as argument is equivalent to page 1.<br/>
   *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-* `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int]`<br>
+* `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int]`<br/>
   Returns the list of submissions found on a specific journals page, and the number of the next page. The returned page
   number is set to 0 if it is the last page.
-* `watchlist_to(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br>
+* `watchlist_to(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br/>
   Given a username, returns a list of `UserPartial` objects for each user that is watching the given user and the next
   page, if it is not the last.
-* `watchlist_by(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br>
+* `watchlist_by(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br/>
   Given a username, returns a list of `UserPartial` objects for each user that is watched by the given user and the next
   page, if it is not the last.
 
@@ -216,13 +216,13 @@ If no `user_tag` is passed then the object fields will remain at their default -
 
 #### Methods
 
-* `name_url -> str`<br>
+* `name_url -> str`<br/>
   Property method that returns the URL-safe username
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
-* `generate_user_icon_url() -> str`<br>
+* `generate_user_icon_url() -> str`<br/>
   Generates the URl for the current user icon.
-* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+* `parse(user_page: bs4.BeautifulSoup = None)`<br/>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
 ### User
@@ -263,13 +263,13 @@ If no `user_page` is passed then the object fields will remain at their default 
 
 #### Methods
 
-* `name_url -> str`<br>
+* `name_url -> str`<br/>
   Property method that returns the URL-safe username
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
-* `generate_user_icon_url() -> str`<br>
+* `generate_user_icon_url() -> str`<br/>
   Generates the URl for the current user icon.
-* `parse(user_page: bs4.BeautifulSoup = None)`<br>
+* `parse(user_page: bs4.BeautifulSoup = None)`<br/>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
 
 ### JournalPartial
@@ -303,9 +303,9 @@ If no `journal_tag` is passed then the object fields will remain at their defaul
 
 #### Methods
 
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the journal (`https://www.furaffinity.net/journal/{id}`).
-* `parse(journal_item: bs4.element.Tag = None)`<br>
+* `parse(journal_item: bs4.element.Tag = None)`<br/>
   Parses the stored journal tag for information. If `journal_tag` is passed, it overwrites the existing `journal_tag`
   value.
 
@@ -344,9 +344,9 @@ If no `journal_page` is passed then the object fields will remain at their defau
 
 #### Methods
 
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the journal (`https://www.furaffinity.net/journal/{id}`).
-* `parse(journal_page: bs4.BeautifulSoup = None)`<br>
+* `parse(journal_page: bs4.BeautifulSoup = None)`<br/>
   Parses the stored journal tag for information. If `journal_tag` is passed, it overwrites the existing `journal_tag`
   value.
 
@@ -379,9 +379,9 @@ If no `submission_figure` is passed then the object fields will remain at their 
 
 #### Methods
 
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the submission (`https://www.furaffinity.net/view/{id}`).
-* `parse(submission_figure: bs4.element.Tag = None)`<br>
+* `parse(submission_figure: bs4.element.Tag = None)`<br/>
   Parses the stored submission figure tag for information. If `submission_figure` is passed, it overwrites the
   existing `submission_figure` value.
 
@@ -434,9 +434,9 @@ If no `submission_page` is passed then the object fields will remain at their de
 
 #### Methods
 
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the submission (`https://www.furaffinity.net/view/{id}`).
-* `parse(submission_page: bs4.BeautifulSoup = None)`<br>
+* `parse(submission_page: bs4.BeautifulSoup = None)`<br/>
   Parses the stored submission page for metadata. If `submission_page` is passed, it overwrites the
   existing `submission_page` value.
 
@@ -487,11 +487,11 @@ If no `tag` is passed then the object fields will remain at their default - empt
 
 #### Methods
 
-* `url -> str`<br>
+* `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the comment (
   e.g. `https://www.furaffinity.net/view/12345678#cid:1234567890`). If the `parent` variable is `None`, the property
   returns an empty string.
-* `parse(tag: bs4.element.Tag = None)`<br>
+* `parse(tag: bs4.element.Tag = None)`<br/>
   Parses the stored tag for metadata. If `tag` is passed, it overwrites the existing `tag` value.
 
 #### Extra Functions
