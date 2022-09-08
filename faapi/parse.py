@@ -1,5 +1,4 @@
 from datetime import datetime
-from re import IGNORECASE
 from re import MULTILINE
 from re import Match
 from re import Pattern
@@ -236,6 +235,11 @@ def bbcode_to_html(bbcode: str) -> str:
                     child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2]}"})
                     child_new.insert(0, m_[2])
                     child.replaceWith(m_[1], child_new, m_[3])
+                elif m_ := match(r"(.*):link([a-zA-Z0-9.~_-]+):(.*)", child):
+                    has_match = True
+                    child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2]}"})
+                    child_new.insert(0, m_[2])
+                    child.replaceWith(m_[1], child_new, m_[3])
                 elif m_ := match(r"(.*):(?:icon([a-zA-Z0-9.~_-]+)|([a-zA-Z0-9.~_-]+)icon):(.*)", child):
                     has_match = True
                     user: str = m_[2] or m_[3] or ""
@@ -315,9 +319,6 @@ def bbcode_to_html(bbcode: str) -> str:
     parser.add_formatter("tag", render_tag)
 
     bbcode = sub(r"-{5,}", "[hr]", bbcode)
-    bbcode = sub(r":icon([^ :]+):", r"[iconusername]\1[/iconusername]", bbcode, flags=IGNORECASE)
-    bbcode = sub(r":([^ :]+)icon:", r"[usernameicon]\1[/usernameicon]", bbcode, flags=IGNORECASE)
-    bbcode = sub(r":link([^ :]+):", r'[linkusername]\1[/linkusername]', bbcode, flags=IGNORECASE)
 
     result_page: BeautifulSoup = parse_extra(parse_page(parser.format(bbcode)))
     return (result_page.select_one("html > body") or result_page).decode_contents()
