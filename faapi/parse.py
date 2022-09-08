@@ -229,16 +229,11 @@ def bbcode_to_html(bbcode: str) -> str:
         while has_match:
             has_match = False
             for child in [c for e in page.select("*:not(a)") for c in e.children if isinstance(c, NavigableString)]:
-                if m_ := match(r"(.*)@([a-zA-Z0-9.~_-]+)(.*)", child):
+                if m_ := match(r"(.*)(?:@([a-zA-Z0-9.~_-]+)|:link([a-zA-Z0-9.~_-]+):)(.*)", child):
                     has_match = True
-                    child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2]}"})
-                    child_new.insert(0, m_[2])
-                    child.replaceWith(m_[1], child_new, m_[3])
-                elif m_ := match(r"(.*):link([a-zA-Z0-9.~_-]+):(.*)", child):
-                    has_match = True
-                    child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2]}"})
-                    child_new.insert(0, m_[2])
-                    child.replaceWith(m_[1], child_new, m_[3])
+                    child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2] or m_[3]}"})
+                    child_new.insert(0, m_[2] or m_[3])
+                    child.replaceWith(m_[1], child_new, m_[4])
                 elif m_ := match(r"(.*):(?:icon([a-zA-Z0-9.~_-]+)|([a-zA-Z0-9.~_-]+)icon):(.*)", child):
                     has_match = True
                     user: str = m_[2] or m_[3] or ""
