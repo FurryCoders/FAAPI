@@ -21,12 +21,17 @@
 
 * Added `Journal.header_bbcode` and `Journal.footer_bbcode` properties to convert `Journal.header` and `Journal.footer`
   to BBCode
+* Return `None` instead of 0 (or `""` for favorites) when reaching the last page with `FAAPI.gallery()`
+  , `FAAPI.scraps()`, `FAAPI.journals()`, `FAAPI.favorites()`, `FAAPI.watchlist_by()`, and `FAAPI.watchlist_to()`
+* Added `__hash__` method to `User`, `UserPartial`, `Submission`, `SubmissionPartial`, `Journal`, `JournalPartial`,
+  and `Comment`; the hash value is calculated using the same fields used for equality comparisons
 * Improved cleanup of HTML fields by using [htmlmin](https://pypi.org/project/htmlmin)
 * Fur Affinity URLs are now properly converted to relative `[url=<path>]` tags in BBCode
 * Unknown tags are converted to `[tag=<name>.<classes>]` in BBCode
 
 ### Fixes
 
+* Fix comments being considered equal even if they had different parents but the same ID
 * Fix break lines tags (`<br/>`) not always being converted to newlines when converting to BBCode
 * Fix errors when converting nav links (e.g. `[2,1,3]`) to BBCode
 * Fix incorrect detection of last page in `FAAPI.watchlist_by()` and `FAAPI.watchlist_by()`
