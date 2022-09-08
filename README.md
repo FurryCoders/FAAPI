@@ -163,26 +163,26 @@ in [#Cookies](#cookies).
   Given a journal ID, it returns a `Journal` object containing the various metadata of the journal.
 * `user(user: str) -> User`<br/>
   Given a username, it returns a `User` object containing information regarding the user.
-* `gallery(user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]`<br/>
+* `gallery(user: str, page: int = 1) -> tuple[list[SubmissionPartial], int | None]`<br/>
   Returns the list of submissions found on a specific gallery page, and the number of the next page. The returned page
-  number is set to 0 if it is the last page.
-* `scraps(user: str, page: int = 1) -> -> tuple[list[SubmissionPartial], int]`<br/>
+  number is set to `None` if it is the last page.
+* `scraps(user: str, page: int = 1) -> -> tuple[list[SubmissionPartial], int | None]`<br/>
   Returns the list of submissions found on a specific scraps page, and the number of the next page. The returned page
-  number is set to 0 if it is the last page.
-* `favorites(user: str, page: str = "") -> tuple[list[SubmissionPartial], str]`<br/>
+  number is set to `None` if it is the last page.
+* `favorites(user: str, page: str = "") -> tuple[list[SubmissionPartial], str | None]`<br/>
   Downloads a user's favorites page. Because of how favorites pages work on FA, the `page` argument (and the one
-  returned) are strings. If the favorites page is the last then an empty string is returned as next page. An empty page
+  returned) are strings. If the favorites page is the last then a `None` is returned as next page. An empty page
   value as argument is equivalent to page 1.<br/>
   *Note:* favorites page "numbers" do not follow any scheme and are only generated server-side.
-* `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int]`<br/>
+* `journals(user: str, page: int = 1) -> -> tuple[list[JournalPartial], int | None]`<br/>
   Returns the list of submissions found on a specific journals page, and the number of the next page. The returned page
-  number is set to 0 if it is the last page.
-* `watchlist_to(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br/>
+  number is set to `None` if it is the last page.
+* `watchlist_to(self, user: str, page:int = 1) -> tuple[list[UserPartial], int | None]`<br/>
   Given a username, returns a list of `UserPartial` objects for each user that is watching the given user and the next
-  page, if it is not the last.
-* `watchlist_by(self, user: str, page:int = 1) -> tuple[list[UserPartial], int]`<br/>
+  page, if it is not the last, in which case a `None` is returned.
+* `watchlist_by(self, user: str, page:int = 1) -> tuple[list[UserPartial], int | None]`<br/>
   Given a username, returns a list of `UserPartial` objects for each user that is watched by the given user and the next
-  page, if it is not the last.
+  page, if it is not the last, in which case a `None` is returned.
 
 *Note:* The last page returned by the `watchlist_to` and `watchlist_by` may not be correct as Fur Affinity doesn't seem
 to have a consistent behaviour when rendering the next page button, as such it is safer to use an external algorithm to

@@ -210,7 +210,7 @@ class FAAPI:
         return User(self.get_parsed(join_url("user", username_url(user))))
 
     # noinspection DuplicatedCode
-    def gallery(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
+    def gallery(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], Optional[int]]:
         """
         Fetch a user's gallery page.
 
@@ -228,10 +228,10 @@ class FAAPI:
         ]
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author = author
-        return submissions, (page + 1) * (not info_parsed["last_page"])
+        return submissions, (page + 1) if not info_parsed["last_page"] else None
 
     # noinspection DuplicatedCode
-    def scraps(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], int]:
+    def scraps(self, user: str, page: int = 1) -> tuple[list[SubmissionPartial], Optional[int]]:
         """
         Fetch a user's scraps page.
 
@@ -249,9 +249,9 @@ class FAAPI:
         ]
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
             s.author = author
-        return submissions, (page + 1) * (not info_parsed["last_page"])
+        return submissions, (page + 1) if not info_parsed["last_page"] else None
 
-    def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], str]:
+    def favorites(self, user: str, page: str = "") -> tuple[list[SubmissionPartial], Optional[str]]:
         """
         Fetch a user's favorites page.
 
@@ -262,9 +262,9 @@ class FAAPI:
         page_parsed: BeautifulSoup = self.get_parsed(join_url("favorites", username_url(user), page.strip()))
         info_parsed: dict[str, Any] = parse_user_favorites(page_parsed)
         submissions: list[SubmissionPartial] = list(map(SubmissionPartial, info_parsed["figures"]))
-        return submissions, info_parsed["next_page"]
+        return submissions, info_parsed["next_page"] or None
 
-    def journals(self, user: str, page: int = 1) -> tuple[list[JournalPartial], int]:
+    def journals(self, user: str, page: int = 1) -> tuple[list[JournalPartial], Optional[int]]:
         """
         Fetch a user's journals page.
 
@@ -282,9 +282,9 @@ class FAAPI:
         ]
         for j in (journals := list(map(JournalPartial, info_parsed["sections"]))):
             j.author = author
-        return journals, (page + 1) * (not info_parsed["last_page"])
+        return journals, (page + 1) if not info_parsed["last_page"] else None
 
-    def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
+    def watchlist_to(self, user: str, page: int = 1) -> tuple[list[UserPartial], Optional[int]]:
         """
         Fetch a page from the list of users watching the user.
 
@@ -300,9 +300,9 @@ class FAAPI:
             _user.name = u
             _user.status = s
             users.append(_user)
-        return users, np if np and np != str(page) else 0
+        return users, np if np and np != str(page) else None
 
-    def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], int]:
+    def watchlist_by(self, user: str, page: int = 1) -> tuple[list[UserPartial], Optional[int]]:
         """
         Fetch a page from the list of users watched by the user.
         :param user: The name of the user (_ characters are allowed).
@@ -317,4 +317,4 @@ class FAAPI:
             _user.name = u
             _user.status = s
             users.append(_user)
-        return users, np if np and np != page else 0
+        return users, np if np and np != page else None
