@@ -249,8 +249,8 @@ def bbcode_to_html(bbcode: str) -> str:
                                                     "src": f"//a.furaffinity.net/{datetime.now():%Y%m%d}/{user}.gif"})
                     child_new.insert(0, child_new_img)
                     if m_[2]:
-                        child_new.insert(0, m_[2])
-                    child.replaceWith(m_[1], child_new, m_[2])
+                        child_new.insert(1, f"\xA0{m_[2]}")
+                    child.replaceWith(m_[1], child_new, m_[4])
                 elif m_ := match(r"(.*)\[ *(?:(\d+)|-)?, *(?:(\d+)|-)? *, *(?:(\d+)|-)? *](.*)", child):
                     has_match = True
                     child_new = Tag(name="span", attrs={"class": "parsed_nav_links"})
