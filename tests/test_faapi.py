@@ -2,6 +2,7 @@ from datetime import datetime
 from json import load
 from pathlib import Path
 from re import sub
+from typing import Optional
 
 from pytest import fixture
 from pytest import raises
@@ -234,7 +235,7 @@ def test_gallery(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
     ss: list[SubmissionPartial] = []
-    p: int = 1
+    p: Optional[int] = 1
 
     while p:
         ss_, p_ = api.gallery(data["gallery"]["user"], p)
@@ -264,7 +265,7 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
     ss: list[SubmissionPartial] = []
-    p: int = 1
+    p: Optional[int] = 1
 
     while p:
         ss_, p_ = api.scraps(data["scraps"]["user"], p)
@@ -294,7 +295,7 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
     ss: list[SubmissionPartial] = []
-    p: str = "/"
+    p: Optional[str] = "/"
 
     while p and len(ss) < data["favorites"]["max_length"]:
         ss_, p_ = api.favorites(data["favorites"]["user"], p)
@@ -323,7 +324,7 @@ def test_journals(cookies: RequestsCookieJar, data: dict):
     api: FAAPI = FAAPI(cookies)
 
     js: list[JournalPartial] = []
-    p: int = 1
+    p: Optional[int] = 1
 
     while p:
         js_, p_ = api.journals(data["journals"]["user"], p)
@@ -353,7 +354,7 @@ def test_watchlist_to(cookies: RequestsCookieJar, data: dict):
     assert api.login_status
 
     ws: list[UserPartial] = []
-    p: int = 1
+    p: Optional[int] = 1
 
     while p:
         ws_, p_ = api.watchlist_to(data["watchlist"]["user"], p)
@@ -376,7 +377,7 @@ def test_watchlist_by(cookies: RequestsCookieJar, data: dict):
     assert api.login_status
 
     ws: list[UserPartial] = []
-    p: int = 1
+    p: Optional[int] = 1
 
     while p:
         ws_, p_ = api.watchlist_by(data["watchlist"]["user"], p)
