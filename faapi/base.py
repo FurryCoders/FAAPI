@@ -7,6 +7,7 @@ from typing import Union
 from urllib.robotparser import RobotFileParser
 
 from .connection import CloudflareScraper
+from .connection import CookieDict
 from .connection import Response
 from .connection import get
 from .connection import get_robots
@@ -39,7 +40,7 @@ class FAAPI:
     This class provides the methods to access and parse Fur Affinity pages and retrieve objects.
     """
 
-    def __init__(self, cookies: Union[list[dict[str, str]], CookieJar]):
+    def __init__(self, cookies: Union[list[CookieDict], CookieJar]):
         """
         :param cookies: The cookies for the session.
         """
@@ -64,7 +65,7 @@ class FAAPI:
         """
         return float(self.robots.crawl_delay(self.user_agent) or 1)
 
-    def load_cookies(self, cookies: Union[list[dict[str, str]], CookieJar]):
+    def load_cookies(self, cookies: Union[list[CookieDict], CookieJar]):
         """
         Load new cookies and create a new session.
 
