@@ -240,10 +240,10 @@ def test_gallery(cookies: RequestsCookieJar, data: dict):
         ss_, p_ = api.gallery(data["gallery"]["user"], p)
         assert isinstance(ss, list)
         assert all(isinstance(s, SubmissionPartial) for s in ss_)
-        assert isinstance(p_, int)
-        assert p_ > p or p_ == 0
+        assert p_ is None or isinstance(p_, int)
+        assert p_ is None or p_ > p
         assert len(ss) or p == 1
-        assert len(ss_) or p_ == 0
+        assert len(ss_) or p_ is None
 
         ss.extend(ss_)
         p = p_
@@ -270,10 +270,10 @@ def test_scraps(cookies: RequestsCookieJar, data: dict):
         ss_, p_ = api.scraps(data["scraps"]["user"], p)
         assert isinstance(ss, list)
         assert all(isinstance(s, SubmissionPartial) for s in ss_)
-        assert isinstance(p_, int)
-        assert p_ > p or p_ == 0
+        assert p_ is None or isinstance(p_, int)
+        assert p_ is None or p_ > p
         assert len(ss) or p == 1
-        assert len(ss_) or p_ == 0
+        assert len(ss_) or p_ is None
 
         ss.extend(ss_)
         p = p_
@@ -300,10 +300,10 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
         ss_, p_ = api.favorites(data["favorites"]["user"], p)
         assert isinstance(ss, list)
         assert all(isinstance(s, SubmissionPartial) for s in ss_)
-        assert isinstance(p_, str)
-        assert (p == "/" and p_ > p) or p_ < p or p_ == ""
+        assert p_ is None or isinstance(p_, str)
+        assert p_ is None or (p == "/" and p_ > p) or p_ < p
         assert len(ss) or p == "/"
-        assert len(ss_) or p_ == ""
+        assert len(ss_) or p_ is None
 
         ss.extend(ss_)
         p = p_
@@ -329,10 +329,10 @@ def test_journals(cookies: RequestsCookieJar, data: dict):
         js_, p_ = api.journals(data["journals"]["user"], p)
         assert isinstance(js, list)
         assert all(isinstance(s, JournalPartial) for s in js_)
-        assert isinstance(p_, int)
-        assert p_ > p or p_ == 0
+        assert p_ is None or isinstance(p_, int)
+        assert p_ is None or p_ > p
         assert len(js) or p == 1
-        assert len(js_) or p_ == 0
+        assert len(js_) or p_ is None
 
         js.extend(js_)
         p = p_
@@ -359,10 +359,10 @@ def test_watchlist_to(cookies: RequestsCookieJar, data: dict):
         ws_, p_ = api.watchlist_to(data["watchlist"]["user"], p)
         assert isinstance(ws, list)
         assert all(isinstance(s, UserPartial) for s in ws_)
-        assert isinstance(p_, int)
-        assert p_ > p or p_ == 0
+        assert p_ is None or isinstance(p_, int)
+        assert p_ is None or p_ > p
         assert len(ws) or p == 1
-        assert len(ws_) or p_ == 0
+        assert len(ws_) or p_ is None
 
         ws.extend(ws_)
         p = p_
@@ -382,10 +382,10 @@ def test_watchlist_by(cookies: RequestsCookieJar, data: dict):
         ws_, p_ = api.watchlist_by(data["watchlist"]["user"], p)
         assert isinstance(ws, list)
         assert all(isinstance(s, UserPartial) for s in ws_)
-        assert isinstance(p_, int)
-        assert p_ > p or p_ == 0
+        assert p_ is None or isinstance(p_, int)
+        assert p_ is None or p_ > p
         assert len(ws) or p == 1
-        assert len(ws_) or p_ == 0
+        assert len(ws_) or p_ is None
 
         ws.extend(ws_)
         p = p_
