@@ -216,7 +216,7 @@ class FAAPI:
 
         :param user: The name of the user (_ characters are allowed).
         :param page: The page to fetch.
-        :return: A list of SubmissionPartial objects and the next page (0 if it is the last).
+        :return: A list of SubmissionPartial objects and the next page (None if it is the last).
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("gallery", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
@@ -237,7 +237,7 @@ class FAAPI:
 
         :param user: The name of the user (_ characters are allowed).
         :param page: The page to fetch.
-        :return: A list of SubmissionPartial objects and the next page (0 if it is the last).
+        :return: A list of SubmissionPartial objects and the next page (None if it is the last).
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("scraps", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
@@ -257,7 +257,7 @@ class FAAPI:
 
         :param user: The name of the user (_ characters are allowed).
         :param page: The page to fetch.
-        :return: A list of SubmissionPartial objects and the next page ("" if it is the last).
+        :return: A list of SubmissionPartial objects and the next page (None if it is the last).
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("favorites", username_url(user), page.strip()))
         info_parsed: dict[str, Any] = parse_user_favorites(page_parsed)
@@ -270,7 +270,7 @@ class FAAPI:
 
         :param user: The name of the user (_ characters are allowed).
         :param page: The page to fetch.
-        :return: A list of Journal objects and the next page (0 if it is the last).
+        :return: A list of Journal objects and the next page (None if it is the last).
         """
         page_parsed: BeautifulSoup = self.get_parsed(join_url("journals", username_url(user), int(page)))
         info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
@@ -290,7 +290,7 @@ class FAAPI:
 
         :param user: The name of the user (_ characters are allowed).
         :param page: The page to fetch.
-        :return: A list of UserPartial objects and the next page (0 if it is the last).
+        :return: A list of UserPartial objects and the next page (None if it is the last).
         """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
@@ -307,7 +307,7 @@ class FAAPI:
         Fetch a page from the list of users watched by the user.
         :param user: The name of the user (_ characters are allowed).
         :param page: The page to fetch.
-        :return: A list of UserPartial objects and the next page (0 if it is the last).
+        :return: A list of UserPartial objects and the next page (None if it is the last).
         """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
