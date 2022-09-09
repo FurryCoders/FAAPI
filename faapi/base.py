@@ -164,7 +164,7 @@ class FAAPI:
         """
         page_parsed: BeautifulSoup = self.get_parsed("/")
         submissions: list[SubmissionPartial] = [SubmissionPartial(f) for f in parse_submission_figures(page_parsed)]
-        return sorted({s.id: s for s in submissions}.values(), reverse=True)
+        return sorted({s for s in submissions}, reverse=True)
 
     def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: int = None
                    ) -> tuple[Submission, Optional[bytes]]:
