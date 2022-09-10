@@ -12,6 +12,7 @@
       icon
 * BBCode to HTML conversion
     * Work-in-progress version of a BBCode converter based on the [bbcode](https://pypi.org/project/bbcode) library
+    * Converter function is located in the `parse` submodule: `faapi.parse.bbcode_to_html()`
     * The majority of HTML fields (submission descriptions, journal contents, comments, etc.) can be converted back and
       forth between HTML and BBCode without loosing information
     * If a submission contains incorrect or very unusual BBCode tags or text, the BBCode to HTML conversion may create
@@ -28,6 +29,8 @@
 * Improved cleanup of HTML fields by using [htmlmin](https://pypi.org/project/htmlmin)
 * Fur Affinity URLs are now properly converted to relative `[url=<path>]` tags in BBCode
 * Unknown tags are converted to `[tag=<name>.<classes>]` in BBCode
+* Added `CookieDict(TypedDict)` notation for cookies dictionary (alternative to `CookieJar`) to provide intellisense and
+  type checking information
 
 ### Fixes
 
