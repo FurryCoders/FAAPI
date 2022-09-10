@@ -42,8 +42,8 @@
 
 ### Dependencies
 
-* Use [htmlmin ^0.1.12](https://pypi.org/project/htmlmin/0.1.12)
-* Use [bbcode ^1.1.0](https://pypi.org/project/bbcode/1.1.0)
+* Added [htmlmin ^0.1.12](https://pypi.org/project/htmlmin/0.1.12)
+* Added [bbcode ^1.1.0](https://pypi.org/project/bbcode/1.1.0)
 
 ## v3.8.1
 
