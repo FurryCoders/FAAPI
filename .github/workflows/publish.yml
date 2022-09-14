@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  PYTHON_VERSION: 3.10.2
-  POETRY_VERSION: 1.1.13
+  PYTHON_VERSION: 3.10.6
+  POETRY_VERSION: 1.2.0
 
 jobs:
   wait_static_tests:
