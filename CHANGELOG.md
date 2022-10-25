@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.9.1
+
+### Fixes
+
+* Fix incorrect user icon URLs when converting BBCode to HTML
+
+### Dependencies
+
+* Use [pytest ^7.2.0](https://pypi.org/project/pytest/7.2.0)
+    * Fix [CVE-2022-42969](https://cve.report/CVE-2022-42969.pdf) issue
+
 ## v3.9.0
 
 ### New Features
