@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  PYTHON_VERSION: 3.10.6
-  POETRY_VERSION: 1.2.0
+  PYTHON_VERSION: 3.10.8
+  POETRY_VERSION: 1.2.2
 
 jobs:
   flake8:
