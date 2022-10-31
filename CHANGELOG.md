@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.9.2
+
+### Fixes
+
+* Fix ` being removed from usernames
+
 ## v3.9.1
 
 ### Fixes
