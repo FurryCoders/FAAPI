@@ -626,7 +626,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
     status: str
     name: str
-    url_username = parese_username_from_url(tag_meta_url["content"])
+    url_username = parse_username_from_url(tag_meta_url["content"])
     proto_name = tag_status.text.strip()
     if len(url_username) == len(proto_name):
         status, name = "", proto_name
@@ -842,6 +842,6 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], i
     return (users, int(match_next[1]) if match_next else 0)
 
 
-def parese_username_from_url(url: str):
+def parse_username_from_url(url: str):
     path, username = split(url.rstrip('/'))
     return unquote(username)
