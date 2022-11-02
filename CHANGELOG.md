@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.9.4
+
+### Fixes
+
+* Fix admins' username and status not being parsed correctly in watchlists and users tags
+    * Fix issue [#6](https://github.com/FurryCoders/FAAPI/issues/6)
+
 ## v3.9.3
 
 ### Changes
