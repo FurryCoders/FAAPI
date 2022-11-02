@@ -820,7 +820,8 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], i
     match_next: Optional[Match] = watchlist_next_regexp.match(get_attr(tag_next, "action")) if tag_next else None
     return (
         [
-            ("", t.text.strip()) if t.select_one("img.type-admin") else ((u := t.text.strip().replace(" ", ""))[0], u[1:])
+            ("", t.text.strip()) if t.select_one("img.type-admin")
+            else ((u := t.text.strip().replace(" ", ""))[0], u[1:])
             for t in tags_users
         ],
         int(match_next[1]) if match_next else 0,
