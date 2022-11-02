@@ -619,8 +619,12 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_watch: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/watch/'], a[href^='/unwatch/']")
     tag_block: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/block/'], a[href^='/unblock/']")
 
-    status: str = (u := tag_status.text.strip())[0]
-    name: str = u[1:]
+    status: str
+    name: str
+    if user_page.select_one("div.username img.type-admin"):
+        status, name = "", tag_status.text.strip()
+    else:
+        status, name = (u := tag_status.text.strip())[0], u[1:]
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
     profile: str = clean_html(inner_html(tag_profile))
