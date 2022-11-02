@@ -609,7 +609,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_contacts: list[Tag] = user_page.select("div#userpage-contact div.user-contact-user-info")
     tag_user_icon_url: Optional[Tag] = user_page.select_one("img.user-nav-avatar")
     tag_user_nav_controls: Optional[Tag] = user_page.select_one("div.user-nav-controls")
-    tag_meta_url: Optional[Tag] = user_page.find("meta", property="og:url")
+    tag_meta_url: Optional[Tag] = user_page.select_one('meta[property="og:url"]')
 
     assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
     assert tag_profile is not None, _raise_exception(ParsingError("Missing profile tag"))
