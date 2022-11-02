@@ -1,5 +1,17 @@
 # Changelog
 
+## v3.9.3
+
+### Changes
+
+* Users with non-alphanumeric characters in their name are now escaped in URLs
+    * From suggestion in issue [#5](https://github.com/FurryCoders/FAAPI/issues/5)
+
+### Fixes
+
+* Fix admins' username and status not being parsed correctly
+    * Fix issue [#6](https://github.com/FurryCoders/FAAPI/issues/6)
+
 ## v3.9.2
 
 ### Fixes
