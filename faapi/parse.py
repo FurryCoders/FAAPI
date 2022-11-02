@@ -1,6 +1,3 @@
-from os.path import split
-from urllib.parse import unquote
-
 from datetime import datetime
 from re import MULTILINE
 from re import Match
@@ -19,6 +16,7 @@ from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
 from htmlmin import minify  # type:ignore
+from urllib3.util import parse_url
 
 from .connection import root
 from .exceptions import DisabledAccount
@@ -32,6 +30,7 @@ from .exceptions import _raise_exception
 
 relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
+url_username_regexp: Pattern = re_compile(r"/(?:user|gallery|scraps|favorites|journals|commissions)/([^/]+)(/.*)?")
 watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(?:by|to)/[^/]+/(\d+)")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
@@ -626,7 +625,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
     status: str = ""
     name: str = tag_status.text.strip()
-    if username_url(name) != username_url(parse_username_from_url(get_attr(tag_meta_url, "content"))):
+    if username_url(name) != username_url(parse_username_from_url(get_attr(tag_meta_url, "content")) or ""):
         status, name = name[0], name[1:]
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
@@ -837,6 +836,5 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], i
     return watches, int(match_next[1]) if match_next else 0
 
 
-def parse_username_from_url(url: str):
-    path, username = split(url.rstrip('/'))
-    return unquote(username)
+def parse_username_from_url(url: str) -> Optional[str]:
+    return m[1] if (m := url_username_regexp.match(parse_url(url).path or "")) else None
