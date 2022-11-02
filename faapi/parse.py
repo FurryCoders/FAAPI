@@ -738,10 +738,24 @@ def parse_comments(page: BeautifulSoup) -> list[Tag]:
 
 
 def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
-    status: str = (u := [*filter(bool, map(str.strip, user_tag.text.split("\n")))])[0][0]
-    name: str = u[0][1:]
-    title: str = ttd[0].strip() if len(ttd := u[1].rsplit("|", 1)) > 1 else ""
-    join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
+    tag_status: Optional[Tag] = user_tag.select_one("h2")
+    tag_title: Optional[Tag] = user_tag.select_one("span")
+
+    assert tag_status, _raise_exception(ParsingError("Missing status and username tag"))
+    assert tag_title, _raise_exception(ParsingError("Missing title and join date tag"))
+
+    status: str
+    name: str
+    title: str
+    join_date_str: str
+
+    if user_tag.select_one("img.type-admin"):
+        status, name = "", tag_status.text.strip()
+    else:
+        status, name = (u := tag_status.text.strip())[0], u[1:]
+
+    title, join_date_str = tag_title.text.strip().split("|", 1)
+    join_date: datetime = parse_date(join_date_str.split(":", 1)[1].strip())
 
     return {
         "user_name": name,
