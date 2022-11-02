@@ -624,15 +624,10 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_watch: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/watch/'], a[href^='/unwatch/']")
     tag_block: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/block/'], a[href^='/unblock/']")
 
-    status: str
-    name: str
-    url_username = parse_username_from_url(tag_meta_url["content"])
-    proto_name = tag_status.text.strip()
-    if len(url_username) == len(proto_name):
-        status, name = "", proto_name
-    else:
-        status, name = proto_name[0], proto_name[1:]
-
+    status: str = ""
+    name: str = tag_status.text.strip()
+    if username_url(name) != username_url(parse_username_from_url(get_attr(tag_meta_url, "content"))):
+        status, name = name[0], name[1:]
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
     profile: str = clean_html(inner_html(tag_profile))
