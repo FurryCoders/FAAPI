@@ -740,20 +740,18 @@ def parse_comments(page: BeautifulSoup) -> list[Tag]:
 
 
 def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
-    tag_page: Optional[Tag] = user_tag.find_parent("html")
     tag_status: Optional[Tag] = user_tag.select_one("h2")
     tag_title: Optional[Tag] = user_tag.select_one("span")
 
-    assert tag_page, _raise_exception(ParsingError("Missing html parent"))
     assert tag_status, _raise_exception(ParsingError("Missing status and username tag"))
     assert tag_title, _raise_exception(ParsingError("Missing title and join date tag"))
 
-    tag_meta_url: Optional[Tag] = tag_page.select_one('meta[property="og:url"]')
-    assert tag_meta_url is not None, _raise_exception(ParsingError("Missing meta tag"))
-
     status: str = ""
     name: str = tag_status.text.strip()
-    if username_url(name) != username_url(parse_username_from_url(get_attr(tag_meta_url, "content")) or ""):
+    title: str
+    join_date_str: str
+
+    if not user_tag.select_one("img.type-admin"):
         status, name = name[0], name[1:]
 
     title, join_date_str = tag_title.text.strip().split("|", 1)
