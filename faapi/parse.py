@@ -823,23 +823,23 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], int]:
-    tags_users: list[Tag] = watch_page.select("div.watch-list-items")
     tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")
     match_next: Optional[Match] = watchlist_next_regexp.match(get_attr(tag_next, "action")) if tag_next else None
 
-    users = []
-    for t in tags_users:
-        parts = t.text.strip('\n').split()
+    watches: list[tuple[str, str]] = []
 
-        status: str
-        name: str
-        if len(parts) == 1:
-            status = ""
-            name = parts[0]
-        else:
-            status, name, *_ = parts
-        users.append((status, name))
-    return (users, int(match_next[1]) if match_next else 0)
+    for tag_user in watch_page.select("div.watch-list-items"):
+        user_link: Optional[Tag] = tag_user.select_one("a")
+        assert user_link, _raise_exception(ParsingError("Missing user link"))
+
+        username: str = user_link.text.strip()
+        user_link.decompose()
+
+        status: str = tag_user.text.strip()
+
+        watches.append((status, username))
+
+    return watches, int(match_next[1]) if match_next else 0
 
 
 def parse_username_from_url(url: str):
