@@ -1,6 +1,7 @@
 from collections import namedtuple
 from datetime import datetime
 from typing import Optional
+from urllib.parse import quote
 
 from .connection import join_url
 from .connection import root
@@ -102,7 +103,7 @@ class UserBase:
 
         :return: The URL to the user.
         """
-        return join_url(root, "user", self.name_url)
+        return join_url(root, "user", quote(self.name_url))
 
     def generate_user_icon_url(self) -> str:
         """
