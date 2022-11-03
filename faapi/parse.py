@@ -330,6 +330,10 @@ def bbcode_to_html(bbcode: str) -> str:
     return (result_page.select_one("html > body") or result_page).decode_contents()
 
 
+def parse_username_from_url(url: str) -> Optional[str]:
+    return m[1] if (m := url_username_regexp.match(parse_url(url).path or "")) else None
+
+
 def parse_mentions(tag: Tag) -> list[str]:
     mentions: list[str] = [username_url(m[1]) for a in tag.select("a")
                            if (m := match(mentions_regexp, get_attr(a, "href")))]
@@ -832,7 +836,3 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], i
         watches.append((status, username))
 
     return watches, int(match_next[1]) if match_next else 0
-
-
-def parse_username_from_url(url: str) -> Optional[str]:
-    return m[1] if (m := url_username_regexp.match(parse_url(url).path or "")) else None
