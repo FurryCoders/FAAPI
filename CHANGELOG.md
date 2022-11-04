@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.9.5
+
+### Changes
+
+* Improve parsing of usernames and statuses
+    * Thanks to PR [#7](https://github.com/FurryCoders/FAAPI/pull/7) by @Xraydylan
+
+### Fixes
+
+* Fix parsing of user tags for folders when the user had no title set, or used bars (`|`) in their title
+
 ## v3.9.4
 
 ### Fixes
