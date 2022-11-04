@@ -758,7 +758,10 @@ def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
     if not user_tag.select_one("img.type-admin"):
         status, name = name[0], name[1:]
 
-    title, join_date_str = tag_title.text.strip().split("|", 1)
+    if "|" in (tag_title_text := tag_title.text.strip()):
+        title, join_date_str = tag_title_text.rsplit("|", 1)
+    else:
+        title, join_date_str = "", tag_title_text
     join_date: datetime = parse_date(join_date_str.split(":", 1)[1].strip())
 
     return {
