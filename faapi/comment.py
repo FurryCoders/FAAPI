@@ -15,7 +15,7 @@ class Comment:
     Contains comment information and references to replies and parent objects.
     """
 
-    def __init__(self, tag: Tag = None, parent: Union[faapi.submission.Submission, faapi.journal.Journal] = None):
+    def __init__(self, tag: Optional[Tag] = None, parent: Optional[Union[faapi.submission.Submission, faapi.journal.Journal]] = None):
         """
         :param tag: The comment tag from which to parse information
         :param parent: The parent object of the comment
@@ -110,7 +110,7 @@ class Comment:
         """
         return "" if self.parent is None else f"{self.parent.url}#cid:{self.id}"
 
-    def parse(self, comment_tag: Tag = None):
+    def parse(self, comment_tag: Optional[Tag] = None):
         """
         Parse a comment tag, overrides any information already present in the object.
 

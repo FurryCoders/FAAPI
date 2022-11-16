@@ -167,7 +167,7 @@ class FAAPI:
         submissions: list[SubmissionPartial] = [SubmissionPartial(f) for f in parse_submission_figures(page_parsed)]
         return sorted({s for s in submissions}, reverse=True)
 
-    def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: int = None
+    def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: Optional[int] = None
                    ) -> tuple[Submission, Optional[bytes]]:
         """
         Fetch a submission and, optionally, its file.
@@ -181,7 +181,7 @@ class FAAPI:
         sub_file: Optional[bytes] = self.submission_file(sub, chunk_size=chunk_size) if get_file and sub.id else None
         return sub, sub_file
 
-    def submission_file(self, submission: Submission, *, chunk_size: int = None) -> bytes:
+    def submission_file(self, submission: Submission, *, chunk_size: Optional[int] = None) -> bytes:
         """
         Fetch a submission file from a Submission object.
 

@@ -50,8 +50,8 @@ def get_robots(session: Session) -> RobotFileParser:
     return robots
 
 
-def get(session: CloudflareScraper, path: str, *, timeout: int = None,
-        params: dict[str, Union[str, bytes, int, float]] = None) -> Response:
+def get(session: CloudflareScraper, path: str, *, timeout: Optional[int] = None,
+        params: Optional[dict[str, Union[str, bytes, int, float]]] = None) -> Response:
     return session.get(join_url(root, path), params=params, timeout=timeout)
 
 

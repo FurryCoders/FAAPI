@@ -107,7 +107,7 @@ class SubmissionPartial(SubmissionBase):
     Contains partial submission information gathered from submissions pages (gallery, scraps, etc.).
     """
 
-    def __init__(self, submission_figure: Tag = None):
+    def __init__(self, submission_figure: Optional[Tag] = None):
         """
         :param submission_figure: The figure tag from which to parse the submission information.
         """
@@ -131,7 +131,7 @@ class SubmissionPartial(SubmissionBase):
         yield "type", self.type
         yield "thumbnail_url", self.thumbnail_url
 
-    def parse(self, submission_figure: Tag = None):
+    def parse(self, submission_figure: Optional[Tag] = None):
         """
         Parse a submission figure Tag, overrides any information already present in the object.
 
@@ -159,7 +159,7 @@ class Submission(SubmissionBase):
     Contains complete submission information gathered from submission pages, including comments.
     """
 
-    def __init__(self, submission_page: BeautifulSoup = None):
+    def __init__(self, submission_page: Optional[BeautifulSoup] = None):
         """
         :param submission_page: The page from which to parse the submission information.
         """
@@ -237,7 +237,7 @@ class Submission(SubmissionBase):
         """
         return html_to_bbcode(self.footer)
 
-    def parse(self, submission_page: BeautifulSoup = None):
+    def parse(self, submission_page: Optional[BeautifulSoup] = None):
         """
         Parse a submission page, overrides any information already present in the object.
 

@@ -119,7 +119,7 @@ class UserPartial(UserBase):
     Contains partial user information gathered from user folders (gallery, journals, etc.) and submission/journal pages.
     """
 
-    def __init__(self, user_tag: Tag = None):
+    def __init__(self, user_tag: Optional[Tag] = None):
         """
         :param user_tag: The tag from which to parse the user information.
         """
@@ -142,7 +142,7 @@ class UserPartial(UserBase):
         yield "join_date", self.join_date
         yield "user_icon_url", self.user_icon_url
 
-    def parse(self, user_tag: Tag = None):
+    def parse(self, user_tag: Optional[Tag] = None):
         """
         Parse a user page, overrides any information already present in the object.
 
@@ -168,7 +168,7 @@ class User(UserBase):
     Contains complete user information gathered from userpages.
     """
 
-    def __init__(self, user_page: BeautifulSoup = None):
+    def __init__(self, user_page: Optional[BeautifulSoup] = None):
         """
         :param user_page: The page from which to parse the user information.
         """
@@ -216,7 +216,7 @@ class User(UserBase):
         """
         return html_to_bbcode(self.profile)
 
-    def parse(self, user_page: BeautifulSoup = None):
+    def parse(self, user_page: Optional[BeautifulSoup] = None):
         """
         Parse a user page, overrides any information already present in the object.
 

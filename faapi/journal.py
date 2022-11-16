@@ -110,7 +110,7 @@ class JournalPartial(JournalBase):
     Contains partial journal information gathered from journals pages.
     """
 
-    def __init__(self, journal_tag: Tag = None):
+    def __init__(self, journal_tag: Optional[Tag] = None):
         """
         :param journal_tag: The tag from which to parse the journal.
         """
@@ -122,7 +122,7 @@ class JournalPartial(JournalBase):
 
         self.parse()
 
-    def parse(self, journal_tag: Union[Tag, BeautifulSoup] = None):
+    def parse(self, journal_tag: Optional[Union[Tag, BeautifulSoup]] = None):
         """
         Parse a journal tag, overrides any information already present in the object.
 
@@ -156,7 +156,7 @@ class Journal(JournalBase):
     Contains complete journal information gathered from journal pages, including comments.
     """
 
-    def __init__(self, journal_page: BeautifulSoup = None):
+    def __init__(self, journal_page: Optional[BeautifulSoup] = None):
         """
         :param journal_page: The page from which to parse the journal.
         """
@@ -199,7 +199,7 @@ class Journal(JournalBase):
         """
         return html_to_bbcode(self.footer)
 
-    def parse(self, journal_page: Union[Tag, BeautifulSoup] = None):
+    def parse(self, journal_page: Optional[Union[Tag, BeautifulSoup]] = None):
         """
         Parse a journal page, overrides any information already present in the object.
 
