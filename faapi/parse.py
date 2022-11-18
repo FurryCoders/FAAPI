@@ -347,7 +347,7 @@ def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
 def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     id_: int = int(section_tag.attrs.get("id", "00000")[4:])
     tag_title: Optional[Tag] = section_tag.select_one("h2")
-    tag_date: Optional[Tag] = section_tag.select_one("span.popup_date")
+    tag_date: Optional[Tag] = section_tag.select_one("div.section-header span.popup_date")
     tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
     tag_comments: Optional[Tag] = section_tag.select_one("div.section-footer > a > span")
 
@@ -382,7 +382,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journal_page)
     tag_id: Optional[Tag] = journal_page.select_one("meta[property='og:url']")
     tag_title: Optional[Tag] = journal_page.select_one("h2.journal-title")
-    tag_date: Optional[Tag] = journal_page.select_one("span.popup_date")
+    tag_date: Optional[Tag] = journal_page.select_one("div.content div.section-header span.popup_date")
     tag_header: Optional[Tag] = journal_page.select_one("div.journal-header")
     tag_footer: Optional[Tag] = journal_page.select_one("div.journal-footer")
     tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
@@ -483,7 +483,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
     tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
-    tag_date: Optional[Tag] = sub_page.select_one("span.popup_date")
+    tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date")
     tag_tags: list[Tag] = sub_page.select("section.tags-row a")
     tag_views: Optional[Tag] = sub_page.select_one("div.views span")
     tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
