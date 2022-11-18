@@ -1,5 +1,20 @@
 # Changelog
 
+## v3.9.6
+
+### Changes
+
+* Remove implicit `Optional`types to comply with [PEP 484](https://peps.python.org/pep-0484/)
+
+### Fixes
+
+* Fix selectors for date tags in journals and submissions which sometimes caused the incorrect date to be selected
+
+### Dependencies
+
+* Use [mypy ^0.991](https://pypi.org/project/mypy/0.991)
+    * Complies with [PEP 484](https://peps.python.org/pep-0484/)
+
 ## v3.9.5
 
 ### Changes
