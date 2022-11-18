@@ -4,7 +4,7 @@
 
 ### Changes
 
-* Remove implicit `Optional`types to comply with [PEP 484](https://peps.python.org/pep-0484/)
+* Remove implicit `Optional` types to comply with [PEP 484](https://peps.python.org/pep-0484/)
 
 ### Fixes
 
