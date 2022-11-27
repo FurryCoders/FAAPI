@@ -197,6 +197,7 @@ journal, gallery, scraps, etc.
 * `status: str` user status (~, !, etc.)
 * `title: str` the user title as it appears on their userpage
 * `join_date: datetime` the date the user joined (defaults to timestamp 0)
+* `avatar_url: str` the URL to the user icon (used only when available)
 * `user_tag: bs4.element.Tag` the user element used to parse information (placeholder, `UserPartial` is filled
   externally)
 
@@ -220,7 +221,7 @@ If no `user_tag` is passed then the object fields will remain at their default -
   Property method that returns the URL-safe username
 * `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
-* `generate_user_icon_url() -> str`<br/>
+* `generate_avatar_url() -> str`<br/>
   Generates the URl for the current user icon.
 * `parse(user_page: bs4.BeautifulSoup = None)`<br/>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
@@ -240,7 +241,8 @@ The main class storing all of a user's metadata.
 * `info: dict[str, str]` profile information (e.g. "Accepting Trades", "Accepting Commissions", "Character Species",
   etc.)
 * `contacts: dict[str, str]` contact links (e.g. Twitter, Steam, etc.)
-* `user_icon_url: str` the URL to the user icon
+* `avatar_url: str` the URL to the user icon
+* `banner_url: str | None` the URL to the user banner (if any is set, otherwise `None`)
 * `watched: bool` `True` if the user is watched, `False` otherwise
 * `watched_toggle_link: str | None` The link to toggle the watch status (`/watch/` or `/unwatch/` type link)
 * `blocked: bool` `True` if the user is blocked, `False` otherwise
@@ -267,7 +269,7 @@ If no `user_page` is passed then the object fields will remain at their default 
   Property method that returns the URL-safe username
 * `url -> str`<br/>
   Property method that returns the Fur Affinity URL to the user (`https://www.furaffinity.net/user/{name_url}`).
-* `generate_user_icon_url() -> str`<br/>
+* `generate_avatar_url() -> str`<br/>
   Generates the URl for the current user icon.
 * `parse(user_page: bs4.BeautifulSoup = None)`<br/>
   Parses the stored user page for metadata. If `user_page` is passed, it overwrites the existing `user_page` value.
@@ -391,7 +393,7 @@ The main class that parses and holds submission metadata.
 
 * `id: int` submission ID
 * `title: str` submission title
-* `author: UserPartial` submission author (only the `name`, `title`, and `user_icon_url` fields are filled)
+* `author: UserPartial` submission author (only the `name`, `title`, and `avatar_url` fields are filled)
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
   timestamp 0)
 * `tags: list[str]` tags list
