@@ -109,7 +109,8 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["stats"][5] >= user_test_data["stats"]["journals"]
     assert result["info"] == user_test_data["info"]
     assert result["contacts"] == user_test_data["contacts"]
-    assert result["user_icon_url"] != ""
+    assert result["avatar_url"] == user_test_data["avatar_url"] != ""
+    assert result["banner_url"] == user_test_data["banner_url"] != ""
     assert remove_user_icons(clean_html(result["profile"])) == remove_user_icons(clean_html(user_test_data["profile"]))
     assert html_to_bbcode(result["profile"]) == user_test_data["profile_bbcode"]
     assert user_test_data["profile_bbcode"] == html_to_bbcode(bbcode_to_html(user_test_data["profile_bbcode"]))
@@ -169,7 +170,7 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["title"] == journal_test_data["title"]
     assert result["user_info"]["name"] == journal_test_data["author"]["name"]
     assert result["user_info"]["join_date"] == datetime.fromisoformat(journal_test_data["author"]["join_date"])
-    assert result["user_info"]["user_icon_url"] != ""
+    assert result["user_info"]["avatar_url"] != ""
     assert result["date"] == datetime.fromisoformat(journal_test_data["date"])
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]

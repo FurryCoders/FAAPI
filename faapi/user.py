@@ -105,7 +105,7 @@ class UserBase:
         """
         return join_url(root, "user", quote(self.name_url))
 
-    def generate_user_icon_url(self) -> str:
+    def generate_avatar_url(self) -> str:
         """
         Generate the URl for the current user icon.
 
@@ -131,7 +131,7 @@ class UserPartial(UserBase):
         self.user_tag: Optional[Tag] = user_tag
         self.title: str = ""
         self.join_date: datetime = datetime.fromtimestamp(0)
-        self.user_icon_url: str = ""
+        self.avatar_url: str = ""
 
         self.parse()
 
@@ -140,7 +140,7 @@ class UserPartial(UserBase):
         yield "status", self.status
         yield "title", self.title
         yield "join_date", self.join_date
-        yield "user_icon_url", self.user_icon_url
+        yield "avatar_url", self.avatar_url
 
     def parse(self, user_tag: Optional[Tag] = None):
         """
@@ -184,8 +184,8 @@ class User(UserBase):
         self.stats: UserStats = UserStats(0, 0, 0, 0, 0, 0, 0, 0)
         self.info: dict[str, str] = {}
         self.contacts: dict[str, str] = {}
-        self.user_icon_url: str = ""
-        self.user_banner_url: Optional[str] = None
+        self.avatar_url: str = ""
+        self.banner_url: Optional[str] = None
         self.watched: bool = False
         self.watched_toggle_link: Optional[str] = None
         self.blocked: bool = False
@@ -202,8 +202,8 @@ class User(UserBase):
         yield "stats", self.stats._asdict()
         yield "info", self.info
         yield "contacts", self.contacts
-        yield "user_icon_url", self.user_icon_url
-        yield "user_banner_url", self.user_banner_url
+        yield "avatar_url", self.avatar_url
+        yield "banner_url", self.banner_url
         yield "watched", self.watched
         yield "watched_toggle_link", self.watched_toggle_link
         yield "blocked", self.blocked
@@ -243,8 +243,8 @@ class User(UserBase):
         self.stats = UserStats(*parsed["stats"])
         self.info = parsed["info"]
         self.contacts = parsed["contacts"]
-        self.user_icon_url = parsed["user_icon_url"]
-        self.user_banner_url = parsed["user_banner_url"]
+        self.avatar_url = parsed["avatar_url"]
+        self.banner_url = parsed["banner_url"]
         self.watched = parsed["watch"] is None and parsed["unwatch"] is not None
         self.watched_toggle_link = parsed["watch"] or parsed["unwatch"] or None
         self.blocked = parsed["block"] is None and parsed["unblock"] is not None

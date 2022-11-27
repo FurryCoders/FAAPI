@@ -131,7 +131,7 @@ class Comment:
         self.author = faapi.user.UserPartial()
         self.author.name = parsed["user_name"]
         self.author.title = parsed["user_title"]
-        self.author.user_icon_url = parsed["user_icon_url"]
+        self.author.avatar_url = parsed["avatar_url"]
         self.text = parsed["text"]
         self.replies = []
         self.reply_to = parsed["parent"]

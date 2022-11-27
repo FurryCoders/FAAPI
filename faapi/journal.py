@@ -144,7 +144,7 @@ class JournalPartial(JournalBase):
         self.author.status = parsed.get("user_status", "")
         self.author.title = parsed.get("user_title", "")
         self.author.join_date = parsed.get("user_join_date", "")
-        self.author.user_icon_url = parsed.get("user_icon_url", "")
+        self.author.avatar_url = parsed.get("avatar_url", "")
         self.stats = JournalStats(parsed["comments"])
         self.date = parsed["date"]
         self.content = parsed["content"]
@@ -223,7 +223,7 @@ class Journal(JournalBase):
         self.author.status = parsed["user_info"]["status"]
         self.author.title = parsed["user_info"]["title"]
         self.author.join_date = parsed["user_info"]["join_date"]
-        self.author.user_icon_url = parsed["user_info"]["user_icon_url"]
+        self.author.avatar_url = parsed["user_info"]["avatar_url"]
         self.stats = JournalStats(parsed["comments"])
         self.date = parsed["date"]
         self.content = parsed["content"]

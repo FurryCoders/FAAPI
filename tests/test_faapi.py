@@ -118,7 +118,8 @@ def test_user(cookies: RequestsCookieJar, user_test_data: dict):
     assert user_dict["stats"]["journals"] >= user_test_data["stats"]["journals"]
     assert user.info == user_dict["info"] == user_test_data["info"]
     assert user.contacts == user_dict["contacts"] == user_test_data["contacts"]
-    assert user.user_icon_url == user_dict["user_icon_url"] != ""
+    assert user.avatar_url == user_dict["avatar_url"] != ""
+    assert user.banner_url == user_dict["banner_url"] != ""
     assert remove_user_icons(clean_html(user.profile)) == \
            remove_user_icons(clean_html(user_dict["profile"])) == \
            remove_user_icons(clean_html(user_test_data["profile"]))
@@ -135,7 +136,7 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.id == submission_dict["id"] == submission_test_data["id"]
     assert submission.title == submission_dict["title"] == submission_test_data["title"]
     assert submission.author.name == submission_dict["author"]["name"] == submission_test_data["author"]["name"]
-    assert submission.author.user_icon_url == submission_dict["author"]["user_icon_url"] != ""
+    assert submission.author.avatar_url == submission_dict["author"]["avatar_url"] != ""
     assert submission.date == submission_dict["date"] == datetime.fromisoformat(submission_test_data["date"])
     assert submission.tags == submission_dict["tags"] == submission_test_data["tags"]
     assert submission.category == submission_dict["category"] == submission_test_data["category"]
@@ -197,7 +198,7 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
     assert journal.author.name == journal_dict["author"]["name"] == journal_test_data["author"]["name"]
     assert journal.author.join_date == journal_dict["author"]["join_date"] == \
            datetime.fromisoformat(journal_test_data["author"]["join_date"])
-    assert journal.author.user_icon_url == journal_dict["author"]["user_icon_url"] != ""
+    assert journal.author.avatar_url == journal_dict["author"]["avatar_url"] != ""
     assert journal.date == journal_dict["date"] == datetime.fromisoformat(journal_test_data["date"])
     assert journal.stats.comments == journal_dict["stats"]["comments"] >= journal_test_data["stats"]["comments"]
     assert journal.mentions == journal_dict["mentions"] == journal_test_data["mentions"]

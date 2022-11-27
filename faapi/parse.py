@@ -604,11 +604,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_header(user_header: Tag) -> dict[str, Any]:
     tag_status: Optional[Tag] = user_header.select_one("userpage-nav-user-details h1 username")
     tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details username.user-title")
-    tag_user_icon: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
+    tag_avatar: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
 
     assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
     assert tag_title_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
-    assert tag_user_icon is not None, _raise_exception(ParsingError("Missing user icon tag"))
+    assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
 
     status: str = ""
     name: str = tag_status.text.strip()
@@ -618,14 +618,14 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
 
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
-    user_icon_url: str = "https:" + get_attr(tag_user_icon, "src")
+    avatar_url: str = "https:" + get_attr(tag_avatar, "src")
 
     return {
         "status": status,
         "name": name,
         "title": title,
         "join_date": join_date,
-        "user_icon_url": user_icon_url,
+        "avatar_url": avatar_url,
     }
 
 
@@ -688,7 +688,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
     return {
         **parse_user_header(tag_user_header),
-        "user_banner_url": user_banner_url,
+        "banner_url": user_banner_url,
         "profile": profile,
         "stats": stats,
         "info": info,
@@ -703,7 +703,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 def parse_comment_tag(tag: Tag) -> dict:
     tag_id: Optional[Tag] = tag.select_one("a.comment_anchor")
     tag_username: Optional[Tag] = tag.select_one("comment-username")
-    tag_user_icon: Optional[Tag] = tag.select_one("div.avatar img.comment_useravatar")
+    tag_avatar: Optional[Tag] = tag.select_one("div.avatar img.comment_useravatar")
     tag_user_title: Optional[Tag] = tag.select_one("comment-title")
     tag_body: Optional[Tag] = tag.select_one("comment-user-text")
     # TODO: update when they implement parent link
@@ -725,7 +725,7 @@ def parse_comment_tag(tag: Tag) -> dict:
             "id": comment_id,
             "user_name": "",
             "user_title": "",
-            "user_icon_url": "",
+            "avatar_url": "",
             "timestamp": 0,
             "text": comment_text,
             "parent": None,
@@ -734,11 +734,11 @@ def parse_comment_tag(tag: Tag) -> dict:
         }
 
     assert tag_username is not None, _raise_exception(ParsingError("Missing user name tag"))
-    assert tag_user_icon is not None, _raise_exception(ParsingError("Missing user icon tag"))
+    assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
     assert tag_user_title is not None, _raise_exception(ParsingError("Missing user title tag"))
 
     attr_timestamp: Optional[str] = tag.attrs.get("data-timestamp")
-    attr_user_icon: Optional[str] = tag_user_icon.attrs.get("src")
+    attr_avatar: Optional[str] = tag_avatar.attrs.get("src")
     # TODO: update when they implement parent link
     # attr_parent_href: Optional[str] = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
     # TODO: remove when they implement parent link
@@ -747,7 +747,7 @@ def parse_comment_tag(tag: Tag) -> dict:
         attr_parent_href = m[1]
 
     assert attr_timestamp is not None, _raise_exception(ParsingError("Missing timestamp attribute"))
-    assert attr_user_icon is not None, _raise_exception(ParsingError("Missing user icon src attribute"))
+    assert attr_avatar is not None, _raise_exception(ParsingError("Missing user icon src attribute"))
 
     parent_id: Optional[int] = int(attr_parent_href.removeprefix("#cid:")) if attr_parent_href else None
 
@@ -755,7 +755,7 @@ def parse_comment_tag(tag: Tag) -> dict:
         "id": comment_id,
         "user_name": tag_username.text.strip(),
         "user_title": tag_user_title.text.strip(),
-        "user_icon_url": "https:" + attr_user_icon,
+        "avatar_url": "https:" + attr_avatar,
         "timestamp": int(attr_timestamp),
         "text": comment_text,
         "parent": parent_id,

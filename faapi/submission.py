@@ -258,7 +258,7 @@ class Submission(SubmissionBase):
         self.title = parsed["title"]
         self.author.name = parsed["author"]
         self.author.title = parsed["author_title"]
-        self.author.user_icon_url = parsed["author_icon_url"]
+        self.author.avatar_url = parsed["author_icon_url"]
         self.date = parsed["date"]
         self.tags = parsed["tags"]
         self.category = parsed["category"]
