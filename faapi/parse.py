@@ -631,6 +631,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
 
 def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_user_header: Optional[Tag] = user_page.select_one("userpage-nav-header")
+    tag_user_banner: Optional[Tag] = user_page.select_one("site-banner picture img")
     tag_profile: Optional[Tag] = user_page.select_one("div.userpage-profile")
     tag_stats: Optional[Tag] = user_page.select_one("div.userpage-section-right div.table")
     tag_watchlist_to: Optional[Tag] = user_page.select_one("a[href*='watchlist/to']")
@@ -683,9 +684,11 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     tag_block_href: str = get_attr(tag_block, "href") if tag_block else ""
     block: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/block/") else None
     unblock: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/unblock/") else None
+    user_banner_url: Optional[str] = ("https:" + get_attr(tag_user_banner, "src")) if tag_user_banner else None
 
     return {
         **parse_user_header(tag_user_header),
+        "user_banner_url": user_banner_url,
         "profile": profile,
         "stats": stats,
         "info": info,

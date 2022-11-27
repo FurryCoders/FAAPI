@@ -185,6 +185,7 @@ class User(UserBase):
         self.info: dict[str, str] = {}
         self.contacts: dict[str, str] = {}
         self.user_icon_url: str = ""
+        self.user_banner_url: Optional[str] = None
         self.watched: bool = False
         self.watched_toggle_link: Optional[str] = None
         self.blocked: bool = False
@@ -202,6 +203,7 @@ class User(UserBase):
         yield "info", self.info
         yield "contacts", self.contacts
         yield "user_icon_url", self.user_icon_url
+        yield "user_banner_url", self.user_banner_url
         yield "watched", self.watched
         yield "watched_toggle_link", self.watched_toggle_link
         yield "blocked", self.blocked
@@ -242,6 +244,7 @@ class User(UserBase):
         self.info = parsed["info"]
         self.contacts = parsed["contacts"]
         self.user_icon_url = parsed["user_icon_url"]
+        self.user_banner_url = parsed["user_banner_url"]
         self.watched = parsed["watch"] is None and parsed["unwatch"] is not None
         self.watched_toggle_link = parsed["watch"] or parsed["unwatch"] or None
         self.blocked = parsed["block"] is None and parsed["unblock"] is not None
