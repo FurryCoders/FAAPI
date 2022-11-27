@@ -411,7 +411,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     assert id_ != 0, _raise_exception(ParsingError("Missing ID"))
 
     return {
-        **user_info,
+        "user_info": user_info,
         "id": id_,
         "title": title,
         "date": date,
@@ -601,38 +601,59 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     }
 
 
+def parse_user_header(user_header: Tag) -> dict[str, Any]:
+    tag_status: Optional[Tag] = user_header.select_one("userpage-nav-user-details h1 username")
+    tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details username.user-title")
+    tag_user_icon: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
+
+    assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
+    assert tag_title_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
+    assert tag_user_icon is not None, _raise_exception(ParsingError("Missing user icon tag"))
+
+    status: str = ""
+    name: str = tag_status.text.strip()
+
+    if not user_header.select_one("img.type-admin"):
+        status, name = name[0], name[1:]
+
+    title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
+    join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
+    user_icon_url: str = "https:" + get_attr(tag_user_icon, "src")
+
+    return {
+        "status": status,
+        "name": name,
+        "title": title,
+        "join_date": join_date,
+        "user_icon_url": user_icon_url,
+    }
+
+
 def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
-    tag_status: Optional[Tag] = user_page.select_one("div.username h2")
+    tag_user_header: Optional[Tag] = user_page.select_one("userpage-nav-header")
     tag_profile: Optional[Tag] = user_page.select_one("div.userpage-profile")
-    tag_title_join_date: Optional[Tag] = user_page.select_one("div.userpage-flex-item.username > span")
     tag_stats: Optional[Tag] = user_page.select_one("div.userpage-section-right div.table")
     tag_watchlist_to: Optional[Tag] = user_page.select_one("a[href*='watchlist/to']")
     tag_watchlist_by: Optional[Tag] = user_page.select_one("a[href*='watchlist/by']")
     tag_infos: list[Tag] = user_page.select("div#userpage-contact-item div.table-row")
     tag_contacts: list[Tag] = user_page.select("div#userpage-contact div.user-contact-user-info")
-    tag_user_icon_url: Optional[Tag] = user_page.select_one("img.user-nav-avatar")
-    tag_user_nav_controls: Optional[Tag] = user_page.select_one("div.user-nav-controls")
+    tag_user_nav_controls: Optional[Tag] = user_page.select_one("userpage-nav-interface-buttons")
     tag_meta_url: Optional[Tag] = user_page.select_one('meta[property="og:url"]')
 
-    assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
+    assert tag_user_header is not None, _raise_exception(ParsingError("Missing user header tag"))
     assert tag_profile is not None, _raise_exception(ParsingError("Missing profile tag"))
-    assert tag_title_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
     assert tag_stats is not None, _raise_exception(ParsingError("Missing stats tag"))
     assert tag_watchlist_to is not None, _raise_exception(ParsingError("Missing watchlist to tag"))
     assert tag_watchlist_by is not None, _raise_exception(ParsingError("Missing watchlist by tag"))
-    assert tag_user_icon_url is not None, _raise_exception(ParsingError("Missing user icon URL tag"))
-    assert tag_user_nav_controls is not None, _raise_exception(ParsingError("Missing user nav controls tag"))
     assert tag_meta_url is not None, _raise_exception(ParsingError("Missing meta tag"))
 
-    tag_watch: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/watch/'], a[href^='/unwatch/']")
-    tag_block: Optional[Tag] = tag_user_nav_controls.select_one("a[href^='/block/'], a[href^='/unblock/']")
+    tag_watch: Optional[Tag] = None
+    tag_block: Optional[Tag] = None
 
-    status: str = ""
-    name: str = tag_status.text.strip()
-    if username_url(name) != username_url(parse_username_from_url(get_attr(tag_meta_url, "content")) or ""):
-        status, name = name[0], name[1:]
-    title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
-    join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
+    if tag_user_nav_controls:
+        tag_watch = tag_user_nav_controls.select_one("a[href^='/watch/'], a[href^='/unwatch/']")
+        tag_block = tag_user_nav_controls.select_one("a[href^='/block/'], a[href^='/unblock/']")
+
     profile: str = clean_html(inner_html(tag_profile))
     stats: tuple[int, ...] = (
         *map(lambda s: int(s.split(":")[1]), filter(bool, map(str.strip, tag_stats.text.split("\n")))),
@@ -656,7 +677,6 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
             continue
         contacts[tag_key.text.strip()] = get_attr(a, "href") if (a := pc.select_one("a")) else \
             [*filter(bool, map(str.strip, pc.text.split("\n")))][-1]
-    user_icon_url: str = "https:" + get_attr(tag_user_icon_url, "src")
     tag_watch_href: str = get_attr(tag_watch, "href") if tag_watch else ""
     watch: Optional[str] = f"{root}{tag_watch_href}" if tag_watch_href.startswith("/watch/") else None
     unwatch: Optional[str] = f"{root}{tag_watch_href}" if tag_watch_href.startswith("/unwatch/") else None
@@ -665,15 +685,11 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     unblock: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/unblock/") else None
 
     return {
-        "name": name,
-        "status": status,
-        "title": title,
-        "join_date": join_date,
+        **parse_user_header(tag_user_header),
         "profile": profile,
         "stats": stats,
         "info": info,
         "contacts": contacts,
-        "user_icon_url": user_icon_url,
         "watch": watch,
         "unwatch": unwatch,
         "block": block,
@@ -682,12 +698,13 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_comment_tag(tag: Tag) -> dict:
-    tag_id: Optional[Tag] = tag.select_one("a")
-    tag_username: Optional[Tag] = tag.select_one("div.header strong.comment_username > h3")
-    tag_user_icon: Optional[Tag] = tag.select_one("div.header img.comment_useravatar")
-    tag_user_title: Optional[Tag] = tag.select_one("div.header div.name div.cell span.hideonmobile")
-    tag_body: Optional[Tag] = tag.select_one("div.base > div.body")
-    tag_parent_link: Optional[Tag] = tag.select_one("a.comment-parent")
+    tag_id: Optional[Tag] = tag.select_one("a.comment_anchor")
+    tag_username: Optional[Tag] = tag.select_one("comment-username")
+    tag_user_icon: Optional[Tag] = tag.select_one("div.avatar img.comment_useravatar")
+    tag_user_title: Optional[Tag] = tag.select_one("comment-title")
+    tag_body: Optional[Tag] = tag.select_one("comment-user-text")
+    # TODO: update when they implement parent link
+    # tag_parent_link: Optional[Tag] = tag.select_one("a.comment-parent")
     tag_edited: Optional[Tag] = tag.select_one("img.edited")
 
     assert tag_id is not None, _raise_exception(ParsingError("Missing link tag"))
@@ -719,7 +736,12 @@ def parse_comment_tag(tag: Tag) -> dict:
 
     attr_timestamp: Optional[str] = tag.attrs.get("data-timestamp")
     attr_user_icon: Optional[str] = tag_user_icon.attrs.get("src")
-    attr_parent_href: Optional[str] = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
+    # TODO: update when they implement parent link
+    # attr_parent_href: Optional[str] = tag_parent_link.attrs.get("href") if tag_parent_link is not None else None
+    # TODO: remove when they implement parent link
+    attr_parent_href: Optional[str] = None
+    if m := search(r'<a class="comment-parent" href="(#cid:\d+)"', tag.decode_contents()):
+        attr_parent_href = m[1]
 
     assert attr_timestamp is not None, _raise_exception(ParsingError("Missing timestamp attribute"))
     assert attr_user_icon is not None, _raise_exception(ParsingError("Missing user icon src attribute"))
@@ -773,13 +795,10 @@ def parse_user_tag(user_tag: Tag) -> dict[str, Any]:
 
 
 def parse_user_folder(folder_page: BeautifulSoup) -> dict[str, Any]:
-    tag_username: Optional[Tag] = folder_page.select_one("div.userpage-flex-item.username")
-    tag_user_icon: Optional[Tag] = folder_page.select_one("img.user-nav-avatar")
-    assert tag_username is not None, _raise_exception(ParsingError("Missing username tag"))
-    assert tag_user_icon is not None, _raise_exception(ParsingError("Missing user icon tag"))
+    tag_user_header: Optional[Tag] = folder_page.select_one("userpage-nav-header")
+    assert tag_user_header is not None, _raise_exception(ParsingError("Missing user header tag"))
     return {
-        **parse_user_tag(tag_username),
-        "user_icon_url": "https:" + get_attr(tag_user_icon, "src"),
+        **parse_user_header(tag_user_header),
     }
 
 

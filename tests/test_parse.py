@@ -167,9 +167,9 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
 
     assert result["id"] == journal_test_data["id"]
     assert result["title"] == journal_test_data["title"]
-    assert result["user_name"] == journal_test_data["author"]["name"]
-    assert result["user_join_date"] == datetime.fromisoformat(journal_test_data["author"]["join_date"])
-    assert result["user_icon_url"] != ""
+    assert result["user_info"]["name"] == journal_test_data["author"]["name"]
+    assert result["user_info"]["join_date"] == datetime.fromisoformat(journal_test_data["author"]["join_date"])
+    assert result["user_info"]["user_icon_url"] != ""
     assert result["date"] == datetime.fromisoformat(journal_test_data["date"])
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]

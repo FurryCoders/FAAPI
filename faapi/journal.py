@@ -219,11 +219,11 @@ class Journal(JournalBase):
         # noinspection DuplicatedCode
         self.id = parsed["id"]
         self.title = parsed["title"]
-        self.author.name = parsed.get("user_name", "")
-        self.author.status = parsed.get("user_status", "")
-        self.author.title = parsed.get("user_title", "")
-        self.author.join_date = parsed.get("user_join_date", "")
-        self.author.user_icon_url = parsed.get("user_icon_url", "")
+        self.author.name = parsed["user_info"]["name"]
+        self.author.status = parsed["user_info"]["status"]
+        self.author.title = parsed["user_info"]["title"]
+        self.author.join_date = parsed["user_info"]["join_date"]
+        self.author.user_icon_url = parsed["user_info"]["user_icon_url"]
         self.stats = JournalStats(parsed["comments"])
         self.date = parsed["date"]
         self.content = parsed["content"]

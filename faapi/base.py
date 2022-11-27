@@ -223,8 +223,8 @@ class FAAPI:
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         author: UserPartial = UserPartial()
         author.name, author.status, author.title, author.join_date, author.user_icon_url = [
-            info_parsed["user_name"], info_parsed["user_status"],
-            info_parsed["user_title"], info_parsed["user_join_date"],
+            info_parsed["name"], info_parsed["status"],
+            info_parsed["title"], info_parsed["join_date"],
             info_parsed["user_icon_url"]
         ]
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
@@ -244,8 +244,8 @@ class FAAPI:
         info_parsed: dict[str, Any] = parse_user_submissions(page_parsed)
         author: UserPartial = UserPartial()
         author.name, author.status, author.title, author.join_date, author.user_icon_url = [
-            info_parsed["user_name"], info_parsed["user_status"],
-            info_parsed["user_title"], info_parsed["user_join_date"],
+            info_parsed["name"], info_parsed["status"],
+            info_parsed["title"], info_parsed["join_date"],
             info_parsed["user_icon_url"]
         ]
         for s in (submissions := list(map(SubmissionPartial, info_parsed["figures"]))):
@@ -277,8 +277,8 @@ class FAAPI:
         info_parsed: dict[str, Any] = parse_user_journals(page_parsed)
         author: UserPartial = UserPartial()
         author.name, author.status, author.title, author.join_date, author.user_icon_url = [
-            info_parsed["user_name"], info_parsed["user_status"],
-            info_parsed["user_title"], info_parsed["user_join_date"],
+            info_parsed["name"], info_parsed["status"],
+            info_parsed["title"], info_parsed["join_date"],
             info_parsed["user_icon_url"]
         ]
         for j in (journals := list(map(JournalPartial, info_parsed["sections"]))):
