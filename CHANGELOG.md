@@ -1,5 +1,26 @@
 # Changelog
 
+## v3.10.0
+
+### New Features
+
+* Fur Affinity UI update
+    * Support the new UI introduced on November 26, 2022
+    * *Note:* the new UI does not show comment parents yet, but the parent comment link is stil present in the HTML and
+      just commented out, so the parser uses regex to extract the parent ID; this could cause unforeseen issues so be
+      careful when parsing comments
+* User banners
+    * Parse new user banners (when set)
+    * New `User.banner_url` variable holds the banner URL
+
+### Changes
+
+* Rename `User.user_icon_url` and `UserPartial.user_icon_url` to `User.avatar_url` and `UserPartial.avatar_url`
+
+### Dependencies
+
+* Use [flake ^6.0.0](https://pypi.org/project/flake/6.0.0) for testing
+
 ## v3.9.6
 
 ### Changes
