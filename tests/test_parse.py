@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timedelta
 from json import load
 from pathlib import Path
 from re import sub
@@ -55,6 +56,25 @@ def journal_test_data() -> dict:
     return load((__root__ / "test_journal.json").open())
 
 
+def dst_us() -> timedelta:
+    now: datetime = datetime.now()
+
+    if now.month < 3 or now.month >= 12:
+        return timedelta(0)
+
+    m1 = datetime(now.year, 3, 1)
+
+    if now < datetime(now.year, 3, 7 + (6 - m1.weekday() + 1)):
+        return timedelta(0)
+
+    n1 = datetime(now.year, 11, 1)
+
+    if now > datetime(now.year, 11, 6 - n1.weekday() + 1):
+        return timedelta(0)
+
+    return timedelta(hours=-1)
+
+
 def remove_user_icons(html: str) -> str:
     return sub(r"a\.furaffinity\.net/\d{8}/[^. ]+.gif", "", html)
 
@@ -100,7 +120,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert result["name"] == user_test_data["name"]
     assert result["status"] == user_test_data["status"]
     assert result["title"] == user_test_data["title"]
-    assert result["join_date"] == datetime.fromisoformat(user_test_data["join_date"])
+    assert result["join_date"] == datetime.fromisoformat(user_test_data["join_date"]) + dst_us()
     assert result["stats"][0] >= user_test_data["stats"]["views"]
     assert result["stats"][1] >= user_test_data["stats"]["submissions"]
     assert result["stats"][2] >= user_test_data["stats"]["favorites"]
@@ -127,7 +147,7 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
     assert result["title"] == submission_test_data["title"]
     assert result["author"] == submission_test_data["author"]["name"]
     assert result["author_icon_url"] != ""
-    assert result["date"] == datetime.fromisoformat(submission_test_data["date"])
+    assert result["date"] == datetime.fromisoformat(submission_test_data["date"]) + dst_us()
     assert result["tags"] == submission_test_data["tags"]
     assert result["category"] == submission_test_data["category"]
     assert result["species"] == submission_test_data["species"]
@@ -169,9 +189,10 @@ def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict)
     assert result["id"] == journal_test_data["id"]
     assert result["title"] == journal_test_data["title"]
     assert result["user_info"]["name"] == journal_test_data["author"]["name"]
-    assert result["user_info"]["join_date"] == datetime.fromisoformat(journal_test_data["author"]["join_date"])
+    assert result["user_info"]["join_date"] == \
+           datetime.fromisoformat(journal_test_data["author"]["join_date"]) + dst_us()
     assert result["user_info"]["avatar_url"] != ""
-    assert result["date"] == datetime.fromisoformat(journal_test_data["date"])
+    assert result["date"] == datetime.fromisoformat(journal_test_data["date"]) + dst_us()
     assert result["comments"] >= journal_test_data["stats"]["comments"]
     assert result["mentions"] == journal_test_data["mentions"]
     assert remove_user_icons(clean_html(result["content"])) == remove_user_icons(

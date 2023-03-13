@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timedelta
 from json import load
 from pathlib import Path
 from re import sub
@@ -45,6 +46,25 @@ def submission_test_data() -> dict:
 @fixture
 def journal_test_data() -> dict:
     return load((__root__ / "test_journal.json").open())
+
+
+def dst_us() -> timedelta:
+    now: datetime = datetime.now()
+
+    if now.month < 3 or now.month >= 12:
+        return timedelta(0)
+
+    m1 = datetime(now.year, 3, 1)
+
+    if now < datetime(now.year, 3, 7 + (6 - m1.weekday() + 1)):
+        return timedelta(0)
+
+    n1 = datetime(now.year, 11, 1)
+
+    if now > datetime(now.year, 11, 6 - n1.weekday() + 1):
+        return timedelta(0)
+
+    return timedelta(hours=-1)
 
 
 def remove_user_icons(html: str) -> str:
@@ -103,7 +123,7 @@ def test_user(cookies: RequestsCookieJar, user_test_data: dict):
     assert user.name == user_dict["name"] == user_test_data["name"]
     assert user.status == user_dict["status"] == user_test_data["status"]
     assert user.title == user_dict["title"] == user_test_data["title"]
-    assert user.join_date == user_dict["join_date"] == datetime.fromisoformat(user_test_data["join_date"])
+    assert user.join_date == user_dict["join_date"] == datetime.fromisoformat(user_test_data["join_date"]) + dst_us()
     assert user.stats.views == user_dict["stats"]["views"]
     assert user_dict["stats"]["views"] >= user_test_data["stats"]["views"]
     assert user.stats.submissions == user_dict["stats"]["submissions"]
@@ -137,7 +157,7 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.title == submission_dict["title"] == submission_test_data["title"]
     assert submission.author.name == submission_dict["author"]["name"] == submission_test_data["author"]["name"]
     assert submission.author.avatar_url == submission_dict["author"]["avatar_url"] != ""
-    assert submission.date == submission_dict["date"] == datetime.fromisoformat(submission_test_data["date"])
+    assert submission.date == submission_dict["date"] == datetime.fromisoformat(submission_test_data["date"]) + dst_us()
     assert submission.tags == submission_dict["tags"] == submission_test_data["tags"]
     assert submission.category == submission_dict["category"] == submission_test_data["category"]
     assert submission.species == submission_dict["species"] == submission_test_data["species"]
@@ -197,9 +217,9 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
     assert journal.title == journal_dict["title"] == journal_test_data["title"]
     assert journal.author.name == journal_dict["author"]["name"] == journal_test_data["author"]["name"]
     assert journal.author.join_date == journal_dict["author"]["join_date"] == \
-           datetime.fromisoformat(journal_test_data["author"]["join_date"])
+           datetime.fromisoformat(journal_test_data["author"]["join_date"]) + dst_us()
     assert journal.author.avatar_url == journal_dict["author"]["avatar_url"] != ""
-    assert journal.date == journal_dict["date"] == datetime.fromisoformat(journal_test_data["date"])
+    assert journal.date == journal_dict["date"] == datetime.fromisoformat(journal_test_data["date"]) + dst_us()
     assert journal.stats.comments == journal_dict["stats"]["comments"] >= journal_test_data["stats"]["comments"]
     assert journal.mentions == journal_dict["mentions"] == journal_test_data["mentions"]
     assert remove_user_icons(clean_html(journal.content)) == \
