@@ -9,6 +9,7 @@ from re import sub
 from typing import Any
 from typing import Optional
 from typing import Union
+from urllib.parse import quote
 
 from bbcode import Parser as BBCodeParser  # type:ignore
 from bs4 import BeautifulSoup
@@ -555,6 +556,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     mentions: list[str] = parse_mentions(tag_description)
     folder: str = m.group(1).lower() if (m := match(r"^/(scraps|gallery)/.*$", get_attr(tag_folder, "href"))) else ""
     file_url: str = "https:" + get_attr(tag_file_url, "href")
+    file_url = f"{file_url.rsplit('/', 1)[0]}/{quote(file_url.rsplit('/', 1)[1])}"
     thumbnail_url: str = ("https:" + get_attr(tag_thumbnail_url, "data-preview-src")) if tag_thumbnail_url else ""
     prev_sub: Optional[int] = int(
         get_attr(tag_prev, "href").split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
