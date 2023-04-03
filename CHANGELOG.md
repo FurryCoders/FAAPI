@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.10.1
+
+### Fixes
+
+* Fix parsed URLs not being properly encoded if they contained non-allowed URL characters
+
 ## v3.10.0
 
 ### New Features
