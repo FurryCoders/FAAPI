@@ -439,6 +439,7 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
     rating: str = next(c for c in figure_tag["class"] if c.startswith("r-"))[2:]
     type_: str = next(c for c in figure_tag["class"] if c.startswith("t-"))[2:]
     thumbnail_url: str = "https:" + get_attr(tag_thumbnail, "src")
+    thumbnail_url = f"{thumbnail_url.rsplit('/', 1)[0]}/{quote(thumbnail_url.rsplit('/', 1)[1])}"
 
     return {
         "id": id_,
@@ -558,6 +559,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     file_url: str = "https:" + get_attr(tag_file_url, "href")
     file_url = f"{file_url.rsplit('/', 1)[0]}/{quote(file_url.rsplit('/', 1)[1])}"
     thumbnail_url: str = ("https:" + get_attr(tag_thumbnail_url, "data-preview-src")) if tag_thumbnail_url else ""
+    thumbnail_url = f"{thumbnail_url.rsplit('/', 1)[0]}/{quote(thumbnail_url.rsplit('/', 1)[1])}" \
+        if thumbnail_url else ""
     prev_sub: Optional[int] = int(
         get_attr(tag_prev, "href").split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
     next_sub: Optional[int] = int(
@@ -621,6 +624,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
     avatar_url: str = "https:" + get_attr(tag_avatar, "src")
+    avatar_url = f"{avatar_url.rsplit('/', 1)[0]}/{quote(avatar_url.rsplit('/', 1)[1])}"
 
     return {
         "status": status,
@@ -687,6 +691,8 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
     block: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/block/") else None
     unblock: Optional[str] = f"{root}{tag_block_href}" if tag_block_href.startswith("/unblock/") else None
     user_banner_url: Optional[str] = ("https:" + get_attr(tag_user_banner, "src")) if tag_user_banner else None
+    user_banner_url = f"{user_banner_url.rsplit('/', 1)[0]}/{quote(user_banner_url.rsplit('/', 1)[1])}" \
+        if user_banner_url else None
 
     return {
         **parse_user_header(tag_user_header),
@@ -752,12 +758,14 @@ def parse_comment_tag(tag: Tag) -> dict:
     assert attr_avatar is not None, _raise_exception(ParsingError("Missing user icon src attribute"))
 
     parent_id: Optional[int] = int(attr_parent_href.removeprefix("#cid:")) if attr_parent_href else None
+    avatar_url: str = "https:" + attr_avatar
+    avatar_url = f"{avatar_url.rsplit('/', 1)[0]}/{quote(avatar_url.rsplit('/', 1)[1])}"
 
     return {
         "id": comment_id,
         "user_name": tag_username.text.strip(),
         "user_title": tag_user_title.text.strip(),
-        "avatar_url": "https:" + attr_avatar,
+        "avatar_url": avatar_url,
         "timestamp": int(attr_timestamp),
         "text": comment_text,
         "parent": parent_id,
