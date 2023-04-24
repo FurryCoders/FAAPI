@@ -27,9 +27,9 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.28.2"
-beautifulsoup4 = "^4.12.0"
+beautifulsoup4 = "^4.12.2"
 cfscrape = "^2.1.1"
-lxml = "^4.9.1"
+lxml = "^4.9.2"
 python-dateutil = "^2.8.2"
 htmlmin = "^0.1.12"
 bbcode = "^1.1.0"
