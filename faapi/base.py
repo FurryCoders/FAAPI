@@ -3,6 +3,7 @@ from time import sleep
 from time import time
 from typing import Any
 from typing import Optional
+from typing import Type
 from typing import Union
 from urllib.parse import quote
 from urllib.robotparser import RobotFileParser
@@ -42,12 +43,12 @@ class FAAPI:
     This class provides the methods to access and parse Fur Affinity pages and retrieve objects.
     """
 
-    def __init__(self, cookies: Union[list[CookieDict], CookieJar]):
+    def __init__(self, cookies: Union[list[CookieDict], CookieJar], session_class: Type[Session] = Session):
         """
         :param cookies: The cookies for the session.
         """
 
-        self.session: Session = make_session(cookies)  # Session used for get requests
+        self.session: Session = make_session(cookies, session_class)  # Session used for get requests
         self.robots: RobotFileParser = get_robots(self.session)  # robots.txt handler
         self.last_get: float = time() - self.crawl_delay  # Time of last get (UNIX time)
         self.raise_for_unauthorized: bool = True  # Control login checks
@@ -73,7 +74,7 @@ class FAAPI:
 
         :param cookies: The cookies for the session.
         """
-        self.session = make_session(cookies)
+        self.session = make_session(cookies, self.session.__class__)
 
     def handle_delay(self):
         """

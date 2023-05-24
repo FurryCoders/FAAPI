@@ -5,6 +5,7 @@ from platform import python_version
 from platform import uname
 from re import compile as re_compile
 from typing import Optional
+from typing import Type
 from typing import TypedDict
 from typing import Union
 from urllib.robotparser import RobotFileParser
@@ -18,12 +19,6 @@ from .exceptions import _raise_exception
 
 root: str = "https://www.furaffinity.net"
 
-try:
-    # noinspection PyPackageRequirements
-    from cfscrape import CloudflareScraper as SessionClass  # type: ignore
-except ModuleNotFoundError:
-    from requests import Session as SessionClass
-
 
 class CookieDict(TypedDict):
     name: str
@@ -34,9 +29,9 @@ def join_url(*url_comps: Union[str, int]) -> str:
     return "/".join(map(lambda e: str(e).strip(" /"), url_comps))
 
 
-def make_session(cookies: Union[list[CookieDict], CookieJar]) -> Session:
+def make_session(cookies: Union[list[CookieDict], CookieJar], cls: Type[Session]) -> Session:
     assert len(cookies), _raise_exception(Unauthorized("No cookies for session"))
-    session: Session = SessionClass()
+    session: Session = cls()
     session.headers["User-Agent"] = f"faapi/{__version__} Python/{python_version()} {(u := uname()).system}/{u.release}"
 
     for cookie in cookies:
