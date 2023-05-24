@@ -1,16 +1,12 @@
 from json import load
 from pathlib import Path
-from platform import python_version
-from platform import uname
 from urllib.robotparser import RobotFileParser
 
 from pytest import fixture
 from pytest import raises
 from requests import Response
-from requests import Session
 from requests.cookies import RequestsCookieJar
 
-from faapi.__version__ import __version__
 from faapi.connection import SessionClass
 from faapi.connection import get_robots
 from faapi.connection import join_url
@@ -48,11 +44,8 @@ def test_make_session_error():
         make_session([])
 
 
-def test_get_robots():
-    with Session() as session:
-        session.headers["User-Agent"] = \
-            f"faapi/{__version__} Python/{python_version()} {(u := uname()).system}/{u.release} test"
-        result = get_robots(session)
+def test_get_robots(cookies: RequestsCookieJar):
+    result = get_robots(make_session(cookies))
     assert isinstance(result, RobotFileParser)
     assert getattr(result, "default_entry", None) is not None
 

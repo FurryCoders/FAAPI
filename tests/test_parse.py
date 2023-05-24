@@ -36,9 +36,7 @@ def data() -> dict:
 
 @fixture
 def session(data: dict) -> Session:
-    sess = make_session(data["cookies"])
-    sess.headers["User-Agent"] += " test"
-    return sess
+    return make_session(data["cookies"])
 
 
 @fixture
