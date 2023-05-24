@@ -58,7 +58,7 @@ class FAAPI:
         """
         The user agent of the session
         """
-        return self.session.headers["User-Agent"]
+        return ua.decode() if isinstance(ua := self.session.headers["User-Agent"], bytes) else ua
 
     @property
     def crawl_delay(self) -> float:
