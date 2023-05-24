@@ -28,14 +28,10 @@ classifiers = [
 python = "^3.9"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
-cfscrape = { version = "^2.1.1", optional = true, extras = ["cfscrape"] }
 lxml = "^4.9.2"
 python-dateutil = "^2.8.2"
 htmlmin = "^0.1.12"
 bbcode = "^1.1.0"
-
-[tool.poetry.extras]
-cfscrape = ["cfscrape", "urllib3"]
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.2.0"
