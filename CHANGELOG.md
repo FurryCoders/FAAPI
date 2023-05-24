@@ -2,14 +2,14 @@
 
 ## v3.10.2
 
+### New Features
+
+* Session class for requests can be customized with new `session_class` argument for `FAAPI`
+
 ### Changes
 
-* Make [cfscrape](https://pypi.org/project/cfscrape) an optional dependency
-
-### Fixes
-
-* Fix urllib3 issue with cfscrape caused by the removal of `DEFAULT_CIPHERS` from urllib3 2.0.0
-    * If the extra dependency cfscrape is used, urllib3 is set to <2.0.0
+* Remove [cfscrape](https://pypi.org/project/cfscrape) dependency
+    * Was not updated in years and all requests succeeded with a normal `requests.Session` object
 
 ### Dependencies
 
