@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.10.2
+
+### Changes
+
+* Make [cfscrape](https://pypi.org/project/cfscrape) an optional dependency
+
+### Fixes
+
+* Fix urllib3 issue with cfscrape caused by the removal of `DEFAULT_CIPHERS` from urllib3 2.0.0
+    * If the extra dependency cfscrape is used, urllib3 is set to <2.0.0
+
+### Dependencies
+
+* Use [requests ^2.31.0](https://pypi.org/project/requests/2.31.0)
+    * Fix [CVE-2023-32681](https://cve.report/CVE-2022-42969) issue
+* Use [beautifulsoup4 ^4.12.2](https://pypi.org/project/beautifulsoup4/4.12.2)
+* Use [lxml ^4.9.2](https://pypi.org/project/lxml/4.9.2)
+
 ## v3.10.1
 
 ### Fixes
