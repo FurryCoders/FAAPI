@@ -8,8 +8,8 @@ from typing import Optional
 from pytest import fixture
 from pytest import raises
 from requests import Response
+from requests import Session
 
-from faapi.connection import CloudflareScraper
 from faapi.connection import join_url
 from faapi.connection import make_session
 from faapi.connection import root
@@ -35,7 +35,7 @@ def data() -> dict:
 
 
 @fixture
-def session(data: dict) -> CloudflareScraper:
+def session(data: dict) -> Session:
     sess = make_session(data["cookies"])
     sess.headers["User-Agent"] += " test"
     return sess
@@ -79,7 +79,7 @@ def remove_user_icons(html: str) -> str:
     return sub(r"a\.furaffinity\.net/\d{8}/[^. ]+.gif", "", html)
 
 
-def test_check_page_disabled_account(session: CloudflareScraper, data: dict):
+def test_check_page_disabled_account(session: Session, data: dict):
     res: Response = session.get(join_url(root, "user", data["disabled"]["user"]))
     assert res.ok
 
@@ -89,7 +89,7 @@ def test_check_page_disabled_account(session: CloudflareScraper, data: dict):
         check_page_raise(page)
 
 
-def test_check_page_not_found(session: CloudflareScraper):
+def test_check_page_not_found(session: Session):
     res: Response = session.get(join_url(root, "user", "_"))
     assert res.ok
 
@@ -99,7 +99,7 @@ def test_check_page_not_found(session: CloudflareScraper):
         check_page_raise(page)
 
 
-def test_parse_loggedin_user(session: CloudflareScraper, data: dict):
+def test_parse_loggedin_user(session: Session, data: dict):
     res: Response = session.get(join_url(root, "user", data["login"]["user"]))
     assert res.ok
 
@@ -110,7 +110,7 @@ def test_parse_loggedin_user(session: CloudflareScraper, data: dict):
     assert username_url(login_user) == username_url(data["login"]["user"])
 
 
-def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
+def test_parse_user_page(session: Session, user_test_data: dict):
     res: Response = session.get(join_url(root, "user", username_url(user_test_data["name"])))
     assert res.ok
 
@@ -136,7 +136,7 @@ def test_parse_user_page(session: CloudflareScraper, user_test_data: dict):
     assert user_test_data["profile_bbcode"] == html_to_bbcode(bbcode_to_html(user_test_data["profile_bbcode"]))
 
 
-def test_parse_submission_page(session: CloudflareScraper, submission_test_data: dict):
+def test_parse_submission_page(session: Session, submission_test_data: dict):
     res: Response = session.get(join_url(root, "view", submission_test_data["id"]))
     assert res.ok
 
@@ -179,7 +179,7 @@ def test_parse_submission_page(session: CloudflareScraper, submission_test_data:
            html_to_bbcode(bbcode_to_html(submission_test_data["footer_bbcode"]))
 
 
-def test_parse_journal_page(session: CloudflareScraper, journal_test_data: dict):
+def test_parse_journal_page(session: Session, journal_test_data: dict):
     res: Response = session.get(join_url(root, "journal", journal_test_data["id"]))
     assert res.ok
 

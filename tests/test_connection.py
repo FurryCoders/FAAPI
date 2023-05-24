@@ -11,7 +11,7 @@ from requests import Session
 from requests.cookies import RequestsCookieJar
 
 from faapi.__version__ import __version__
-from faapi.connection import CloudflareScraper
+from faapi.connection import SessionClass
 from faapi.connection import get_robots
 from faapi.connection import join_url
 from faapi.connection import make_session
@@ -35,12 +35,12 @@ def test_make_session_cookie_jar():
     cookie_jar = RequestsCookieJar()
     cookie_jar.set("a", "a")
     result = make_session(cookie_jar)
-    assert isinstance(result, CloudflareScraper)
+    assert isinstance(result, SessionClass)
 
 
 def test_make_session_list_dict():
     result = make_session([{"name": "a", "value": "a"}])
-    assert isinstance(result, CloudflareScraper)
+    assert isinstance(result, SessionClass)
 
 
 def test_make_session_error():
