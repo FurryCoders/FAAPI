@@ -108,7 +108,7 @@ This is the main object that handles all the calls to scrape pages and get submi
 
 It holds 6 different fields:
 
-* `session: CloudflareScraper` `cfscrape` session used for get requests
+* `session: requests.Session` The session used for all requests.
 * `robots: urllib.robotparser.RobotFileParser` robots.txt handler
 * `user_agent: str` user agent used by the session (property, cannot be set)
 * `crawl_delay: float` crawl delay from robots.txt (property, cannot be set)
@@ -119,10 +119,12 @@ It holds 6 different fields:
 
 #### Init
 
-`__init__(cookies: list[dict[str, str]] | CookieJar)`
+`__init__(cookies: list[dict[str, str]] | CookieJar, session_class: Type[Session] = Session)`
 
-The class init has a single argument for the cookies. Cookies must be in the format mentioned above
-in [#Cookies](#cookies).
+A FAAPI object must be initialised with a cookies object in the format mentioned above in [#Cookies](#cookies).
+
+An optional `session_class` argument can be given to modify the class used by `FAAPI.session`. Any class based
+on `requests.Session` is accepted.
 
 #### Methods & Properties
 
