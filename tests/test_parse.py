@@ -36,7 +36,7 @@ def data() -> dict:
 
 @fixture
 def session(data: dict) -> Session:
-    return make_session(data["cookies"])
+    return make_session(data["cookies"], Session)
 
 
 @fixture
