@@ -87,7 +87,7 @@
 ### Dependencies
 
 * Use [pytest ^7.2.0](https://pypi.org/project/pytest/7.2.0)
-    * Fix [CVE-2022-42969](https://cve.report/CVE-2022-42969.pdf) issue
+    * Fix [CVE-2022-42969](https://cve.report/CVE-2022-42969) issue
 
 ## v3.9.0
 
@@ -176,7 +176,7 @@
 ### Dependencies
 
 * Use [lxml ^4.9.1](https://pypi.org/project/lxml/4.9.1)
-    * Fix [CVE-2022-2309](https://cve.report/CVE-2022-2309.pdf) issue
+    * Fix [CVE-2022-2309](https://cve.report/CVE-2022-2309) issue
 
 ## v3.7.3
 
@@ -434,7 +434,7 @@
 ### Dependencies
 
 * Use [lxml ^4.7.1](https://pypi.org/project/lxml/4.7.1)
-    * Fix [CVE-2021-43818](https://cve.report/CVE-2021-43818.pdf) issue
+    * Fix [CVE-2021-43818](https://cve.report/CVE-2021-43818) issue
 
 ## v3.0.2
 
