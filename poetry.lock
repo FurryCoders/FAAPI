@@ -600,4 +600,4 @@ cfscrape = ["cfscrape", "urllib3"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "920e5f27972ea218840dc938d99703f17e02ddbfe696ee9f6d65af2fea10b38d"
+content-hash = "d1c1b5583a28ca94da0828af2c44ca2fa41b24ca115f8a2929b861987a4290b5"
