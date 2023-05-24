@@ -9,8 +9,6 @@ from typing import TypedDict
 from typing import Union
 from urllib.robotparser import RobotFileParser
 
-from cfscrape import CloudflareScraper  # type: ignore
-from cfscrape import create_scraper  # type: ignore
 from requests import Response
 from requests import Session
 
@@ -19,6 +17,12 @@ from .exceptions import Unauthorized
 from .exceptions import _raise_exception
 
 root: str = "https://www.furaffinity.net"
+
+try:
+    # noinspection PyPackageRequirements
+    from cfscrape import CloudflareScraper as SessionClass  # type: ignore
+except ModuleNotFoundError:
+    from requests import Session as SessionClass
 
 
 class CookieDict(TypedDict):
@@ -30,9 +34,9 @@ def join_url(*url_comps: Union[str, int]) -> str:
     return "/".join(map(lambda e: str(e).strip(" /"), url_comps))
 
 
-def make_session(cookies: Union[list[CookieDict], CookieJar]) -> CloudflareScraper:
+def make_session(cookies: Union[list[CookieDict], CookieJar]) -> Session:
     assert len(cookies), _raise_exception(Unauthorized("No cookies for session"))
-    session: CloudflareScraper = create_scraper()
+    session: Session = SessionClass()
     session.headers["User-Agent"] = f"faapi/{__version__} Python/{python_version()} {(u := uname()).system}/{u.release}"
 
     for cookie in cookies:
@@ -50,12 +54,12 @@ def get_robots(session: Session) -> RobotFileParser:
     return robots
 
 
-def get(session: CloudflareScraper, path: str, *, timeout: Optional[int] = None,
+def get(session: Session, path: str, *, timeout: Optional[int] = None,
         params: Optional[dict[str, Union[str, bytes, int, float]]] = None) -> Response:
     return session.get(join_url(root, path), params=params, timeout=timeout)
 
 
-def stream_binary(session: CloudflareScraper, url: str, *, chunk_size: Optional[int] = None,
+def stream_binary(session: Session, url: str, *, chunk_size: Optional[int] = None,
                   timeout: Optional[int] = None) -> bytes:
     stream: Response = session.get(url, stream=True, timeout=timeout)
     stream.raise_for_status()
