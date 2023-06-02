@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.1
+
+### Changes
+
+* Support submissions with no or partial category
+
 ## v3.11.0
 
 ### New Features
