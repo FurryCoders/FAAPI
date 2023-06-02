@@ -490,7 +490,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_views: Optional[Tag] = sub_page.select_one("div.views span")
     tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
     tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
-    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span")
+    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span.rating-box")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_fav: Optional[Tag] = sub_page.select_one("div.fav > a")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
@@ -500,8 +500,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     tag_category1: Optional[Tag] = tag_info.select_one("span.category-name")
     tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
-    tag_species: Optional[Tag] = (info_spans := tag_info.select("span"))[2]
-    tag_gender: Optional[Tag] = info_spans[3]
+    tag_species: Optional[Tag] = (info_spans := tag_info.select("span"))[bool(tag_category1) + bool(tag_category2)]
+    tag_gender: Optional[Tag] = info_spans[1 + bool(tag_category1) + bool(tag_category2)]
     tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
     tag_folder: Optional[Tag] = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
@@ -519,8 +519,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_rating is not None, _raise_exception(ParsingError("Missing rating tag"))
     assert tag_type is not None, _raise_exception(ParsingError("Missing type tag"))
     assert tag_fav is not None, _raise_exception(ParsingError("Missing fav tag"))
-    assert tag_category1 is not None, _raise_exception(ParsingError("Missing category1 tag"))
-    assert tag_category2 is not None, _raise_exception(ParsingError("Missing category2 tag"))
     assert tag_species is not None, _raise_exception(ParsingError("Missing species tag"))
     assert tag_gender is not None, _raise_exception(ParsingError("Missing gender tag"))
     assert tag_description is not None, _raise_exception(ParsingError("Missing description tag"))
@@ -539,7 +537,12 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         else tag_date.text.strip()
     )
     tags: list[str] = [t.text.strip() for t in tag_tags]
-    category: str = tag_category1.text.strip() + " / " + tag_category2.text.strip()
+    category: str = ""
+    if tag_category1:
+        category += tag_category1.text.strip()
+    if tag_category2:
+        category += " / " + tag_category2.text.strip()
+        category.strip()
     species: str = tag_species.text.strip()
     gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
