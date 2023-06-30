@@ -46,6 +46,7 @@ class FAAPI:
     def __init__(self, cookies: Union[list[CookieDict], CookieJar], session_class: Type[Session] = Session):
         """
         :param cookies: The cookies for the session.
+        :param session_class: The class to use for the session (defaults to requests.Session).
         """
 
         self.session: Session = make_session(cookies, session_class)  # Session used for get requests
