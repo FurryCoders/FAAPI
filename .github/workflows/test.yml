@@ -15,6 +15,7 @@ env:
 
 jobs:
   flake8:
+    if: ${{ github.event_name != "schedule" }}
     name: Flake8
     runs-on: ubuntu-latest
     strategy:
@@ -33,6 +34,7 @@ jobs:
           python -m flake8 --max-line-length=120 faapi
 
   mypy:
+    if: ${{ github.event_name != "schedule" }}
     name: mypy
     runs-on: ubuntu-latest
     strategy:
