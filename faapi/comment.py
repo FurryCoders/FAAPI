@@ -158,12 +158,31 @@ def flatten_comments(comments: list[Comment]) -> list[Comment]:
     :param comments: A list of Comment objects (flat or tree-structured)
     :return: A flat date-sorted (ascending) list of comments
     """
-    return sorted({c for c in [r for c in comments for r in [c, *flatten_comments(c.replies)]]})
+    replies: list[Comment] = comments
+    comments_flat = []
+
+    while replies:
+        comments_flat.extend(replies)
+        replies = [r for c in replies for r in c.replies]
+
+    return sorted(set(comments_flat))
 
 
 def _set_reply_to(comment: Comment, reply_to: Union[Comment, int]) -> Comment:
     comment.reply_to = reply_to
     return comment
+
+
+def _sort_comments_dict(comments: list[Comment]) -> list[dict]:
+    comments_flat = sorted(flatten_comments(comments))
+    comments_dicts: list[dict] = []
+
+    for comment in comments_flat:
+        comment_dict = dict(_remove_recursion(comment))
+        comment_dict["replies"] = [dict(_remove_recursion(c)) for c in comments_flat if c.reply_to == comment]
+        comments_dicts.append(comment_dict)
+
+    return [cd for cd in comments_dicts if not cd["reply_to"]]
 
 
 def _remove_recursion(comment: Comment) -> Comment:
@@ -174,7 +193,7 @@ def _remove_recursion(comment: Comment) -> Comment:
     comment_new.author = comment.author
     comment_new.date = comment.date
     comment_new.text = comment.text
-    comment_new.replies = [_remove_recursion(c) for c in comment.replies]
+    comment_new.replies = []
     comment_new.reply_to = comment.reply_to.id if isinstance(comment.reply_to, Comment) else comment.reply_to
     comment_new.edited = comment.edited
     comment_new.hidden = comment.hidden

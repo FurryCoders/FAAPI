@@ -216,8 +216,8 @@ class Submission(SubmissionBase):
         yield "next", self.next
         yield "favorite", self.favorite
         yield "favorite_toggle_link", self.favorite_toggle_link
-        from .comment import _remove_recursion
-        yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
+        from .comment import _sort_comments_dict
+        yield "comments", _sort_comments_dict(self.comments)
 
     @property
     def description_bbcode(self) -> str:
