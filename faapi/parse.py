@@ -744,7 +744,6 @@ def parse_comment_tag(tag: Tag) -> dict:
             "hidden": True,
         }
 
-    assert tag_username is not None, _raise_exception(ParsingError("Missing user name tag"))
     assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
     assert tag_user_title is not None, _raise_exception(ParsingError("Missing user title tag"))
 
