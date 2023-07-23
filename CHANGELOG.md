@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.11.2
+
+### Changes
+
+* HTML content is not minified beyond basic stripping of whitespace characters
+
+### Fixes
+
+* Fix recursion limit error with chains of comments longer than ~1/6 of the recursion limit
+* Fix incorrectly parsed usernames in comments with the OP (Original Poster) tag
+
+### Dependencies
+
+* Use [lxml ^4.9.3](https://pypi.org/project/lxml/4.9.3)
+* Remove [htmlmin](https://pypi.org/project/htmlmin)
+
 ## v3.11.1
 
 ### Changes
