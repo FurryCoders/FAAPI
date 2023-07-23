@@ -178,8 +178,8 @@ class Journal(JournalBase):
             yield k, v
         yield "header", self.header
         yield "footer", self.footer
-        from .comment import _remove_recursion
-        yield "comments", [dict(_remove_recursion(c)) for c in self.comments]
+        from .comment import _sort_comments_dict
+        yield "comments", _sort_comments_dict(self.comments)
 
     @property
     def header_bbcode(self) -> str:
