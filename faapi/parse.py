@@ -16,7 +16,6 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from bs4.element import Tag
 from dateutil.parser import parse as parse_date
-from htmlmin import minify  # type:ignore
 from urllib3.util import parse_url
 
 from .connection import root
@@ -82,7 +81,7 @@ def inner_html(tag: Tag) -> str:
 
 
 def clean_html(html: str) -> str:
-    return sub(r" *(<br/?>) *", r"\1", minify(html, remove_comments=True, reduce_boolean_attributes=True)).strip()
+    return sub(r" *(<br/?>) *", r"\1", html).strip()
 
 
 def html_to_bbcode(html: str) -> str:
