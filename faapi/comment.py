@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import reduce
 from typing import Optional
 from typing import Union
 
@@ -80,7 +81,7 @@ class Comment:
         yield "author", dict(self.author)
         yield "date", self.date
         yield "text", self.text
-        yield "replies", [dict(r) for r in self.replies]
+        yield "replies", _sort_comments_dict(self.replies)
         yield "reply_to", dict(_remove_recursion(self.reply_to)) if isinstance(self.reply_to, Comment) \
             else self.reply_to
         yield "edited", self.edited
@@ -175,14 +176,25 @@ def _set_reply_to(comment: Comment, reply_to: Union[Comment, int]) -> Comment:
 
 def _sort_comments_dict(comments: list[Comment]) -> list[dict]:
     comments_flat = sorted(flatten_comments(comments))
-    comments_dicts: list[dict] = []
+    comments_levels: list[list[Comment]] = [[c for c in comments_flat if not c.reply_to]]
 
-    for comment in comments_flat:
-        comment_dict = dict(_remove_recursion(comment))
-        comment_dict["replies"] = [dict(_remove_recursion(c)) for c in comments_flat if c.reply_to == comment]
-        comments_dicts.append(comment_dict)
+    comments_flat = [c for c in comments_flat if c not in comments_levels[-1]]
 
-    return [cd for cd in comments_dicts if not cd["reply_to"]]
+    while comments_flat:
+        comments_levels.append([c for c in comments_flat if c.reply_to in comments_levels[-1]])
+        comments_flat = [c for c in comments_flat if c not in comments_levels[-1]]
+
+    comments_levels.reverse()
+
+    comments_dicts: list[dict] = reduce(
+        lambda prev, curr: [
+            dict(_remove_recursion(c)) | {"replies": [cd for cd in prev if cd["reply_to"] == c]}
+            for c in curr
+        ],
+        comments_levels,
+        []
+    )
+    return comments_dicts
 
 
 def _remove_recursion(comment: Comment) -> Comment:
