@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.3
+
+### Fixes
+
+* Fix recursion limit error with chains of journal comments longer than ~1/6 of the recursion limit
+
 ## v3.11.2
 
 ### Changes
