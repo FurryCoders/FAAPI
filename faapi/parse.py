@@ -81,7 +81,7 @@ def inner_html(tag: Tag) -> str:
 
 
 def clean_html(html: str) -> str:
-    return sub(r" *(<br/?>) *", r"\1", html).strip()
+    return html.strip().replace("\r", "")
 
 
 def html_to_bbcode(html: str) -> str:
