@@ -14,7 +14,7 @@
 
 ### Fixes
 
-* Fix recursion limit error with chains of comments longer than ~1/6 of the recursion limit
+* Fix recursion limit error with chains of submission comments longer than ~1/6 of the recursion limit
 * Fix incorrectly parsed usernames in comments with the OP (Original Poster) tag
 
 ### Dependencies
