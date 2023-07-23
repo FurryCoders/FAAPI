@@ -713,7 +713,7 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_comment_tag(tag: Tag) -> dict:
     tag_id: Optional[Tag] = tag.select_one("a.comment_anchor")
-    tag_username: Optional[Tag] = tag.select_one("comment-username")
+    tag_username: Optional[Tag] = tag.select_one("comment-username .comment_username")
     tag_avatar: Optional[Tag] = tag.select_one("div.avatar img.comment_useravatar")
     tag_user_title: Optional[Tag] = tag.select_one("comment-title")
     tag_body: Optional[Tag] = tag.select_one("comment-user-text")
