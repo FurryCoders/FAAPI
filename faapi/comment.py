@@ -160,7 +160,7 @@ def flatten_comments(comments: list[Comment]) -> list[Comment]:
     :return: A flat date-sorted (ascending) list of comments
     """
     replies: list[Comment] = comments
-    comments_flat = []
+    comments_flat: list[Comment] = []
 
     while replies:
         comments_flat.extend(replies)
