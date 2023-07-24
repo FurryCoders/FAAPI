@@ -147,7 +147,7 @@ def sort_comments(comments: list[Comment]) -> list[Comment]:
     :param comments: A list of Comment objects (flat or tree-structured)
     :return: A tree-structured list of comments with replies
     """
-    for comment in (comments := sorted(flatten_comments(comments))):
+    for comment in (comments := flatten_comments(comments)):
         comment.replies = [_set_reply_to(c, comment) for c in comments if c.reply_to == comment]
     return [c for c in comments if c.reply_to is None]
 
@@ -175,7 +175,7 @@ def _set_reply_to(comment: Comment, reply_to: Union[Comment, int]) -> Comment:
 
 
 def _sort_comments_dict(comments: list[Comment]) -> list[dict]:
-    comments_flat = sorted(flatten_comments(comments))
+    comments_flat = flatten_comments(comments)
     comments_levels: list[list[Comment]] = [[c for c in comments_flat if not c.reply_to]]
 
     comments_flat = [c for c in comments_flat if c not in comments_levels[-1]]
