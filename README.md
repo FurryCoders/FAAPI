@@ -12,6 +12,7 @@ Python library to implement API-like functionality for the [Fur Affinity](https:
 [![](https://img.shields.io/github/v/tag/FurryCoders/faapi?label=github&sort=date&logo=github&color=blue)](https://github.com/FurryCoders/faapi)
 [![](https://img.shields.io/github/issues/FurryCoders/faapi?logo=github&color=blue)](https://github.com/FurryCoders/FAAPI/issues)
 [![](https://img.shields.io/github/actions/workflow/status/FurryCoders/FAAPI/test.yml?label=Test&logo=githubactions)](https://github.com/FurryCoders/FAAPI/actions/workflows/test.yml)
+[![](https://coveralls.io/repos/github/FurryCoders/FAAPI/badge.svg)](https://coveralls.io/github/FurryCoders/FAAPI)
 
 </div>
 
