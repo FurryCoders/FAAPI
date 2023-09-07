@@ -77,4 +77,6 @@ jobs:
           echo "$TEST_USER" > tests/test_user.json
           echo "$TEST_SUBMISSION" > tests/test_submission.json
           echo "$TEST_JOURNAL" > tests/test_journal.json
-          poetry run pytest tests/test_connection.py tests/test_parse.py tests/test_faapi.py -v --tb=line
+          poetry run coverage run -m pytest tests/test_connection.py tests/test_parse.py tests/test_faapi.py -v --tb=line
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
