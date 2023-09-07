@@ -79,4 +79,5 @@ jobs:
           echo "$TEST_JOURNAL" > tests/test_journal.json
           poetry run coverage run -m pytest tests/test_connection.py tests/test_parse.py tests/test_faapi.py -v --tb=line
       - name: Coveralls
+        if: github.event_name != 'schedule'
         uses: coverallsapp/github-action@v2
