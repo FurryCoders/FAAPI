@@ -2,6 +2,10 @@
 
 ## v3.11.5
 
+### Fixes
+
+* Fix a possible issue were cookie value could be set as `None` when using a `http.cookiejar.CookieJar` object
+
 ### Dependencies
 
 * Use [requests ^2.32.3](https://pypi.org/project/requests/2.32.3)
