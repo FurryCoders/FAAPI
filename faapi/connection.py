@@ -36,7 +36,7 @@ def make_session(cookies: Union[list[CookieDict], CookieJar], cls: Type[Session]
 
     for cookie in cookies:
         if isinstance(cookie, Cookie):
-            session.cookies.set(cookie.name, cookie.value)
+            session.cookies.set(cookie.name, cookie.value or "")
         else:
             session.cookies.set(cookie["name"], cookie["value"])
 
