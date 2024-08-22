@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.11.5
+
+### Dependencies
+
+* Use [requests ^2.32.3](https://pypi.org/project/requests/2.32.3)
+* Use [beautifulsoup4 ^4.12.3](https://pypi.org/project/beautifulsoup4/4.12.3)
+* Use [lxml ^5.3.0](https://pypi.org/project/lxml/5.3.0)
+* Use [python-dateutil ^2.9.0](https://pypi.org/project/python-dateutil/2.9.0)
+
 ## v3.11.4
 
 ### Fixes
