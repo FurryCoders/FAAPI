@@ -66,7 +66,7 @@ jobs:
           poetry install --no-root
           poetry publish --build --username $PYPI_USERNAME --password $PYPI_PASSWORD
       - name: Save dist
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
