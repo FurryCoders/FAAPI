@@ -330,6 +330,7 @@ def test_favorites(cookies: RequestsCookieJar, data: dict):
         ss.extend(ss_)
         p = p_
 
+    assert not data["favorites"]["next_page"] or p is not None
     assert len(ss) >= data["favorites"]["length"]
     assert len({s.id for s in ss}) == len(ss)
 

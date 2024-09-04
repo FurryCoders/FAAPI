@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.11.6
+
+### Fixes
+
+* Fix next page of favorites
+  * The selector path to the "Next" button had changed
+  * The presence of the button is now tested
+
 ## v3.11.5
 
 ### Fixes
