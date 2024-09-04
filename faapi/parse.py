@@ -833,8 +833,8 @@ def parse_user_submissions(submissions_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_user_favorites(favorites_page: BeautifulSoup) -> dict[str, Any]:
     parsed_submissions = parse_user_submissions(favorites_page)
-    tag_next_page: Optional[Tag] = favorites_page.select_one("a[class~=button][class~=standard][class~=right]")
-    next_page: str = get_attr(tag_next_page, "href").split("/", 3)[-1] if tag_next_page else ""
+    tag_next_page: Optional[Tag] = favorites_page.select_one('form[action^="/favorites/"][action$="/next"]')
+    next_page: str = get_attr(tag_next_page, "action").split("/", 3)[-1] if tag_next_page else ""
 
     return {
         **parsed_submissions,
