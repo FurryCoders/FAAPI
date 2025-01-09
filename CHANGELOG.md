@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.7
+
+### Changes
+
+* Updated parser to work correctly with FurAffinity's new tag-blocking feature on submission pages
+
 ## v3.11.6
 
 ### Fixes
