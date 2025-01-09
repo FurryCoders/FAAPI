@@ -485,7 +485,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
     tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
     tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date")
-    tag_tags: list[Tag] = sub_page.select("section.tags-row a")
+    tag_tags: list[Tag] = sub_page.select('section.tags-row a[href^="/"]')
     tag_views: Optional[Tag] = sub_page.select_one("div.views span")
     tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
     tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
