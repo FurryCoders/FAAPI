@@ -737,7 +737,7 @@ def parse_comment_tag(tag: Tag) -> dict:
     comment_id: int = int(attr_id.removeprefix("cid:"))
     comment_text: str = clean_html(inner_html(tag_body))
 
-    if tag_user_name is None:
+    if tag_user_name is None or tag_user_display_name is None:
         return {
             "id": comment_id,
             "user_name": "",
