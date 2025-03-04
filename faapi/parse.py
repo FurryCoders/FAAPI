@@ -1,9 +1,9 @@
 from datetime import datetime
-from re import MULTILINE
-from re import Match
-from re import Pattern
 from re import compile as re_compile
+from re import Match
 from re import match
+from re import MULTILINE
+from re import Pattern
 from re import search
 from re import sub
 from typing import Any
@@ -19,14 +19,14 @@ from dateutil.parser import parse as parse_date
 from urllib3.util import parse_url
 
 from .connection import root
+from .exceptions import _raise_exception
 from .exceptions import DisabledAccount
-from .exceptions import NoTitle
 from .exceptions import NonePage
 from .exceptions import NotFound
 from .exceptions import NoticeMessage
+from .exceptions import NoTitle
 from .exceptions import ParsingError
 from .exceptions import ServerError
-from .exceptions import _raise_exception
 
 relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
@@ -130,9 +130,11 @@ def html_to_bbcode(html: str) -> str:
 
     for a in body.select("a"):
         href_match: Optional[Match] = relative_url.match(a.attrs.get('href', ''))
-        a.replaceWith(f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]",
-                      *a.children,
-                      "[/url]")
+        a.replaceWith(
+            f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]",
+            *a.children,
+            "[/url]"
+        )
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
         yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
@@ -144,31 +146,33 @@ def html_to_bbcode(html: str) -> str:
             quote_name_tag.replaceWith(quote_author)
             continue
         quote_name_tag.decompose()
-        quote_tag.replaceWith(f"[quote{('=' + quote_author) if quote_author else ''}]",
-                              *quote_tag.children,
-                              "[/quote]")
+        quote_tag.replaceWith(
+            f"[quote{('=' + quote_author) if quote_author else ''}]",
+            *quote_tag.children,
+            "[/quote]"
+        )
 
     for quote_tag in body.select("span.bbcode.bbcode_quote"):
         quote_tag.replaceWith("[quote]", *quote_tag.children, "[/quote]")
 
     for [selector, bbcode_tag] in (
-            ("i", "i"),
-            ("b", "b"),
-            ("strong", "b"),
-            ("u", "u"),
-            ("s", "s"),
-            ("code.bbcode_left", "left"),
-            ("code.bbcode_center", "center"),
-            ("code.bbcode_right", "right"),
-            ("span.bbcode_spoiler", "spoiler"),
-            ("sub", "sub"),
-            ("sup", "sup"),
-            ("h1", "h1"),
-            ("h2", "h2"),
-            ("h3", "h3"),
-            ("h4", "h4"),
-            ("h5", "h5"),
-            ("h6", "h6"),
+        ("i", "i"),
+        ("b", "b"),
+        ("strong", "b"),
+        ("u", "u"),
+        ("s", "s"),
+        ("code.bbcode_left", "left"),
+        ("code.bbcode_center", "center"),
+        ("code.bbcode_right", "right"),
+        ("span.bbcode_spoiler", "spoiler"),
+        ("sub", "sub"),
+        ("sup", "sup"),
+        ("h1", "h1"),
+        ("h2", "h2"),
+        ("h3", "h3"),
+        ("h4", "h4"),
+        ("h5", "h5"),
+        ("h6", "h6"),
     ):
         for tag in body.select(selector):
             tag.replaceWith(f"[{bbcode_tag}]", *tag.children, f"[/{bbcode_tag}]")
@@ -183,9 +187,11 @@ def html_to_bbcode(html: str) -> str:
         if not (div_class := tag.attrs.get("class", None)):
             tag.replaceWith(f"[tag={tag.name}]", *tag.children, "[/tag.{tag.name}]")
         else:
-            tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
-                            *tag.children,
-                            "[/tag]")
+            tag.replaceWith(
+                f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
+                *tag.children,
+                "[/tag]"
+            )
 
     bbcode: str = body.decode_contents()
 
@@ -193,15 +199,15 @@ def html_to_bbcode(html: str) -> str:
     bbcode = sub("^ *", "", bbcode, flags=MULTILINE)
 
     for char, substitution in (
-            ("©", "(c)"),
-            ("™", "(tm)"),
-            ("®", "(r)"),
-            ("&copy;", "(c)"),
-            ("&reg;", "(tm)"),
-            ("&trade;", "(r)"),
-            ("&lt;", "<"),
-            ("&gt;", ">"),
-            ("&amp;", "&"),
+        ("©", "(c)"),
+        ("™", "(tm)"),
+        ("®", "(r)"),
+        ("&copy;", "(c)"),
+        ("&reg;", "(tm)"),
+        ("&trade;", "(r)"),
+        ("&lt;", "<"),
+        ("&gt;", ">"),
+        ("&amp;", "&"),
     ):
         bbcode = bbcode.replace(char, substitution)
 
@@ -251,8 +257,11 @@ def bbcode_to_html(bbcode: str) -> str:
                     child_new = Tag(name="a", attrs={"class": "iconusername", "href": f"/user/{user}"})
                     child_new_img: Tag = Tag(
                         name="img",
-                        attrs={"alt": user, "title": user,
-                               "src": f"//a.furaffinity.net/{datetime.now():%Y%m%d}/{username_url(user)}.gif"})
+                        attrs={
+                            "alt": user, "title": user,
+                            "src": f"//a.furaffinity.net/{datetime.now():%Y%m%d}/{username_url(user)}.gif"
+                        }
+                    )
                     child_new.insert(0, child_new_img)
                     if m_[2]:
                         child_new.insert(1, f"\xA0{m_[2]}")
@@ -463,9 +472,11 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
     author_name: str = tag_author_name.attrs["title"].strip()
     author_display_name: str = tag_author_name.text.strip()
-    author_title: str = ([*filter(bool, [child.strip()
-                                         for child in tag_author.children
-                                         if isinstance(child, NavigableString)][3:])] or [""])[-1]
+    author_title: str = ([*filter(
+        bool, [child.strip()
+               for child in tag_author.children
+               if isinstance(child, NavigableString)][3:]
+    )] or [""])[-1]
     author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
     author_title = author_title.strip("\xA0 ")  # NBSP
     author_icon_url: str = "https:" + get_attr(tag_author_icon, "src")
@@ -566,9 +577,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     thumbnail_url = f"{thumbnail_url.rsplit('/', 1)[0]}/{quote(thumbnail_url.rsplit('/', 1)[1])}" \
         if thumbnail_url else ""
     prev_sub: Optional[int] = int(
-        get_attr(tag_prev, "href").split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
+        get_attr(tag_prev, "href").split("/")[-2]
+    ) if tag_prev and tag_prev.text.lower() == "prev" else None
     next_sub: Optional[int] = int(
-        get_attr(tag_next, "href").split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
+        get_attr(tag_next, "href").split("/")[-2]
+    ) if tag_next and tag_next.text.lower() == "next" else None
     fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
     unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
     user_folders: list[tuple[str, str, str]] = []
@@ -576,11 +589,13 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         tag_folder_name: Optional[Tag] = a.select_one("span")
         tag_folder_group: Optional[Tag] = a.select_one("strong")
         assert tag_folder_name is not None, _raise_exception(ParsingError("Missing folder name tag"))
-        user_folders.append((
-            tag_folder_name.text.strip(),
-            (root + href) if (href := a.attrs.get("href", "")) else "",
-            tag_folder_group.text.strip() if tag_folder_group else ""
-        ))
+        user_folders.append(
+            (
+                tag_folder_name.text.strip(),
+                (root + href) if (href := a.attrs.get("href", "")) else "",
+                tag_folder_group.text.strip() if tag_folder_group else ""
+            )
+        )
 
     return {
         "id": id_,
@@ -771,7 +786,9 @@ def parse_comment_tag(tag: Tag) -> dict:
 
     return {
         "id": comment_id,
-        "user_name": tag_user_name.text.strip().removeprefix(tag_user_symbol.text.strip() if tag_user_symbol else "").strip(),
+        "user_name": tag_user_name.text.strip().removeprefix(
+            tag_user_symbol.text.strip() if tag_user_symbol else ""
+        ).strip(),
         "user_display_name": tag_user_display_name.text.strip(),
         "user_title": tag_user_title.text.strip(),
         "avatar_url": avatar_url,
