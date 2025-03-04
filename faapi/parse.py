@@ -455,13 +455,14 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
     assert tag_author is not None, _raise_exception(ParsingError("Missing author tag"))
 
-    tag_author_name: Optional[Tag] = tag_author.select_one("span.c-usernameBlockSimple > a")
+    tag_author_name: Optional[Tag] = tag_author.select_one("span.c-usernameBlockSimple__displayName")
     tag_author_icon: Optional[Tag] = author_tag.select_one("img.submission-user-icon")
 
     assert tag_author_name is not None, _raise_exception(ParsingError("Missing author name tag"))
     assert tag_author_icon is not None, _raise_exception(ParsingError("Missing author icon tag"))
 
-    author_name: str = get_attr(tag_author_name, "href").strip().split('/')[-2]
+    author_name: str = tag_author_name.attrs["title"].strip()
+    author_display_name: str = tag_author_name.text.strip()
     author_title: str = ([*filter(bool, [child.strip()
                                          for child in tag_author.children
                                          if isinstance(child, NavigableString)][3:])] or [""])[-1]
@@ -471,6 +472,7 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
     return {
         "author": author_name,
+        "author_display_name": author_display_name,
         "author_title": author_title,
         "author_icon_url": author_icon_url,
     }
@@ -609,19 +611,21 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_user_header(user_header: Tag) -> dict[str, Any]:
-    tag_status: Optional[Tag] = user_header.select_one("a.c-usernameBlock__userName")
+    tag_user_name: Optional[Tag] = user_header.select_one("a.c-usernameBlock__userName")
+    tag_user_display_name: Optional[Tag] = user_header.select_one("a.c-usernameBlock__displayName")
     tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details span.user-title")
     tag_avatar: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
 
-    assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
+    assert tag_user_name is not None, _raise_exception(ParsingError("Missing user name tag"))
+    assert tag_user_display_name is not None, _raise_exception(ParsingError("Missing user display name tag"))
     assert tag_title_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
     assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
 
-    status: str = ""
-    name: str = tag_status.text.strip()
+    tag_user_symbol: Optional[Tag] = tag_user_name.select_one("span.c-usernameBlock__symbol")
 
-    if not user_header.select_one("img.type-admin"):
-        status, name = name[0], name[1:]
+    status: str = tag_user_symbol.text.strip() if tag_user_symbol else ""
+    name: str = tag_user_name.text.strip().removeprefix(status).strip()
+    display_name: str = tag_user_display_name.text.strip()
 
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
@@ -631,6 +635,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     return {
         "status": status,
         "name": name,
+        "display_name": display_name,
         "title": title,
         "join_date": join_date,
         "avatar_url": avatar_url,
