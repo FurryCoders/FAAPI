@@ -115,7 +115,7 @@ def test_parse_user_page(session: Session, user_test_data: dict):
     page = parse_page(res.text)
     result = parse_user_page(page)
 
-    assert result["name"] == user_test_data["name"]
+    assert result["name"].lower() == user_test_data["name"].lower()
     assert result["status"] == user_test_data["status"]
     assert result["title"] == user_test_data["title"]
     assert result["join_date"] == datetime.fromisoformat(user_test_data["join_date"]) + dst_us()
@@ -143,7 +143,7 @@ def test_parse_submission_page(session: Session, submission_test_data: dict):
 
     assert result["id"] == submission_test_data["id"]
     assert result["title"] == submission_test_data["title"]
-    assert result["author"] == submission_test_data["author"]["name"]
+    assert result["author"].lower() == submission_test_data["author"]["name"].lower()
     assert result["author_icon_url"] != ""
     assert result["date"] == datetime.fromisoformat(submission_test_data["date"]) + dst_us()
     assert result["tags"] == submission_test_data["tags"]
@@ -186,7 +186,7 @@ def test_parse_journal_page(session: Session, journal_test_data: dict):
 
     assert result["id"] == journal_test_data["id"]
     assert result["title"] == journal_test_data["title"]
-    assert result["user_info"]["name"] == journal_test_data["author"]["name"]
+    assert result["user_info"]["name"].lower() == journal_test_data["author"]["name"].lower()
     assert result["user_info"]["join_date"] == \
            datetime.fromisoformat(journal_test_data["author"]["join_date"]) + dst_us()
     assert result["user_info"]["avatar_url"] != ""

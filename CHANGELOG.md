@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.11.8
+
+### Changes
+
+* Update parser to support FurAffinity's new display names feature
+* Added `UserPartial.display_name` and `User.display_name`
+* Full support coming in next minor update
+
 ## v3.11.7
 
 ### Changes

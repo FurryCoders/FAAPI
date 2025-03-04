@@ -37,6 +37,7 @@ class UserBase:
 
     def __init__(self):
         self.name: str = ""
+        self.display_name: str = ""
         self.status: str = ""
 
     def __hash__(self) -> int:
@@ -79,6 +80,7 @@ class UserBase:
 
     def __iter__(self):
         yield "name", self.name
+        yield "display_name", self.display_name
         yield "status", self.status
 
     def __repr__(self):
@@ -195,6 +197,7 @@ class User(UserBase):
 
     def __iter__(self):
         yield "name", self.name
+        yield "display_name", self.display_name
         yield "status", self.status
         yield "title", self.title
         yield "join_date", self.join_date
@@ -236,6 +239,7 @@ class User(UserBase):
         parsed: dict = parse_user_page(self.user_page)
 
         self.name = parsed["name"]
+        self.display_name = parsed["display_name"]
         self.status = parsed["status"]
         self.profile = parsed["profile"]
         self.title = parsed["title"]

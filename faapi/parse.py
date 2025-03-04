@@ -1,9 +1,9 @@
 from datetime import datetime
-from re import MULTILINE
-from re import Match
-from re import Pattern
 from re import compile as re_compile
+from re import Match
 from re import match
+from re import MULTILINE
+from re import Pattern
 from re import search
 from re import sub
 from typing import Any
@@ -19,14 +19,14 @@ from dateutil.parser import parse as parse_date
 from urllib3.util import parse_url
 
 from .connection import root
+from .exceptions import _raise_exception
 from .exceptions import DisabledAccount
-from .exceptions import NoTitle
 from .exceptions import NonePage
 from .exceptions import NotFound
 from .exceptions import NoticeMessage
+from .exceptions import NoTitle
 from .exceptions import ParsingError
 from .exceptions import ServerError
-from .exceptions import _raise_exception
 
 relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
@@ -130,9 +130,11 @@ def html_to_bbcode(html: str) -> str:
 
     for a in body.select("a"):
         href_match: Optional[Match] = relative_url.match(a.attrs.get('href', ''))
-        a.replaceWith(f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]",
-                      *a.children,
-                      "[/url]")
+        a.replaceWith(
+            f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]",
+            *a.children,
+            "[/url]"
+        )
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
         yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
@@ -144,31 +146,33 @@ def html_to_bbcode(html: str) -> str:
             quote_name_tag.replaceWith(quote_author)
             continue
         quote_name_tag.decompose()
-        quote_tag.replaceWith(f"[quote{('=' + quote_author) if quote_author else ''}]",
-                              *quote_tag.children,
-                              "[/quote]")
+        quote_tag.replaceWith(
+            f"[quote{('=' + quote_author) if quote_author else ''}]",
+            *quote_tag.children,
+            "[/quote]"
+        )
 
     for quote_tag in body.select("span.bbcode.bbcode_quote"):
         quote_tag.replaceWith("[quote]", *quote_tag.children, "[/quote]")
 
     for [selector, bbcode_tag] in (
-            ("i", "i"),
-            ("b", "b"),
-            ("strong", "b"),
-            ("u", "u"),
-            ("s", "s"),
-            ("code.bbcode_left", "left"),
-            ("code.bbcode_center", "center"),
-            ("code.bbcode_right", "right"),
-            ("span.bbcode_spoiler", "spoiler"),
-            ("sub", "sub"),
-            ("sup", "sup"),
-            ("h1", "h1"),
-            ("h2", "h2"),
-            ("h3", "h3"),
-            ("h4", "h4"),
-            ("h5", "h5"),
-            ("h6", "h6"),
+        ("i", "i"),
+        ("b", "b"),
+        ("strong", "b"),
+        ("u", "u"),
+        ("s", "s"),
+        ("code.bbcode_left", "left"),
+        ("code.bbcode_center", "center"),
+        ("code.bbcode_right", "right"),
+        ("span.bbcode_spoiler", "spoiler"),
+        ("sub", "sub"),
+        ("sup", "sup"),
+        ("h1", "h1"),
+        ("h2", "h2"),
+        ("h3", "h3"),
+        ("h4", "h4"),
+        ("h5", "h5"),
+        ("h6", "h6"),
     ):
         for tag in body.select(selector):
             tag.replaceWith(f"[{bbcode_tag}]", *tag.children, f"[/{bbcode_tag}]")
@@ -183,9 +187,11 @@ def html_to_bbcode(html: str) -> str:
         if not (div_class := tag.attrs.get("class", None)):
             tag.replaceWith(f"[tag={tag.name}]", *tag.children, "[/tag.{tag.name}]")
         else:
-            tag.replaceWith(f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
-                            *tag.children,
-                            "[/tag]")
+            tag.replaceWith(
+                f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
+                *tag.children,
+                "[/tag]"
+            )
 
     bbcode: str = body.decode_contents()
 
@@ -193,15 +199,15 @@ def html_to_bbcode(html: str) -> str:
     bbcode = sub("^ *", "", bbcode, flags=MULTILINE)
 
     for char, substitution in (
-            ("©", "(c)"),
-            ("™", "(tm)"),
-            ("®", "(r)"),
-            ("&copy;", "(c)"),
-            ("&reg;", "(tm)"),
-            ("&trade;", "(r)"),
-            ("&lt;", "<"),
-            ("&gt;", ">"),
-            ("&amp;", "&"),
+        ("©", "(c)"),
+        ("™", "(tm)"),
+        ("®", "(r)"),
+        ("&copy;", "(c)"),
+        ("&reg;", "(tm)"),
+        ("&trade;", "(r)"),
+        ("&lt;", "<"),
+        ("&gt;", ">"),
+        ("&amp;", "&"),
     ):
         bbcode = bbcode.replace(char, substitution)
 
@@ -251,8 +257,11 @@ def bbcode_to_html(bbcode: str) -> str:
                     child_new = Tag(name="a", attrs={"class": "iconusername", "href": f"/user/{user}"})
                     child_new_img: Tag = Tag(
                         name="img",
-                        attrs={"alt": user, "title": user,
-                               "src": f"//a.furaffinity.net/{datetime.now():%Y%m%d}/{username_url(user)}.gif"})
+                        attrs={
+                            "alt": user, "title": user,
+                            "src": f"//a.furaffinity.net/{datetime.now():%Y%m%d}/{username_url(user)}.gif"
+                        }
+                    )
                     child_new.insert(0, child_new_img)
                     if m_[2]:
                         child_new.insert(1, f"\xA0{m_[2]}")
@@ -455,22 +464,26 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
     assert tag_author is not None, _raise_exception(ParsingError("Missing author tag"))
 
-    tag_author_name: Optional[Tag] = tag_author.select_one("span.c-usernameBlockSimple > a")
+    tag_author_name: Optional[Tag] = tag_author.select_one("span.c-usernameBlockSimple__displayName")
     tag_author_icon: Optional[Tag] = author_tag.select_one("img.submission-user-icon")
 
     assert tag_author_name is not None, _raise_exception(ParsingError("Missing author name tag"))
     assert tag_author_icon is not None, _raise_exception(ParsingError("Missing author icon tag"))
 
-    author_name: str = get_attr(tag_author_name, "href").strip().split('/')[-2]
-    author_title: str = ([*filter(bool, [child.strip()
-                                         for child in tag_author.children
-                                         if isinstance(child, NavigableString)][3:])] or [""])[-1]
+    author_name: str = tag_author_name.attrs["title"].strip()
+    author_display_name: str = tag_author_name.text.strip()
+    author_title: str = ([*filter(
+        bool, [child.strip()
+               for child in tag_author.children
+               if isinstance(child, NavigableString)][3:]
+    )] or [""])[-1]
     author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
     author_title = author_title.strip("\xA0 ")  # NBSP
     author_icon_url: str = "https:" + get_attr(tag_author_icon, "src")
 
     return {
         "author": author_name,
+        "author_display_name": author_display_name,
         "author_title": author_title,
         "author_icon_url": author_icon_url,
     }
@@ -564,9 +577,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     thumbnail_url = f"{thumbnail_url.rsplit('/', 1)[0]}/{quote(thumbnail_url.rsplit('/', 1)[1])}" \
         if thumbnail_url else ""
     prev_sub: Optional[int] = int(
-        get_attr(tag_prev, "href").split("/")[-2]) if tag_prev and tag_prev.text.lower() == "prev" else None
+        get_attr(tag_prev, "href").split("/")[-2]
+    ) if tag_prev and tag_prev.text.lower() == "prev" else None
     next_sub: Optional[int] = int(
-        get_attr(tag_next, "href").split("/")[-2]) if tag_next and tag_next.text.lower() == "next" else None
+        get_attr(tag_next, "href").split("/")[-2]
+    ) if tag_next and tag_next.text.lower() == "next" else None
     fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
     unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
     user_folders: list[tuple[str, str, str]] = []
@@ -574,11 +589,13 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         tag_folder_name: Optional[Tag] = a.select_one("span")
         tag_folder_group: Optional[Tag] = a.select_one("strong")
         assert tag_folder_name is not None, _raise_exception(ParsingError("Missing folder name tag"))
-        user_folders.append((
-            tag_folder_name.text.strip(),
-            (root + href) if (href := a.attrs.get("href", "")) else "",
-            tag_folder_group.text.strip() if tag_folder_group else ""
-        ))
+        user_folders.append(
+            (
+                tag_folder_name.text.strip(),
+                (root + href) if (href := a.attrs.get("href", "")) else "",
+                tag_folder_group.text.strip() if tag_folder_group else ""
+            )
+        )
 
     return {
         "id": id_,
@@ -609,19 +626,21 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_user_header(user_header: Tag) -> dict[str, Any]:
-    tag_status: Optional[Tag] = user_header.select_one("a.c-usernameBlock__userName")
+    tag_user_name: Optional[Tag] = user_header.select_one("a.c-usernameBlock__userName")
+    tag_user_display_name: Optional[Tag] = user_header.select_one("a.c-usernameBlock__displayName")
     tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details span.user-title")
     tag_avatar: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
 
-    assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
+    assert tag_user_name is not None, _raise_exception(ParsingError("Missing user name tag"))
+    assert tag_user_display_name is not None, _raise_exception(ParsingError("Missing user display name tag"))
     assert tag_title_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
     assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
 
-    status: str = ""
-    name: str = tag_status.text.strip()
+    tag_user_symbol: Optional[Tag] = tag_user_name.select_one("span.c-usernameBlock__symbol")
 
-    if not user_header.select_one("img.type-admin"):
-        status, name = name[0], name[1:]
+    status: str = tag_user_symbol.text.strip() if tag_user_symbol else ""
+    name: str = tag_user_name.text.strip().removeprefix(status).strip()
+    display_name: str = tag_user_display_name.text.strip()
 
     title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
     join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
@@ -631,6 +650,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     return {
         "status": status,
         "name": name,
+        "display_name": display_name,
         "title": title,
         "join_date": join_date,
         "avatar_url": avatar_url,
@@ -712,7 +732,9 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_comment_tag(tag: Tag) -> dict:
     tag_id: Optional[Tag] = tag.select_one("a.comment_anchor")
-    tag_username: Optional[Tag] = tag.select_one("comment-username .comment_username")
+    tag_user_name: Optional[Tag] = tag.select_one("comment-username a.c-usernameBlock__userName")
+    tag_user_symbol: Optional[Tag] = tag_user_name.select_one(".c-usernameBlock__symbol") if tag_user_name else None
+    tag_user_display_name: Optional[Tag] = tag.select_one("comment-username a.c-usernameBlock__displayName")
     tag_avatar: Optional[Tag] = tag.select_one("div.avatar img.comment_useravatar")
     tag_user_title: Optional[Tag] = tag.select_one("comment-title")
     tag_body: Optional[Tag] = tag.select_one("comment-user-text")
@@ -730,7 +752,7 @@ def parse_comment_tag(tag: Tag) -> dict:
     comment_id: int = int(attr_id.removeprefix("cid:"))
     comment_text: str = clean_html(inner_html(tag_body))
 
-    if tag_username is None:
+    if tag_user_name is None or tag_user_display_name is None:
         return {
             "id": comment_id,
             "user_name": "",
@@ -764,7 +786,10 @@ def parse_comment_tag(tag: Tag) -> dict:
 
     return {
         "id": comment_id,
-        "user_name": tag_username.text.strip(),
+        "user_name": tag_user_name.text.strip().removeprefix(
+            tag_user_symbol.text.strip() if tag_user_symbol else ""
+        ).strip(),
+        "user_display_name": tag_user_display_name.text.strip(),
         "user_title": tag_user_title.text.strip(),
         "avatar_url": avatar_url,
         "timestamp": int(attr_timestamp),

@@ -120,7 +120,7 @@ def test_user(cookies: RequestsCookieJar, user_test_data: dict):
     user = api.user(user_test_data["name"])
     user_dict = dict(user)
 
-    assert user.name == user_dict["name"] == user_test_data["name"]
+    assert user.name.lower() == user_dict["name"].lower() == user_test_data["name"].lower()
     assert user.status == user_dict["status"] == user_test_data["status"]
     assert user.title == user_dict["title"] == user_test_data["title"]
     assert user.join_date == user_dict["join_date"] == datetime.fromisoformat(user_test_data["join_date"]) + dst_us()
@@ -155,7 +155,7 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
 
     assert submission.id == submission_dict["id"] == submission_test_data["id"]
     assert submission.title == submission_dict["title"] == submission_test_data["title"]
-    assert submission.author.name == submission_dict["author"]["name"] == submission_test_data["author"]["name"]
+    assert submission.author.name.lower() == submission_dict["author"]["name"].lower() == submission_test_data["author"]["name"].lower()
     assert submission.author.avatar_url == submission_dict["author"]["avatar_url"] != ""
     assert submission.date == submission_dict["date"] == datetime.fromisoformat(submission_test_data["date"]) + dst_us()
     assert submission.tags == submission_dict["tags"] == submission_test_data["tags"]
@@ -215,7 +215,7 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
 
     assert journal.id == journal_dict["id"] == journal_test_data["id"]
     assert journal.title == journal_dict["title"] == journal_test_data["title"]
-    assert journal.author.name == journal_dict["author"]["name"] == journal_test_data["author"]["name"]
+    assert journal.author.name.lower() == journal_dict["author"]["name"].lower() == journal_test_data["author"]["name"].lower()
     assert journal.author.join_date == journal_dict["author"]["join_date"] == \
            datetime.fromisoformat(journal_test_data["author"]["join_date"]) + dst_us()
     assert journal.author.avatar_url == journal_dict["author"]["avatar_url"] != ""
