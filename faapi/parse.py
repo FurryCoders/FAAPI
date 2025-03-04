@@ -455,13 +455,13 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
     assert tag_author is not None, _raise_exception(ParsingError("Missing author tag"))
 
-    tag_author_name: Optional[Tag] = tag_author.select_one("a > strong")
+    tag_author_name: Optional[Tag] = tag_author.select_one("span.c-usernameBlockSimple > a")
     tag_author_icon: Optional[Tag] = author_tag.select_one("img.submission-user-icon")
 
     assert tag_author_name is not None, _raise_exception(ParsingError("Missing author name tag"))
     assert tag_author_icon is not None, _raise_exception(ParsingError("Missing author icon tag"))
 
-    author_name: str = tag_author_name.text.strip()
+    author_name: str = get_attr(tag_author_name, "href").strip().split('/')[-2]
     author_title: str = ([*filter(bool, [child.strip()
                                          for child in tag_author.children
                                          if isinstance(child, NavigableString)][3:])] or [""])[-1]
@@ -609,8 +609,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_user_header(user_header: Tag) -> dict[str, Any]:
-    tag_status: Optional[Tag] = user_header.select_one("userpage-nav-user-details h1 username")
-    tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details username.user-title")
+    tag_status: Optional[Tag] = user_header.select_one("a.c-usernameBlock__userName")
+    tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details span.user-title")
     tag_avatar: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
 
     assert tag_status is not None, _raise_exception(ParsingError("Missing name tag"))
