@@ -717,7 +717,9 @@ def parse_user_page(user_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_comment_tag(tag: Tag) -> dict:
     tag_id: Optional[Tag] = tag.select_one("a.comment_anchor")
-    tag_username: Optional[Tag] = tag.select_one("comment-username .comment_username")
+    tag_user_name: Optional[Tag] = tag.select_one("comment-username a.c-usernameBlock__userName")
+    tag_user_symbol: Optional[Tag] = tag_user_name.select_one(".c-usernameBlock__symbol") if tag_user_name else None
+    tag_user_display_name: Optional[Tag] = tag.select_one("comment-username a.c-usernameBlock__displayName")
     tag_avatar: Optional[Tag] = tag.select_one("div.avatar img.comment_useravatar")
     tag_user_title: Optional[Tag] = tag.select_one("comment-title")
     tag_body: Optional[Tag] = tag.select_one("comment-user-text")
@@ -735,7 +737,7 @@ def parse_comment_tag(tag: Tag) -> dict:
     comment_id: int = int(attr_id.removeprefix("cid:"))
     comment_text: str = clean_html(inner_html(tag_body))
 
-    if tag_username is None:
+    if tag_user_name is None:
         return {
             "id": comment_id,
             "user_name": "",
@@ -769,7 +771,8 @@ def parse_comment_tag(tag: Tag) -> dict:
 
     return {
         "id": comment_id,
-        "user_name": tag_username.text.strip(),
+        "user_name": tag_user_name.text.strip().removeprefix(tag_user_symbol.text.strip() if tag_user_symbol else "").strip(),
+        "user_display_name": tag_user_display_name.text.strip(),
         "user_title": tag_user_title.text.strip(),
         "avatar_url": avatar_url,
         "timestamp": int(attr_timestamp),

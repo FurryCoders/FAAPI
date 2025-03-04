@@ -131,6 +131,7 @@ class Comment:
         self.date = datetime.fromtimestamp(parsed["timestamp"])
         self.author = faapi.user.UserPartial()
         self.author.name = parsed["user_name"]
+        self.author.display_name = parsed["user_display_name"]
         self.author.title = parsed["user_title"]
         self.author.avatar_url = parsed["avatar_url"]
         self.text = parsed["text"]
