@@ -756,6 +756,7 @@ def parse_comment_tag(tag: Tag) -> dict:
         return {
             "id": comment_id,
             "user_name": "",
+            "user_display_name": "",
             "user_title": "",
             "avatar_url": "",
             "timestamp": 0,
