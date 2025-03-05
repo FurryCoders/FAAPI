@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.9
+
+### Fixes
+
+* Fix `KeyError` raised when parsing a submission or journal with hidden comments
+
 ## v3.11.8
 
 ### Changes
