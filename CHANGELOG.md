@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.11.10
+
+### Changes
+
+* Remove gender parsing and set the `Submission.gender` property to `None`
+  * See [June 18th, 2025- Hardware and Drop Down Updates](https://www.furaffinity.net/journal/11160892)
+
+### Fixes
+
+* Allow "^" characters in username URL names
+
 ## v3.11.9
 
 ### Fixes
