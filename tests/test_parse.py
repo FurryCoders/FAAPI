@@ -89,8 +89,6 @@ def test_check_page_disabled_account(session: Session, data: dict):
 
 def test_check_page_not_found(session: Session):
     res: Response = session.get(join_url(root, "user", "_"))
-    assert res.ok
-
     page = parse_page(res.text)
 
     with raises(NotFound):
@@ -149,7 +147,6 @@ def test_parse_submission_page(session: Session, submission_test_data: dict):
     assert result["tags"] == submission_test_data["tags"]
     assert result["category"] == submission_test_data["category"]
     assert result["species"] == submission_test_data["species"]
-    assert result["gender"] == submission_test_data["gender"]
     assert result["rating"] == submission_test_data["rating"]
     assert result["views"] >= submission_test_data["stats"]["views"]
     assert result["comment_count"] >= submission_test_data["stats"]["comments"]

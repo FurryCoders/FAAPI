@@ -173,7 +173,7 @@ class Submission(SubmissionBase):
         self.tags: list[str] = []
         self.category: str = ""
         self.species: str = ""
-        self.gender: str = ""
+        self.gender: Optional[str] = None
         self.rating: str = ""
         self.stats: SubmissionStats = SubmissionStats(0, 0, 0)
         self.type: str = ""
