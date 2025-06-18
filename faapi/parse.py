@@ -73,7 +73,7 @@ def check_page_raise(page: BeautifulSoup) -> None:
 
 
 def username_url(username: str) -> str:
-    return sub(r"[^a-z\d.~`\[\]-]", "", username.lower())
+    return sub(r"[^\^a-z\d.~`\[\]-]", "", username.lower())
 
 
 def inner_html(tag: Tag) -> str:
