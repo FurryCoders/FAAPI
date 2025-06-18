@@ -512,7 +512,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     tag_category1: Optional[Tag] = tag_info.select_one("span.category-name")
     tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
-    tag_species: Optional[Tag] = (info_spans := tag_info.select("span"))[bool(tag_category1) + bool(tag_category2)]
+    tag_species: Optional[Tag] = tag_info.select("span")[bool(tag_category1) + bool(tag_category2)]
     tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
     tag_folder: Optional[Tag] = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
