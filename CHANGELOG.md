@@ -5,7 +5,7 @@
 ### Changes
 
 * Remove gender parsing and set the `Submission.gender` property to `None`
-  * See [June 18th, 2025- Hardware and Drop Down Updates](https://www.furaffinity.net/journal/11160892)
+    * See [June 18th, 2025- Hardware and Drop Down Updates](https://www.furaffinity.net/journal/11160892)
 
 ### Fixes
 
@@ -36,8 +36,8 @@
 ### Fixes
 
 * Fix next page of favorites
-  * The selector path to the "Next" button had changed
-  * The presence of the button is now tested
+    * The selector path to the "Next" button had changed
+    * The presence of the button is now tested
 
 ## v3.11.5
 
