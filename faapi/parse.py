@@ -513,7 +513,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_category1: Optional[Tag] = tag_info.select_one("span.category-name")
     tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
     tag_species: Optional[Tag] = (info_spans := tag_info.select("span"))[bool(tag_category1) + bool(tag_category2)]
-    tag_gender: Optional[Tag] = info_spans[1 + bool(tag_category1) + bool(tag_category2)]
     tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
     tag_folder: Optional[Tag] = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
     tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
@@ -532,7 +531,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_type is not None, _raise_exception(ParsingError("Missing type tag"))
     assert tag_fav is not None, _raise_exception(ParsingError("Missing fav tag"))
     assert tag_species is not None, _raise_exception(ParsingError("Missing species tag"))
-    assert tag_gender is not None, _raise_exception(ParsingError("Missing gender tag"))
     assert tag_description is not None, _raise_exception(ParsingError("Missing description tag"))
     assert tag_folder is not None, _raise_exception(ParsingError("Missing folder tag"))
     assert tag_file_url is not None, _raise_exception(ParsingError("Missing file URL tag"))
@@ -556,7 +554,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         category += " / " + tag_category2.text.strip()
         category.strip()
     species: str = tag_species.text.strip()
-    gender: str = tag_gender.text.strip()
     rating: str = tag_rating.text.strip()
     views: int = int(tag_views.text.strip())
     comment_count: int = int(tag_comment_count.text.strip())
@@ -577,11 +574,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     thumbnail_url = f"{thumbnail_url.rsplit('/', 1)[0]}/{quote(thumbnail_url.rsplit('/', 1)[1])}" \
         if thumbnail_url else ""
     prev_sub: Optional[int] = int(
-        get_attr(tag_prev, "href").split("/")[-2]
-    ) if tag_prev and tag_prev.text.lower() == "prev" else None
+        get_attr(tag_prev, "href").strip("/").split("/")[-1]
+    ) if tag_prev and tag_prev.text.lower() == "newer" else None
     next_sub: Optional[int] = int(
-        get_attr(tag_next, "href").split("/")[-2]
-    ) if tag_next and tag_next.text.lower() == "next" else None
+        get_attr(tag_next, "href").strip("/").split("/")[-1]
+    ) if tag_next and tag_next.text.lower() == "older" else None
     fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
     unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
     user_folders: list[tuple[str, str, str]] = []
@@ -605,7 +602,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         "tags": tags,
         "category": category,
         "species": species,
-        "gender": gender,
+        "gender": None,
         "rating": rating,
         "views": views,
         "comment_count": comment_count,

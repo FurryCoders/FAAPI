@@ -161,7 +161,6 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.tags == submission_dict["tags"] == submission_test_data["tags"]
     assert submission.category == submission_dict["category"] == submission_test_data["category"]
     assert submission.species == submission_dict["species"] == submission_test_data["species"]
-    assert submission.gender == submission_dict["gender"] == submission_test_data["gender"]
     assert submission.rating == submission_dict["rating"] == submission_test_data["rating"]
     assert submission.stats.views == submission_dict["stats"]["views"]
     assert submission.stats.views >= submission_test_data["stats"]["views"]
