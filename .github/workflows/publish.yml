@@ -71,53 +71,53 @@ jobs:
           name: dist
           path: dist
 
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: publish
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Get dist
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
-      - name: Get Tag
-        id: tag
-        uses: olegtarasov/get-tag@v2.1.1
-      - name: Clean CHANGELOG.md
-        run: |
-          touch CHANGELOG.md.tmp
-          npm install -g prettier
-          prettier --parser markdown --tab-width 4 --prose-wrap never CHANGELOG.md > CHANGELOG.md.tmp
-          cat CHANGELOG.md.tmp > CHANGELOG.md
-      - name: Build Release
-        id: release
-        uses: MatteoCampinoti94/changelog-to-release@v1.0.2
-        with:
-          version-name: ${{ steps.tag.outputs.tag }}
-      - name: Build Release File
-        env:
-          TAG: ${{ steps.tag.outputs.tag }}
-          RELEASE: ${{ steps.release.outputs.body }}
-        run: |
-          touch RELEASE.md
-          PREVIOUS_TAG="$(git tag -l --sort=-version:refname | head -2 | tail -1)"
-          printf "%s\n" "$RELEASE" > RELEASE.md
-          printf "\n## 🔗 Links\n" >> RELEASE.md
-          printf "\n* %s" "PyPi release: https://pypi.org/project/${GITHUB_REPOSITORY#*/}/${TAG#v}" >> RELEASE.md
-          printf "\n* %s" "Full changelog: https://github.com/$GITHUB_REPOSITORY/compare/$PREVIOUS_TAG...$TAG" >> RELEASE.md
-          cat RELEASE.md
-          printf "\n\n## Dist Files\n"
-          ls -l dist || echo "  no files"
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ steps.tag.outputs.tag }}
-          name: ${{ steps.release.outputs.title }}
-          body_path: RELEASE.md
-          files: |
-            dist/*
+#  release:
+#    name: Release
+#    runs-on: ubuntu-latest
+#    needs: publish
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 0
+#      - name: Get dist
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: dist
+#          path: dist
+#      - name: Get Tag
+#        id: tag
+#        uses: olegtarasov/get-tag@v2.1.1
+#      - name: Clean CHANGELOG.md
+#        run: |
+#          touch CHANGELOG.md.tmp
+#          npm install -g prettier
+#          prettier --parser markdown --tab-width 4 --prose-wrap never CHANGELOG.md > CHANGELOG.md.tmp
+#          cat CHANGELOG.md.tmp > CHANGELOG.md
+#      - name: Build Release
+#        id: release
+#        uses: MatteoCampinoti94/changelog-to-release@v1.0.2
+#        with:
+#          version-name: ${{ steps.tag.outputs.tag }}
+#      - name: Build Release File
+#        env:
+#          TAG: ${{ steps.tag.outputs.tag }}
+#          RELEASE: ${{ steps.release.outputs.body }}
+#        run: |
+#          touch RELEASE.md
+#          PREVIOUS_TAG="$(git tag -l --sort=-version:refname | head -2 | tail -1)"
+#          printf "%s\n" "$RELEASE" > RELEASE.md
+#          printf "\n## 🔗 Links\n" >> RELEASE.md
+#          printf "\n* %s" "PyPi release: https://pypi.org/project/${GITHUB_REPOSITORY#*/}/${TAG#v}" >> RELEASE.md
+#          printf "\n* %s" "Full changelog: https://github.com/$GITHUB_REPOSITORY/compare/$PREVIOUS_TAG...$TAG" >> RELEASE.md
+#          cat RELEASE.md
+#          printf "\n\n## Dist Files\n"
+#          ls -l dist || echo "  no files"
+#      - name: Create Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          tag_name: ${{ steps.tag.outputs.tag }}
+#          name: ${{ steps.release.outputs.title }}
+#          body_path: RELEASE.md
+#          files: |
+#            dist/*
