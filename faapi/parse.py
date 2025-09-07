@@ -90,30 +90,30 @@ def html_to_bbcode(html: str) -> str:
         return ""
 
     for linkusername in body.select("a.linkusername"):
-        linkusername.replaceWith(f"@{linkusername.text.strip()}")
+        linkusername.replace_with(f"@{linkusername.text.strip()}")
 
     for iconusername in body.select("a.iconusername,a.usernameicon"):
         username: str = iconusername.text.strip() or iconusername.attrs.get('href', '').strip('/').split('/')[-1]
         if icon := iconusername.select_one("img"):
             username = icon.attrs.get('alt', '').strip() or username
-        iconusername.replaceWith(f":icon{username}:" if iconusername.text.strip() else f":{username}icon:")
+        iconusername.replace_with(f":icon{username}:" if iconusername.text.strip() else f":{username}icon:")
 
     for img in body.select("img"):
-        img.replaceWith(f"[img={img.attrs.get('src', '')}/]")
+        img.replace_with(f"[img={img.attrs.get('src', '')}/]")
 
     for hr in body.select("hr"):
-        hr.replaceWith("-----")
+        hr.replace_with("-----")
 
     for smilie in body.select("i.smilie"):
         smilie_class: list[str] = list(smilie.attrs.get("class", []))
         smilie_name: str = next(filter(lambda c: c not in ["smilie", ""], smilie_class), "")
-        smilie.replaceWith(f":{smilie_name or 'smilie'}:")
+        smilie.replace_with(f":{smilie_name or 'smilie'}:")
 
     for span in body.select("span.bbcode[style*=color]"):
         if m := match(r".*color: ?([^ ;]+).*", span.attrs["style"]):
-            span.replaceWith(f"[color={m[1]}]", *span.children, "[/color]")
+            span.replace_with(f"[color={m[1]}]", *span.children, "[/color]")
         else:
-            span.replaceWith(*span.children)
+            span.replace_with(*span.children)
 
     for nav_link in body.select("span.parsed_nav_links"):
         a_tags = nav_link.select("a")
@@ -123,37 +123,37 @@ def html_to_bbcode(html: str) -> str:
         a_prev = a_prev_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_prev_tag else ""
         a_frst = a_frst_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_frst_tag else ""
         a_next = a_next_tag.attrs.get("href", "").strip("/").split("/")[-1] if a_next_tag else ""
-        nav_link.replaceWith(f"[{a_prev or '-'},{a_frst or '-'},{a_next or '-'}]")
+        nav_link.replace_with(f"[{a_prev or '-'},{a_frst or '-'},{a_next or '-'}]")
 
     for a in body.select("a.auto_link_shortened:not(.named_url), a.auto_link:not(.named_url)"):
-        a.replaceWith(a.attrs.get('href', ''))
+        a.replace_with(a.attrs.get('href', ''))
 
     for a in body.select("a"):
         href_match: Optional[Match] = relative_url.match(a.attrs.get('href', ''))
-        a.replaceWith(
+        a.replace_with(
             f"[url={href_match[1] if href_match else a.attrs.get('href', '')}]",
             *a.children,
             "[/url]"
         )
 
     for yt in body.select("iframe[src*='youtube.com/embed']"):
-        yt.replaceWith(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
+        yt.replace_with(f"[yt]https://youtube.com/embed/{yt.attrs.get('src', '').strip('/').split('/')}[/yt]")
 
     for quote_name_tag in body.select("span.bbcode.bbcode_quote > span.bbcode_quote_name"):
         quote_author: str = quote_name_tag.text.strip().removesuffix('wrote:').strip()
         quote_tag = quote_name_tag.parent
         if not quote_tag:
-            quote_name_tag.replaceWith(quote_author)
+            quote_name_tag.replace_with(quote_author)
             continue
         quote_name_tag.decompose()
-        quote_tag.replaceWith(
+        quote_tag.replace_with(
             f"[quote{('=' + quote_author) if quote_author else ''}]",
             *quote_tag.children,
             "[/quote]"
         )
 
     for quote_tag in body.select("span.bbcode.bbcode_quote"):
-        quote_tag.replaceWith("[quote]", *quote_tag.children, "[/quote]")
+        quote_tag.replace_with("[quote]", *quote_tag.children, "[/quote]")
 
     for [selector, bbcode_tag] in (
         ("i", "i"),
@@ -175,19 +175,19 @@ def html_to_bbcode(html: str) -> str:
         ("h6", "h6"),
     ):
         for tag in body.select(selector):
-            tag.replaceWith(f"[{bbcode_tag}]", *tag.children, f"[/{bbcode_tag}]")
+            tag.replace_with(f"[{bbcode_tag}]", *tag.children, f"[/{bbcode_tag}]")
 
     for br in body.select("br"):
-        br.replaceWith("\n")
+        br.replace_with("\n")
 
     for p in body.select("p"):
-        p.replaceWith(*p.children)
+        p.replace_with(*p.children)
 
     for tag in body.select("*"):
         if not (div_class := tag.attrs.get("class", None)):
-            tag.replaceWith(f"[tag={tag.name}]", *tag.children, "[/tag.{tag.name}]")
+            tag.replace_with(f"[tag={tag.name}]", *tag.children, "[/tag.{tag.name}]")
         else:
-            tag.replaceWith(
+            tag.replace_with(
                 f"[tag={tag.name}.{' '.join(div_class) if isinstance(div_class, list) else div_class}]",
                 *tag.children,
                 "[/tag]"
@@ -245,12 +245,12 @@ def bbcode_to_html(bbcode: str) -> str:
                 if m_ := match(rf"(.*):({'|'.join(smilie_icons)}):(.*)", child):
                     has_match = True
                     child_new = Tag(name="i", attrs={"class": f"smilie {m_[2]}"})
-                    child.replaceWith(m_[1], child_new, m_[3])
+                    child.replace_with(m_[1], child_new, m_[3])
                 elif m_ := match(r"(.*)(?:@([a-zA-Z0-9.~_-]+)|:link([a-zA-Z0-9.~_-]+):)(.*)", child):
                     has_match = True
                     child_new = Tag(name="a", attrs={"class": "linkusername", "href": f"/user/{m_[2] or m_[3]}"})
                     child_new.insert(0, m_[2] or m_[3])
-                    child.replaceWith(m_[1], child_new, m_[4])
+                    child.replace_with(m_[1], child_new, m_[4])
                 elif m_ := match(r"(.*):(?:icon([a-zA-Z0-9.~_-]+)|([a-zA-Z0-9.~_-]+)icon):(.*)", child):
                     has_match = True
                     user: str = m_[2] or m_[3] or ""
@@ -265,7 +265,7 @@ def bbcode_to_html(bbcode: str) -> str:
                     child_new.insert(0, child_new_img)
                     if m_[2]:
                         child_new.insert(1, f"\xA0{m_[2]}")
-                    child.replaceWith(m_[1], child_new, m_[4])
+                    child.replace_with(m_[1], child_new, m_[4])
                 elif m_ := match(r"(.*)\[ *(?:(\d+)|-)?, *(?:(\d+)|-)? *, *(?:(\d+)|-)? *](.*)", child):
                     has_match = True
                     child_new = Tag(name="span", attrs={"class": "parsed_nav_links"})
@@ -286,10 +286,10 @@ def bbcode_to_html(bbcode: str) -> str:
                     child_new.insert(2, child_new_2)
                     child_new.insert(3, "\xA0|\xA0")
                     child_new.insert(4, child_new_3)
-                    child.replaceWith(m_[1], child_new, m_[5])
+                    child.replace_with(m_[1], child_new, m_[5])
 
         for p in page.select("p"):
-            p.replaceWith(*p.children)
+            p.replace_with(*p.children)
 
         return page
 
