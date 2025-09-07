@@ -116,7 +116,7 @@ class FAAPI:
 
         :return: True if the cookies belong to a login session, False otherwise.
         """
-        return parse_loggedin_user(self.get_parsed("login", skip_auth_check=True)) is not None
+        return parse_loggedin_user(self.get_parsed("/", skip_auth_check=True)) is not None
 
     def get(self, path: str, **params: Union[str, bytes, int, float]) -> Response:
         """
@@ -158,7 +158,7 @@ class FAAPI:
 
         :return: A User object for the logged-in user, or None if the cookies are not from a login session.
         """
-        return self.user(user) if (user := parse_loggedin_user(self.get_parsed("login"))) else None
+        return self.user(user) if (user := parse_loggedin_user(self.get_parsed("/"))) else None
 
     def frontpage(self) -> list[SubmissionPartial]:
         """
