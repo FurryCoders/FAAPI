@@ -1,5 +1,17 @@
 # Changelog
 
+## v3.11.11
+
+### Fixes
+
+* Fix `FAAPI.login_status` and `FAAPI.me` not working due to /login not being allowed by FurAffinity's robots.txt.
+
+### Dependencies
+
+* Use [requests ^2.32.5](https://pypi.org/project/requests/2.32.5)
+* Use [beautifulsoup4 ^4.13.5](https://pypi.org/project/beautifulsoup4/4.13.5)
+* Use [lxml ^6.0.1](https://pypi.org/project/lxml/6.0.1)
+
 ## v3.11.10
 
 ### Changes
