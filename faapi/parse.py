@@ -31,7 +31,6 @@ from .exceptions import ServerError
 relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
 url_username_regexp: Pattern = re_compile(r"/(?:user|gallery|scraps|favorites|journals|commissions)/([^/]+)(/.*)?")
-watchlist_next_regexp: Pattern = re_compile(r"/watchlist/(?:by|to)/[^/]+/(\d+)")
 not_found_messages: tuple[str, ...] = ("not in our database", "cannot be found", "could not be found", "user not found")
 deactivated_messages: tuple[str, ...] = ("deactivated", "pending deletion")
 smilie_icons: tuple[str, ...] = (
@@ -879,7 +878,15 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], int]:
     tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")
-    match_next: Optional[Match] = watchlist_next_regexp.match(get_attr(tag_next, "action")) if tag_next else None
+
+    next_page = None
+
+    submit_button = tag_next.find("button", type="submit") if tag_next else None
+    if submit_button and not submit_button.has_attr("disabled"):
+        page_input = tag_next.find("input", type="hidden", attrs={"name": "page"})
+
+        if page_input and page_input.has_attr("value") and page_input["value"].isdigit():
+            next_page = int(page_input["value"])
 
     watches: list[tuple[str, str]] = []
 
@@ -894,4 +901,4 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], i
 
         watches.append((status, username))
 
-    return watches, int(match_next[1]) if match_next else 0
+    return watches, next_page

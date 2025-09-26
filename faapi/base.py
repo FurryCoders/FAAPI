@@ -298,7 +298,7 @@ class FAAPI:
         """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
-            self.get_parsed(join_url("watchlist", "to", quote(username_url(user)), page), skip_auth_check=True))
+            self.get_parsed(join_url("watchlist", "to", quote(username_url(user))), page=page, skip_auth_check=True))
         for s, u in us:
             _user: UserPartial = UserPartial()
             _user.name = u
@@ -315,7 +315,7 @@ class FAAPI:
         """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
-            self.get_parsed(join_url("watchlist", "by", quote(username_url(user)), page), skip_auth_check=True))
+            self.get_parsed(join_url("watchlist", "by", quote(username_url(user))), page=page, skip_auth_check=True))
         for s, u in us:
             _user: UserPartial = UserPartial()
             _user.name = u
