@@ -6,12 +6,12 @@ from .connection import join_url
 from .connection import root
 from .exceptions import _raise_exception
 from .parse import BeautifulSoup
-from .parse import Tag
 from .parse import check_page_raise
 from .parse import html_to_bbcode
 from .parse import parse_comments
 from .parse import parse_submission_figure
 from .parse import parse_submission_page
+from .parse import Tag
 from .user import UserPartial
 
 
