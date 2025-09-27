@@ -878,15 +878,12 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], int]:
     tag_next: Optional[Tag] = watch_page.select_one("section div.floatright form[method=get]")
+    tag_page_input: Optional[Tag] = tag_next.select_one("input[type=hidden][name=page]")
 
-    next_page: Optional[int] = None
+    next_page: int = 0
 
-    tag_submit_button: Optional[Tag] = tag_next.select_one("button[type=submit]") if tag_next else None
-    if tag_submit_button and not tag_submit_button.has_attr("disabled"):
-        tag_page_input: Optional[Tag] = tag_next.select_one("input[type=hidden][name=page]")
-
-        if tag_page_input and tag_page_input.has_attr("value") and tag_page_input["value"].isdigit():
-            next_page = int(tag_page_input["value"])
+    if tag_page_input and tag_page_input.has_attr("value") and tag_page_input["value"].isdigit():
+        next_page = int(tag_page_input["value"])
 
     watches: list[tuple[str, str]] = []
 
