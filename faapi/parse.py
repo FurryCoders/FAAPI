@@ -878,7 +878,7 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], Optional[int]]:
     tag_next: Optional[Tag] = watch_page.select_one(
-        'section div.floatright form[method="get"] input[name="next"][value]'
+        'section div.floatright form[method="get"] input[name="page"][value]'
     )
     next_page: Optional[int] = int(get_attr(tag_next, "value")) if tag_next else None
 
