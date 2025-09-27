@@ -881,12 +881,12 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], i
 
     next_page: Optional[int] = None
 
-    submit_button: Optional[Tag] = tag_next.find("button", type="submit") if tag_next else None
-    if submit_button and not submit_button.has_attr("disabled"):
-        page_input: Optional[Tag] = tag_next.find("input", type="hidden", attrs={"name": "page"})
+    tag_submit_button: Optional[Tag] = tag_next.select_one("button[type=submit]") if tag_next else None
+    if tag_submit_button and not tag_submit_button.has_attr("disabled"):
+        tag_page_input: Optional[Tag] = tag_next.select_one("input[type=hidden][name=page]")
 
-        if page_input and page_input.has_attr("value") and page_input["value"].isdigit():
-            next_page = int(page_input["value"])
+        if tag_page_input and tag_page_input.has_attr("value") and tag_page_input["value"].isdigit():
+            next_page = int(tag_page_input["value"])
 
     watches: list[tuple[str, str]] = []
 
