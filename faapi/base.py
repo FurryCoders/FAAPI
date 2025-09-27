@@ -11,11 +11,11 @@ from urllib.robotparser import RobotFileParser
 from requests import Session
 
 from .connection import CookieDict
-from .connection import Response
 from .connection import get
 from .connection import get_robots
 from .connection import join_url
 from .connection import make_session
+from .connection import Response
 from .connection import stream_binary
 from .exceptions import DisallowedPath
 from .exceptions import Unauthorized
@@ -132,8 +132,10 @@ class FAAPI:
         self.handle_delay()
         return get(self.session, path, timeout=self.timeout, params=params)
 
-    def get_parsed(self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False,
-                   **params: Union[str, bytes, int, float]) -> BeautifulSoup:
+    def get_parsed(
+        self, path: str, *, skip_page_check: bool = False, skip_auth_check: bool = False,
+        **params: Union[str, bytes, int, float]
+    ) -> BeautifulSoup:
         """
         Fetch a path with a GET request and parse it using BeautifulSoup.
 
@@ -170,8 +172,9 @@ class FAAPI:
         submissions: list[SubmissionPartial] = [SubmissionPartial(f) for f in parse_submission_figures(page_parsed)]
         return sorted({s for s in submissions}, reverse=True)
 
-    def submission(self, submission_id: int, get_file: bool = False, *, chunk_size: Optional[int] = None
-                   ) -> tuple[Submission, Optional[bytes]]:
+    def submission(
+        self, submission_id: int, get_file: bool = False, *, chunk_size: Optional[int] = None
+    ) -> tuple[Submission, Optional[bytes]]:
         """
         Fetch a submission and, optionally, its file.
 
@@ -298,7 +301,8 @@ class FAAPI:
         """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
-            self.get_parsed(join_url("watchlist", "to", quote(username_url(user))), page=page, skip_auth_check=True))
+            self.get_parsed(join_url("watchlist", "to", quote(username_url(user))), page=page, skip_auth_check=True)
+        )
         for s, u in us:
             _user: UserPartial = UserPartial()
             _user.name = u
@@ -315,7 +319,8 @@ class FAAPI:
         """
         users: list[UserPartial] = []
         us, np = parse_watchlist(
-            self.get_parsed(join_url("watchlist", "by", quote(username_url(user))), page=page, skip_auth_check=True))
+            self.get_parsed(join_url("watchlist", "by", quote(username_url(user))), page=page, skip_auth_check=True)
+        )
         for s, u in us:
             _user: UserPartial = UserPartial()
             _user.name = u

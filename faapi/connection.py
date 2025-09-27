@@ -14,8 +14,8 @@ from requests import Response
 from requests import Session
 
 from .__version__ import __version__
-from .exceptions import Unauthorized
 from .exceptions import _raise_exception
+from .exceptions import Unauthorized
 
 root: str = "https://www.furaffinity.net"
 
@@ -49,13 +49,17 @@ def get_robots(session: Session) -> RobotFileParser:
     return robots
 
 
-def get(session: Session, path: str, *, timeout: Optional[int] = None,
-        params: Optional[dict[str, Union[str, bytes, int, float]]] = None) -> Response:
+def get(
+    session: Session, path: str, *, timeout: Optional[int] = None,
+    params: Optional[dict[str, Union[str, bytes, int, float]]] = None
+) -> Response:
     return session.get(join_url(root, path), params=params, timeout=timeout)
 
 
-def stream_binary(session: Session, url: str, *, chunk_size: Optional[int] = None,
-                  timeout: Optional[int] = None) -> bytes:
+def stream_binary(
+    session: Session, url: str, *, chunk_size: Optional[int] = None,
+    timeout: Optional[int] = None
+) -> bytes:
     stream: Response = session.get(url, stream=True, timeout=timeout)
     stream.raise_for_status()
 

@@ -155,23 +155,23 @@ def html_to_bbcode(html: str) -> str:
         quote_tag.replace_with("[quote]", *quote_tag.children, "[/quote]")
 
     for [selector, bbcode_tag] in (
-        ("i", "i"),
-        ("b", "b"),
-        ("strong", "b"),
-        ("u", "u"),
-        ("s", "s"),
-        ("code.bbcode_left", "left"),
-        ("code.bbcode_center", "center"),
-        ("code.bbcode_right", "right"),
-        ("span.bbcode_spoiler", "spoiler"),
-        ("sub", "sub"),
-        ("sup", "sup"),
-        ("h1", "h1"),
-        ("h2", "h2"),
-        ("h3", "h3"),
-        ("h4", "h4"),
-        ("h5", "h5"),
-        ("h6", "h6"),
+            ("i", "i"),
+            ("b", "b"),
+            ("strong", "b"),
+            ("u", "u"),
+            ("s", "s"),
+            ("code.bbcode_left", "left"),
+            ("code.bbcode_center", "center"),
+            ("code.bbcode_right", "right"),
+            ("span.bbcode_spoiler", "spoiler"),
+            ("sub", "sub"),
+            ("sup", "sup"),
+            ("h1", "h1"),
+            ("h2", "h2"),
+            ("h3", "h3"),
+            ("h4", "h4"),
+            ("h5", "h5"),
+            ("h6", "h6"),
     ):
         for tag in body.select(selector):
             tag.replace_with(f"[{bbcode_tag}]", *tag.children, f"[/{bbcode_tag}]")
@@ -198,15 +198,15 @@ def html_to_bbcode(html: str) -> str:
     bbcode = sub("^ *", "", bbcode, flags=MULTILINE)
 
     for char, substitution in (
-        ("©", "(c)"),
-        ("™", "(tm)"),
-        ("®", "(r)"),
-        ("&copy;", "(c)"),
-        ("&reg;", "(tm)"),
-        ("&trade;", "(r)"),
-        ("&lt;", "<"),
-        ("&gt;", ">"),
-        ("&amp;", "&"),
+            ("©", "(c)"),
+            ("™", "(tm)"),
+            ("®", "(r)"),
+            ("&copy;", "(c)"),
+            ("&reg;", "(tm)"),
+            ("&trade;", "(r)"),
+            ("&lt;", "<"),
+            ("&gt;", ">"),
+            ("&amp;", "&"),
     ):
         bbcode = bbcode.replace(char, substitution)
 
@@ -877,7 +877,9 @@ def parse_user_journals(journals_page: BeautifulSoup) -> dict[str, Any]:
 
 
 def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], Optional[int]]:
-    tag_next: Optional[Tag] = watch_page.select_one('section div.floatright form[method="get"] input[name="next"][value]')
+    tag_next: Optional[Tag] = watch_page.select_one(
+        'section div.floatright form[method="get"] input[name="next"][value]'
+    )
     next_page: Optional[int] = int(get_attr(tag_next, "value")) if tag_next else None
 
     watches: list[tuple[str, str]] = []
