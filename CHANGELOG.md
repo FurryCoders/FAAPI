@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.12
+
+### Fixes
+
+* Fix `FAAPI.watchlist_to` and `FAAPI.watchlist_by` not returning the next page
+
 ## v3.11.11
 
 ### Fixes
