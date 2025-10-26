@@ -27,6 +27,7 @@ from .exceptions import NoticeMessage
 from .exceptions import NoTitle
 from .exceptions import ParsingError
 from .exceptions import ServerError
+from .exceptions import ClassicTheme
 
 relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
@@ -51,6 +52,8 @@ def parse_page(text: str) -> BeautifulSoup:
 def check_page_raise(page: BeautifulSoup) -> None:
     if page is None:
         raise NonePage
+    elif 'classic' in page.body['data-static-path']:
+        raise ClassicTheme
     elif not (title := page.title.text.lower() if page.title else ""):
         raise NoTitle
     elif title.startswith("account disabled"):
