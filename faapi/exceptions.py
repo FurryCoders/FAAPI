@@ -51,6 +51,7 @@ class NoticeMessage(ParsingError):
     A notice of unknown type was found in the page.
     """
 
+
 class ClassicTheme(ParsingError):
     """
     The cookies supplied are for an account using the Classic theme. Please change your theme to Modern to use FAAPI.
