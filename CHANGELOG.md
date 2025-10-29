@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.11.13
+
+### New Features
+
+* New `ClassicTheme(ParsingError)` exception raised when a parsed page uses the "Classic" theme
+    * Courtesy of @plum-pan
+
 ## v3.11.12
 
 ### Fixes
