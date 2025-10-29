@@ -52,5 +52,11 @@ class NoticeMessage(ParsingError):
     """
 
 
+class ClassicTheme(ParsingError):
+    """
+    The cookies supplied are for an account using the Classic theme. Please change your theme to Modern to use FAAPI.
+    """
+
+
 def _raise_exception(err: BaseException):
     raise err
