@@ -7,6 +7,11 @@
 * New `ClassicTheme(ParsingError)` exception raised when a parsed page uses the "Classic" theme
     * Courtesy of [@plum-pan](https://github.com/plum-pan)
 
+### Dependencies
+
+* [beautifulsoup4 ^4.14.2](https://pypi.org/project/beautifulsoup4/4.14.2)
+* [lxml ^6.0.2](https://pypi.org/project/lxml/6.0.2)
+
 ## v3.11.12
 
 ### Fixes
