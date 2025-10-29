@@ -52,7 +52,7 @@ def parse_page(text: str) -> BeautifulSoup:
 def check_page_raise(page: BeautifulSoup) -> None:
     if page is None:
         raise NonePage
-    elif 'classic' in page.body['data-static-path']:
+    elif page.body and "classic" in page.body.attrs.get("data-static-path", ""):
         raise ClassicTheme
     elif not (title := page.title.text.lower() if page.title else ""):
         raise NoTitle
