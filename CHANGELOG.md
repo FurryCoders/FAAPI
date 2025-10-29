@@ -5,7 +5,7 @@
 ### New Features
 
 * New `ClassicTheme(ParsingError)` exception raised when a parsed page uses the "Classic" theme
-    * Courtesy of @plum-pan
+    * Courtesy of [@plum-pan](https://github.com/plum-pan)
 
 ## v3.11.12
 
