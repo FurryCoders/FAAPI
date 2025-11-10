@@ -888,10 +888,10 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], O
     watches: list[tuple[str, str]] = []
 
     for tag_user in watch_page.select("div.watch-list-items"):
-        user_link: Optional[Tag] = tag_user.select_one("a")
+        user_link: Optional[Tag] = tag_user.select_one('a[href^="/user/"]')
         assert user_link, _raise_exception(ParsingError("Missing user link"))
 
-        username: str = user_link.text.strip()
+        username: str = get_attr(user_link, "href").removeprefix("/user/").strip("/")
         user_link.decompose()
 
         status: str = tag_user.text.strip()

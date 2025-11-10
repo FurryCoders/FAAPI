@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.14
+
+### Fixes
+
+* Fix `FAAPI.watchlist_by` and `FAAPI.watchlist_to` returning display name instead of username
+
 ## v3.11.13
 
 ### New Features
