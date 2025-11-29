@@ -392,7 +392,7 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
 def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journal_page)
     tag_id: Optional[Tag] = journal_page.select_one("meta[property='og:url']")
-    tag_title: Optional[Tag] = journal_page.select_one("h2.journal-title")
+    tag_title: Optional[Tag] = journal_page.select_one("#c-journalTitleTop__subject h3")
     tag_date: Optional[Tag] = journal_page.select_one("div.content div.section-header span.popup_date")
     tag_header: Optional[Tag] = journal_page.select_one("div.journal-header")
     tag_footer: Optional[Tag] = journal_page.select_one("div.journal-footer")
@@ -504,7 +504,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_views: Optional[Tag] = sub_page.select_one("div.views span")
     tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
     tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
-    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span.rating-box")
+    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span.inline")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_fav: Optional[Tag] = sub_page.select_one("div.fav > a")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
