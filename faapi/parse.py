@@ -393,7 +393,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journal_page)
     tag_id: Optional[Tag] = journal_page.select_one("meta[property='og:url']")
     tag_title: Optional[Tag] = journal_page.select_one("#c-journalTitleTop__subject h3")
-    tag_date: Optional[Tag] = journal_page.select_one("div.content div.section-header span.popup_date")
+    tag_date: Optional[Tag] = journal_page.select_one("div.content div.section-header span.popup_date[data-time]")
     tag_header: Optional[Tag] = journal_page.select_one("div.journal-header")
     tag_footer: Optional[Tag] = journal_page.select_one("div.journal-footer")
     tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
@@ -408,11 +408,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     # noinspection DuplicatedCode
     title: str = tag_title.text.strip()
-    date: datetime = parse_date(
-        get_attr(tag_date, "title").strip()
-        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
-        else tag_date.text.strip()
-    )
+    date: datetime = datetime.fromtimestamp(int(tag_date.attrs["data-time"]))
     header: str = clean_html(inner_html(tag_header)) if tag_header else ""
     footer: str = clean_html(inner_html(tag_footer)) if tag_footer else ""
     content: str = clean_html(inner_html(tag_content))
@@ -499,7 +495,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
     tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
-    tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date")
+    tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date[data-time]")
     tag_tags: list[Tag] = sub_page.select('section.tags-row a[href^="/"]')
     tag_views: Optional[Tag] = sub_page.select_one("div.views span")
     tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
@@ -543,11 +539,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     id_: int = int(get_attr(tag_id, "content").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    date: datetime = parse_date(
-        get_attr(tag_date, "title").strip()
-        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
-        else tag_date.text.strip()
-    )
+    date: datetime = datetime.fromtimestamp(int(tag_date.attrs["data-time"]))
     tags: list[str] = [t.text.strip() for t in tag_tags]
     category: str = ""
     if tag_category1:
