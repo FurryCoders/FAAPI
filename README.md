@@ -283,6 +283,7 @@ This object contains partial information gathered when parsing a journals folder
 
 * `id: int` journal ID
 * `title: str` journal title
+* `rating: str` journal rating
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
   timestamp 0)
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)
@@ -321,6 +322,7 @@ as `JournalPartial` with the addition of comments:
 
 * `id: int` journal ID
 * `title: str` journal title
+* `rating: str` journal rating
 * `date: datetime` upload date as a [`datetime` object](https://docs.python.org/3/library/datetime.html) (defaults to
   timestamp 0)
 * `author: UserPartial` journal author (filled only if the journal is parsed from a `bs4.BeautifulSoup` page)

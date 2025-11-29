@@ -358,18 +358,21 @@ def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
 def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     id_: int = int(section_tag.attrs.get("id", "00000")[4:])
     tag_title: Optional[Tag] = section_tag.select_one("h2")
+    tag_rating: Optional[Tag] = section_tag.select_one("span.c-contentRating--general")
     tag_date: Optional[Tag] = section_tag.select_one("div.section-header span.popup_date")
     tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
     tag_comments: Optional[Tag] = section_tag.select_one("div.section-footer > a > span")
 
     assert id_ != 0, _raise_exception(ParsingError("Missing ID"))
     assert tag_title is not None, _raise_exception(ParsingError("Missing title tag"))
+    assert tag_rating is not None, _raise_exception(ParsingError("Missing rating tag"))
     assert tag_date is not None, _raise_exception(ParsingError("Missing date tag"))
     assert tag_content is not None, _raise_exception(ParsingError("Missing content tag"))
     assert tag_comments is not None, _raise_exception(ParsingError("Missing comments tag"))
 
     # noinspection DuplicatedCode
     title: str = tag_title.text.strip()
+    rating: str = tag_rating.text.strip()
     date: datetime = parse_date(
         get_attr(tag_date, "title").strip()
         if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
@@ -382,6 +385,7 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     return {
         "id": id_,
         "title": title,
+        "rating": rating,
         "date": date,
         "content": content,
         "mentions": mentions,
@@ -392,8 +396,9 @@ def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
 def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     user_info: dict[str, str] = parse_user_folder(journal_page)
     tag_id: Optional[Tag] = journal_page.select_one("meta[property='og:url']")
-    tag_title: Optional[Tag] = journal_page.select_one("h2.journal-title")
-    tag_date: Optional[Tag] = journal_page.select_one("div.content div.section-header span.popup_date")
+    tag_title: Optional[Tag] = journal_page.select_one("#c-journalTitleTop__subject h3")
+    tag_rating: Optional[Tag] = journal_page.select_one("#c-journalTitleTop__contentRating")
+    tag_date: Optional[Tag] = journal_page.select_one("div.content div.section-header span.popup_date[data-time]")
     tag_header: Optional[Tag] = journal_page.select_one("div.journal-header")
     tag_footer: Optional[Tag] = journal_page.select_one("div.journal-footer")
     tag_content: Optional[Tag] = journal_page.select_one("div.journal-content")
@@ -401,6 +406,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
 
     assert tag_id is not None, _raise_exception(ParsingError("Missing ID tag"))
     assert tag_title is not None, _raise_exception(ParsingError("Missing title tag"))
+    assert tag_rating is not None, _raise_exception(ParsingError("Missing rating tag"))
     assert tag_date is not None, _raise_exception(ParsingError("Missing date tag"))
     assert tag_content is not None, _raise_exception(ParsingError("Missing content tag"))
     assert tag_comments is not None, _raise_exception(ParsingError("Missing comments tag"))
@@ -408,11 +414,8 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
     id_: int = int(tag_id.attrs.get("content", "0").strip("/").split("/")[-1])
     # noinspection DuplicatedCode
     title: str = tag_title.text.strip()
-    date: datetime = parse_date(
-        get_attr(tag_date, "title").strip()
-        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
-        else tag_date.text.strip()
-    )
+    rating: str = tag_rating.text.strip()
+    date: datetime = datetime.fromtimestamp(int(tag_date.attrs["data-time"]))
     header: str = clean_html(inner_html(tag_header)) if tag_header else ""
     footer: str = clean_html(inner_html(tag_footer)) if tag_footer else ""
     content: str = clean_html(inner_html(tag_content))
@@ -425,6 +428,7 @@ def parse_journal_page(journal_page: BeautifulSoup) -> dict[str, Any]:
         "user_info": user_info,
         "id": id_,
         "title": title,
+        "rating": rating,
         "date": date,
         "content": content,
         "header": header,
@@ -499,12 +503,12 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
     tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
-    tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date")
+    tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date[data-time]")
     tag_tags: list[Tag] = sub_page.select('section.tags-row a[href^="/"]')
     tag_views: Optional[Tag] = sub_page.select_one("div.views span")
     tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
     tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
-    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span.rating-box")
+    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span.inline")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
     tag_fav: Optional[Tag] = sub_page.select_one("div.fav > a")
     tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
@@ -543,11 +547,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 
     id_: int = int(get_attr(tag_id, "content").strip("/").split("/")[-1])
     title: str = tag_title.text.strip()
-    date: datetime = parse_date(
-        get_attr(tag_date, "title").strip()
-        if match(r"^[A-Za-z]+ \d+,.*$", get_attr(tag_date, "title"))
-        else tag_date.text.strip()
-    )
+    date: datetime = datetime.fromtimestamp(int(tag_date.attrs["data-time"]))
     tags: list[str] = [t.text.strip() for t in tag_tags]
     category: str = ""
     if tag_category1:

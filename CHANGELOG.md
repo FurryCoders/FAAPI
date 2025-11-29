@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.12.0
+
+### New Features
+
+* Add `Journal.rating` and `JournalPartial.rating` properties
+
+### Fixes
+
+* Fix parsing errors due to FurAffinity's update on 2025-11-28
+
 ## v3.11.14
 
 ### Fixes

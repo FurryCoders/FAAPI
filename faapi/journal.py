@@ -27,6 +27,7 @@ class JournalBase:
     def __init__(self):
         self.id: int = 0
         self.title: str = ""
+        self.rating: str = ""
         self.date: datetime = datetime.fromtimestamp(0)
         self.author: UserPartial = UserPartial()
         self.stats: JournalStats = JournalStats(0)
@@ -74,6 +75,7 @@ class JournalBase:
     def __iter__(self):
         yield "id", self.id
         yield "title", self.title
+        yield "rating", self.rating
         yield "date", self.date
         yield "author", dict(self.author)
         yield "stats", self.stats._asdict()
@@ -140,6 +142,7 @@ class JournalPartial(JournalBase):
         # noinspection DuplicatedCode
         self.id = parsed["id"]
         self.title = parsed["title"]
+        self.rating = parsed["rating"]
         self.author.name = parsed.get("user_name", "")
         self.author.display_name = parsed.get("user_display_name", "")
         self.author.status = parsed.get("user_status", "")
@@ -220,6 +223,7 @@ class Journal(JournalBase):
         # noinspection DuplicatedCode
         self.id = parsed["id"]
         self.title = parsed["title"]
+        self.rating = parsed["rating"]
         self.author.name = parsed["user_info"]["name"]
         self.author.display_name = parsed["user_info"]["display_name"]
         self.author.status = parsed["user_info"]["status"]
