@@ -20,6 +20,7 @@ from urllib3.util import parse_url
 
 from .connection import root
 from .exceptions import _raise_exception
+from .exceptions import ClassicTheme
 from .exceptions import DisabledAccount
 from .exceptions import NonePage
 from .exceptions import NotFound
@@ -27,7 +28,6 @@ from .exceptions import NoticeMessage
 from .exceptions import NoTitle
 from .exceptions import ParsingError
 from .exceptions import ServerError
-from .exceptions import ClassicTheme
 
 relative_url: Pattern = re_compile(r"^(?:https?://(?:www\.)?furaffinity\.net)?(.*)")
 mentions_regexp: Pattern = re_compile(r"^(?:(?:https?://)?(?:www\.)?furaffinity\.net)?/user/([^/#]+).*$")
@@ -358,7 +358,11 @@ def parse_loggedin_user(page: BeautifulSoup) -> Optional[str]:
 def parse_journal_section(section_tag: Tag) -> dict[str, Any]:
     id_: int = int(section_tag.attrs.get("id", "00000")[4:])
     tag_title: Optional[Tag] = section_tag.select_one("h2")
-    tag_rating: Optional[Tag] = section_tag.select_one("span.c-contentRating--general, span.c-contentRating--adult, span.c-contentRating--mature")
+    tag_rating: Optional[Tag] = section_tag.select_one(
+        "span.c-contentRating--general"
+        ",span.c-contentRating--adult"
+        ",span.c-contentRating--mature"
+    )
     tag_date: Optional[Tag] = section_tag.select_one("div.section-header span.popup_date")
     tag_content: Optional[Tag] = section_tag.select_one("div.journal-body")
     tag_comments: Optional[Tag] = section_tag.select_one("div.section-footer > a > span")
