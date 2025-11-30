@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.1
+
+### Fixes
+
+* Fix error when parsing journals lists when one or more journals was not rated general
+
 ## v3.12.0
 
 ### New Features
