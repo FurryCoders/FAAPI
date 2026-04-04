@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.2
+
+### Fixes
+
+* Fix imprecise selector for submission folder (gallery/scraps)
+
 ## v3.12.1
 
 ### Fixes
