@@ -47,8 +47,10 @@ def submission_test_data() -> dict:
 def journal_test_data() -> dict:
     return load((__root__ / "test_journal.json").open())
 
+
 def compare_dates(a: datetime, b: datetime, max_variance: int) -> bool:
     return (b - timedelta(hours=max_variance)) <= a <= (b + timedelta(hours=max_variance))
+
 
 def remove_user_icons(html: str) -> str:
     return sub(r"a\.furaffinity\.net/\d{8}/[^. ]+.gif", "", html)
@@ -139,7 +141,8 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
 
     assert submission.id == submission_dict["id"] == submission_test_data["id"]
     assert submission.title == submission_dict["title"] == submission_test_data["title"]
-    assert submission.author.name.lower() == submission_dict["author"]["name"].lower() == submission_test_data["author"]["name"].lower()
+    assert submission.author.name.lower() == submission_dict["author"]["name"].lower() == \
+           submission_test_data["author"]["name"].lower()
     assert submission.author.avatar_url == submission_dict["author"]["avatar_url"] != ""
     assert compare_dates(submission.date, submission_dict["date"], 1)
     assert compare_dates(submission.date, datetime.fromisoformat(submission_test_data["date"]), 1)
@@ -156,6 +159,11 @@ def test_submission(cookies: RequestsCookieJar, submission_test_data: dict):
     assert submission.type == submission_dict["type"] == submission_test_data["type"]
     assert submission.mentions == submission_dict["mentions"] == submission_test_data["mentions"]
     assert submission.folder == submission_dict["folder"] == submission_test_data["folder"]
+    assert (
+        [f._asdict() for f in submission.user_folders] ==
+        submission_dict["user_folders"] ==
+        submission_test_data["user_folders"]
+    )
     assert submission.file_url == submission_dict["file_url"] != ""
     assert submission.thumbnail_url == submission_dict["thumbnail_url"] != ""
     assert submission.prev == submission_dict["prev"] == submission_test_data["prev"]
@@ -199,7 +207,8 @@ def test_journal(cookies: RequestsCookieJar, journal_test_data: dict):
 
     assert journal.id == journal_dict["id"] == journal_test_data["id"]
     assert journal.title == journal_dict["title"] == journal_test_data["title"]
-    assert journal.author.name.lower() == journal_dict["author"]["name"].lower() == journal_test_data["author"]["name"].lower()
+    assert journal.author.name.lower() == journal_dict["author"]["name"].lower() == journal_test_data["author"][
+        "name"].lower()
     assert compare_dates(journal.author.join_date, journal_dict["author"]["join_date"], 1)
     assert compare_dates(journal.author.join_date, datetime.fromisoformat(journal_test_data["author"]["join_date"]), 1)
     assert journal.author.avatar_url == journal_dict["author"]["avatar_url"] != ""
