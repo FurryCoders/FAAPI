@@ -525,12 +525,19 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_species: Optional[Tag] = tag_info.select("span")[bool(tag_category1) + bool(tag_category2)]
     tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
     tag_folder: Optional[Tag] = (
-        sub_page.select_one(".favorite-nav a[href^='/scraps/'], .favorite-nav a[href^='/gallery/']")
+        sub_page.select_one('.favorite-nav a[href^="/scraps/"], .favorite-nav a[href^="/gallery/"]')
+        or sub_page.select_one('#minigallery a[href^="/scraps/"], #minigallery a[href^="/gallery/"]')
     )
     tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
     tag_thumbnail_url: Optional[Tag] = sub_page.select_one("img#submissionImg")
-    tag_prev: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:nth-child(1)")
-    tag_next: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:last-child")
+    tag_prev: Optional[Tag] = (
+        sub_page.select_one('div.submission-content div.favorite-nav a:nth-child(1)[href^="/view/"]')
+        or sub_page.select_one(".minigallery-container > div:nth-child(1) figure:last-child a")
+    )
+    tag_next: Optional[Tag] = (
+        sub_page.select_one('div.submission-content div.favorite-nav a:last-child[href^="/view/"]')
+        or sub_page.select_one(".minigallery-container > div:last-child figure:nth-child(1) a")
+    )
 
     assert tag_id is not None, _raise_exception(ParsingError("Missing id tag"))
     assert tag_title is not None, _raise_exception(ParsingError("Missing title tag"))
@@ -583,10 +590,10 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
         if thumbnail_url else ""
     prev_sub: Optional[int] = int(
         get_attr(tag_prev, "href").strip("/").split("/")[-1]
-    ) if tag_prev and tag_prev.text.lower() == "newer" else None
+    ) if tag_prev else None
     next_sub: Optional[int] = int(
         get_attr(tag_next, "href").strip("/").split("/")[-1]
-    ) if tag_next and tag_next.text.lower() == "older" else None
+    ) if tag_next else None
     fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
     unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
     user_folders: list[tuple[str, str, str]] = []
