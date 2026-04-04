@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.12.2
+
+### Fixes
+
+* Fix selectors for submission folder (gallery/scraps), next submission, and previous submission in submission pages
+  that did not work with the "minigallery" navigation turned on
+    * Fix issue [#27](https://github.com/FurryCoders/FAAPI/issues/27)
+
 ## v3.12.1
 
 ### Fixes
