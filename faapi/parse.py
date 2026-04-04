@@ -524,7 +524,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
     tag_species: Optional[Tag] = tag_info.select("span")[bool(tag_category1) + bool(tag_category2)]
     tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
-    tag_folder: Optional[Tag] = sub_page.select_one("a.button[href^='/scraps/'],a.button[href^='/gallery/']")
+    tag_folder: Optional[Tag] = (
+        sub_page.select_one(".favorite-nav a[href^='/scraps/'], .favorite-nav a[href^='/gallery/']")
+    )
     tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
     tag_thumbnail_url: Optional[Tag] = sub_page.select_one("img#submissionImg")
     tag_prev: Optional[Tag] = sub_page.select_one("div.submission-content div.favorite-nav a:nth-child(1)")
