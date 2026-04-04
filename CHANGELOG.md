@@ -4,7 +4,8 @@
 
 ### Fixes
 
-* Fix imprecise selector for submission folder (gallery/scraps)
+* Fix selector for submission folder (gallery/scraps) in submission pages that did not work with the "minigallery"
+  navigation turned on
 
 ## v3.12.1
 
