@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.3
+
+### Fixes
+
+* Fix `ParsingError` being raised on the first and last submission of a user's gallery/scraps
+
 ## v3.12.2
 
 ### Fixes

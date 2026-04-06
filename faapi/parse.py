@@ -553,8 +553,6 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_description is not None, _raise_exception(ParsingError("Missing description tag"))
     assert tag_folder is not None, _raise_exception(ParsingError("Missing folder tag"))
     assert tag_file_url is not None, _raise_exception(ParsingError("Missing file URL tag"))
-    assert tag_prev is not None, _raise_exception(ParsingError("Missing prev tag"))
-    assert tag_next is not None, _raise_exception(ParsingError("Missing next tag"))
 
     tag_footer: Optional[Tag] = tag_description.select_one("div.submission-footer")
 
