@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.4
+
+### Fixes
+
+* Fix `UserPartial` not yielding `display_name` when called with `dict`
+
 ## v3.12.3
 
 ### Fixes
