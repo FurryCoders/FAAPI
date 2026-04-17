@@ -143,6 +143,7 @@ class UserPartial(UserBase):
 
     def __iter__(self):
         yield "name", self.name
+        yield "display_name", self.display_name
         yield "status", self.status
         yield "title", self.title
         yield "join_date", self.join_date
