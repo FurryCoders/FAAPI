@@ -504,7 +504,9 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_favorites: Optional[Tag] = sub_page.select_one(".submission-page-stats > div:nth-child(3) > div:nth-child(1)")
     tag_rating: Optional[Tag] = sub_page.select_one(".submission-page-stats > div:nth-child(4) > div:nth-child(1)")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
-    tag_fav: Optional[Tag] = sub_page.select_one('#submission-options > a[href^="/fav/"], #submission-options > a[href^="/unfav/"]')
+    tag_fav: Optional[Tag] = sub_page.select_one(
+        '#submission-options > a[href^="/fav/"], #submission-options > a[href^="/unfav/"]'
+    )
     tag_category: Optional[Tag] = sub_page.select_one(
         ".submission-content-stats > span:nth-child(2) > span:nth-child(1)"
     )
