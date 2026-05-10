@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.6
+
+### Fixes
+
+* Fix parsing of favorited submissions
+
 ## v3.12.5
 
 ### Fixes
