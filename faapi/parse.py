@@ -470,26 +470,18 @@ def parse_submission_figure(figure_tag: Tag) -> dict[str, Any]:
 
 
 def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
-    tag_author: Optional[Tag] = author_tag.select_one("div.submission-id-sub-container")
-
-    assert tag_author is not None, _raise_exception(ParsingError("Missing author tag"))
-
-    tag_author_name: Optional[Tag] = tag_author.select_one("span.c-usernameBlockSimple__displayName")
+    tag_author_name: Optional[Tag] = author_tag.select_one('.c-usernameBlockSimple a[href^="/user/"]')
     tag_author_icon: Optional[Tag] = author_tag.select_one("img.submission-user-icon")
+    tag_author_title: Optional[Tag] = author_tag.select_one(".submission-title + div > span:nth-child(2)")
 
     assert tag_author_name is not None, _raise_exception(ParsingError("Missing author name tag"))
     assert tag_author_icon is not None, _raise_exception(ParsingError("Missing author icon tag"))
+    assert tag_author_title is not None, _raise_exception(ParsingError("Missing author title tag"))
 
-    author_name: str = tag_author_name.attrs["title"].strip()
+    author_name: str = get_attr(tag_author_name, "href").removeprefix("/user/").strip("/").lower()
     author_display_name: str = tag_author_name.text.strip()
-    author_title: str = ([*filter(
-        bool, [child.strip()
-               for child in tag_author.children
-               if isinstance(child, NavigableString)][3:]
-    )] or [""])[-1]
-    author_title = author_title if tag_author.select_one('a[href$="/#tip"]') is None else sub(r"\|$", "", author_title)
-    author_title = author_title.strip("\xA0 ")  # NBSP
-    author_icon_url: str = "https:" + get_attr(tag_author_icon, "src")
+    author_title: str = tag_author_title.text.strip()
+    author_icon_url: str = "https:" + get_attr(tag_author_icon, "src").removeprefix("https:")
 
     return {
         "author": author_name,
@@ -501,43 +493,46 @@ def parse_submission_author(author_tag: Tag) -> dict[str, Any]:
 
 def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     tag_id: Optional[Tag] = sub_page.select_one("meta[property='og:url']")
-    tag_sub_info: Optional[Tag] = sub_page.select_one("div.submission-id-sub-container")
-
-    assert tag_sub_info is not None, _raise_exception(ParsingError("Missing info tag"))
-
-    tag_title: Optional[Tag] = tag_sub_info.select_one("div.submission-title")
-    tag_author: Optional[Tag] = sub_page.select_one("div.submission-id-container")
-    tag_date: Optional[Tag] = sub_page.select_one("div.submission-id-container span.popup_date[data-time]")
-    tag_tags: list[Tag] = sub_page.select('section.tags-row a[href^="/"]')
-    tag_views: Optional[Tag] = sub_page.select_one("div.views span")
-    tag_comment_count: Optional[Tag] = sub_page.select_one("section.stats-container div.comments span")
-    tag_favorites: Optional[Tag] = sub_page.select_one("div.favorites span")
-    tag_rating: Optional[Tag] = sub_page.select_one("div.rating span.inline")
+    tag_title: Optional[Tag] = sub_page.select_one(".submission-title > h2")
+    tag_author: Optional[Tag] = sub_page.select_one('.submission-description-artist')
+    tag_date: Optional[Tag] = sub_page.select_one(".submission-description-header span.popup_date[data-time]")
+    tag_tags: list[Tag] = sub_page.select('.submission-tags a[data-tag-name] + a[href^="/search/"]')
+    tag_views: Optional[Tag] = sub_page.select_one(".submission-page-stats > div:nth-child(1) > div:nth-child(1)")
+    tag_comment_count: Optional[Tag] = sub_page.select_one(
+        ".submission-page-stats > div:nth-child(2) > div:nth-child(1)"
+    )
+    tag_favorites: Optional[Tag] = sub_page.select_one(".submission-page-stats > div:nth-child(3) > div:nth-child(1)")
+    tag_rating: Optional[Tag] = sub_page.select_one(".submission-page-stats > div:nth-child(4) > div:nth-child(1)")
     tag_type: Optional[Tag] = sub_page.select_one("div#submission_page[class^='page-content-type']")
-    tag_fav: Optional[Tag] = sub_page.select_one("div.fav > a")
-    tag_info: Optional[Tag] = sub_page.select_one("section.info.text")
-    tag_user_folders: list[Tag] = sub_page.select("section.folder-list-container > div > a")
-
-    assert tag_info is not None, _raise_exception(ParsingError("Missing info tag"))
-
-    tag_category1: Optional[Tag] = tag_info.select_one("span.category-name")
-    tag_category2: Optional[Tag] = tag_info.select_one("span.type-name")
-    tag_species: Optional[Tag] = tag_info.select("span")[bool(tag_category1) + bool(tag_category2)]
-    tag_description: Optional[Tag] = sub_page.select_one("div.submission-description")
+    tag_fav: Optional[Tag] = sub_page.select_one('#submission-options > a[href^="/fav/"]')
+    tag_category: Optional[Tag] = sub_page.select_one(
+        ".submission-content-stats > span:nth-child(2) > span:nth-child(1)"
+    )
+    tag_sub_category: Optional[Tag] = sub_page.select_one(
+        ".submission-content-stats > span:nth-child(2) > span:nth-child(2)"
+    )
+    tag_species: Optional[Tag] = sub_page.select_one(
+        ".submission-content-stats > span:nth-child(2) > span:nth-child(3)"
+    )
+    tag_user_folders: list[Tag] = sub_page.select(".folder-list-container .submission-folder > a")
+    tag_description: Optional[Tag] = sub_page.select_one(".submission-description-text")
     tag_folder: Optional[Tag] = (
-        sub_page.select_one('.favorite-nav a[href^="/scraps/"], .favorite-nav a[href^="/gallery/"]')
+        sub_page.select_one('#submission-options a[href^="/scraps/"], #submission-options a[href^="/gallery/"]')
         or sub_page.select_one('#minigallery a[href^="/scraps/"], #minigallery a[href^="/gallery/"]')
     )
-    tag_file_url: Optional[Tag] = sub_page.select_one("div.download a")
+    tag_file_url: Optional[Tag] = next(
+        (a for a in sub_page.select("#submission-options a") if a.text.strip().lower() == "download"),
+        None
+    )
     tag_thumbnail_url: Optional[Tag] = sub_page.select_one("img#submissionImg")
-    tag_prev: Optional[Tag] = (
-        sub_page.select_one('div.submission-content div.favorite-nav a:nth-child(1)[href^="/view/"]')
-        or sub_page.select_one(".minigallery-container > div:nth-child(1) figure:last-child a")
-    )
-    tag_next: Optional[Tag] = (
-        sub_page.select_one('div.submission-content div.favorite-nav a:last-child[href^="/view/"]')
-        or sub_page.select_one(".minigallery-container > div:last-child figure:nth-child(1) a")
-    )
+    tag_newer: Optional[Tag]
+    tag_older: Optional[Tag]
+    if sub_page.select_one("#minigallery"):
+        tags_prev_next: list[Tag] = sub_page.select('.minigallery-navigation a[href^="/view/"]')
+        tag_newer = next((t for t in tags_prev_next if "newer" in t.text.strip().lower()), None)
+        tag_older = next((t for t in tags_prev_next if "older" in t.text.strip().lower()), None)
+    else:
+        raise NotImplementedError("Requires minigallery")
 
     assert tag_id is not None, _raise_exception(ParsingError("Missing id tag"))
     assert tag_title is not None, _raise_exception(ParsingError("Missing title tag"))
@@ -549,6 +544,8 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     assert tag_rating is not None, _raise_exception(ParsingError("Missing rating tag"))
     assert tag_type is not None, _raise_exception(ParsingError("Missing type tag"))
     assert tag_fav is not None, _raise_exception(ParsingError("Missing fav tag"))
+    assert tag_category is not None, _raise_exception(ParsingError("Missing category tag"))
+    assert tag_sub_category is not None, _raise_exception(ParsingError("Missing sub category tag"))
     assert tag_species is not None, _raise_exception(ParsingError("Missing species tag"))
     assert tag_description is not None, _raise_exception(ParsingError("Missing description tag"))
     assert tag_folder is not None, _raise_exception(ParsingError("Missing folder tag"))
@@ -560,12 +557,7 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     title: str = tag_title.text.strip()
     date: datetime = datetime.fromtimestamp(int(tag_date.attrs["data-time"]))
     tags: list[str] = [t.text.strip() for t in tag_tags]
-    category: str = ""
-    if tag_category1:
-        category += tag_category1.text.strip()
-    if tag_category2:
-        category += " / " + tag_category2.text.strip()
-        category.strip()
+    category: str = f"{tag_category.text.strip()} / {tag_sub_category.text.strip()}"
     species: str = tag_species.text.strip()
     rating: str = tag_rating.text.strip()
     views: int = int(tag_views.text.strip())
@@ -587,11 +579,11 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
     thumbnail_url = f"{thumbnail_url.rsplit('/', 1)[0]}/{quote(thumbnail_url.rsplit('/', 1)[1])}" \
         if thumbnail_url else ""
     prev_sub: Optional[int] = int(
-        get_attr(tag_prev, "href").strip("/").split("/")[-1]
-    ) if tag_prev else None
+        get_attr(tag_newer, "href").strip("/").split("/")[-1]
+    ) if tag_newer else None
     next_sub: Optional[int] = int(
-        get_attr(tag_next, "href").strip("/").split("/")[-1]
-    ) if tag_next else None
+        get_attr(tag_older, "href").strip("/").split("/")[-1]
+    ) if tag_older else None
     fav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/fav/") else None
     unfav_link: Optional[str] = f"{root}{href}" if (href := get_attr(tag_fav, "href")).startswith("/unfav/") else None
     user_folders: list[tuple[str, str, str]] = []
