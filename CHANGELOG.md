@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.5
+
+### Fixes
+
+* Fix parsing errors due to FurAffinity's update on 2026-05-09
+
 ## v3.12.4
 
 ### Fixes
