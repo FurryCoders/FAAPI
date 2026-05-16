@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.12.7
+
+### Fixes
+
+* Fix parsing of mentions
+    * Some anchor links are rendered without a href property, causing the parser to fail
+
 ## v3.12.6
 
 ### Fixes
