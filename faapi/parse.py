@@ -346,7 +346,7 @@ def parse_username_from_url(url: str) -> Optional[str]:
 
 
 def parse_mentions(tag: Tag) -> list[str]:
-    mentions: list[str] = [username_url(m[1]) for a in tag.select("a")
+    mentions: list[str] = [username_url(m[1]) for a in tag.select("a[href]")
                            if (m := match(mentions_regexp, get_attr(a, "href")))]
     return sorted(set([m for m in mentions if m]), key=mentions.index)
 
