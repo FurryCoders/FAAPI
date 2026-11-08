@@ -10,6 +10,7 @@ from typing import Any
 from typing import Optional
 from typing import Union
 from urllib.parse import quote
+from uuid import UUID
 
 from bbcode import Parser as BBCodeParser  # type:ignore
 from bs4 import BeautifulSoup
@@ -641,8 +642,10 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
 
     tag_join_date: Optional[Tag] = tag_user_title.select_one("span.popup_date[data-time]")
+    tag_unique_id: Optional[Tag] = tag_user_title.select_one('a[href^="/user/id:"]')
 
     assert tag_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
+    assert tag_unique_id is not None, _raise_exception(ParsingError("Missing unique id tag"))
 
     tag_user_symbol: Optional[Tag] = tag_user_name.select_one("span.c-usernameBlock__symbol")
     tag_title: Optional[NavigableString] = ns if isinstance(ns := next(tag_user_title.children, None), NavigableString) else None
@@ -655,6 +658,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     join_date: datetime = datetime.fromtimestamp(int(get_attr(tag_join_date, "data-time")))
     avatar_url: str = "https:" + get_attr(tag_avatar, "src")
     avatar_url = f"{avatar_url.rsplit('/', 1)[0]}/{quote(avatar_url.rsplit('/', 1)[1])}"
+    unique_id: UUID = UUID(get_attr(tag_unique_id, "href").split(":")[-1])
 
     return {
         "status": status,
@@ -663,6 +667,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
         "title": title,
         "join_date": join_date,
         "avatar_url": avatar_url,
+        "unique_id": unique_id,
     }
 
 
