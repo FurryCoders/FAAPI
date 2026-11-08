@@ -58,7 +58,7 @@ def remove_user_icons(html: str) -> str:
 
 def test_robots(cookies: RequestsCookieJar):
     api: FAAPI = FAAPI(cookies)
-    assert getattr(api.robots, "default_entry") is not None
+    assert api.robots.entries
     assert api.crawl_delay >= 1
     assert api.check_path("/")
     assert api.check_path("/view")
