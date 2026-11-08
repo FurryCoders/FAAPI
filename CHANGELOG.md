@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.13.0
+
+### New Features
+
+* Add `User.id: UUID` property
+
+### Fixes
+
+* Fix parsing of user pages
+    * Fix issue [#37](https://github.com/FurryCoders/FAAPI/issues/37)
+
 ## v3.12.7
 
 ### Fixes

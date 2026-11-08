@@ -2,6 +2,7 @@ from collections import namedtuple
 from datetime import datetime
 from typing import Optional
 from urllib.parse import quote
+from uuid import UUID
 
 from .connection import join_url
 from .connection import root
@@ -184,6 +185,7 @@ class User(UserBase):
 
         super().__init__()
 
+        self.id: UUID = UUID(int=0)
         self.user_page: Optional[BeautifulSoup] = user_page
         self.title: str = ""
         self.join_date: datetime = datetime.fromtimestamp(0)
@@ -201,6 +203,7 @@ class User(UserBase):
         self.parse()
 
     def __iter__(self):
+        yield "id", self.id
         yield "name", self.name
         yield "display_name", self.display_name
         yield "status", self.status
@@ -243,6 +246,7 @@ class User(UserBase):
 
         parsed: dict = parse_user_page(self.user_page)
 
+        self.id = parsed["unique_id"]
         self.name = parsed["name"]
         self.display_name = parsed["display_name"]
         self.status = parsed["status"]
