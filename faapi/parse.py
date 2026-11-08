@@ -649,9 +649,9 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
 
     tag_user_symbol: Optional[Tag] = tag_user_name.select_one("span.c-usernameBlock__symbol")
     tag_title: Optional[NavigableString] = ns if isinstance(
-        ns := next(tag_user_title.children, None),
+        ns := next(tag_user_title.children, None),  # type: ignore
         NavigableString
-    ) else None # type: ignore
+    ) else None
 
     status: str = tag_user_symbol.text.strip() if tag_user_symbol else ""
     name: str = tag_user_name.text.strip().removeprefix(status).strip()
