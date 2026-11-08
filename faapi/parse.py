@@ -654,7 +654,7 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     name: str = tag_user_name.text.strip().removeprefix(status).strip()
     display_name: str = tag_user_display_name.text.strip()
 
-    title: str = tag_title.text.strip() if tag_title else ""
+    title: str = tag_title.text.strip("| \n\r") if tag_title else ""
     join_date: datetime = datetime.fromtimestamp(int(get_attr(tag_join_date, "data-time")))
     avatar_url: str = "https:" + get_attr(tag_avatar, "src")
     avatar_url = f"{avatar_url.rsplit('/', 1)[0]}/{quote(avatar_url.rsplit('/', 1)[1])}"
