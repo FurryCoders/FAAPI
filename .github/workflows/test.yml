@@ -16,7 +16,7 @@ jobs:
   flake8:
     if: github.event_name != 'schedule'
     name: Flake8
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v7
@@ -32,7 +32,7 @@ jobs:
   mypy:
     if: github.event_name != 'schedule'
     name: mypy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v7
