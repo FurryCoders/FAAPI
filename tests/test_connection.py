@@ -46,7 +46,7 @@ def test_make_session_error():
 def test_get_robots(cookies: RequestsCookieJar):
     result = get_robots(make_session(cookies, Session))
     assert isinstance(result, RobotFileParser)
-    assert result.entries
+    assert result.entries  # type: ignore
 
 
 def test_get(cookies: RequestsCookieJar):
