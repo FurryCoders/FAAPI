@@ -632,22 +632,27 @@ def parse_submission_page(sub_page: BeautifulSoup) -> dict[str, Any]:
 def parse_user_header(user_header: Tag) -> dict[str, Any]:
     tag_user_name: Optional[Tag] = user_header.select_one("a.c-usernameBlock__userName")
     tag_user_display_name: Optional[Tag] = user_header.select_one("a.c-usernameBlock__displayName")
-    tag_title_join_date: Optional[Tag] = user_header.select_one("userpage-nav-user-details span.user-title")
+    tag_user_title: Optional[Tag] = user_header.select_one("userpage-nav-user-details span.user-title")
     tag_avatar: Optional[Tag] = user_header.select_one("userpage-nav-avatar img")
 
     assert tag_user_name is not None, _raise_exception(ParsingError("Missing user name tag"))
     assert tag_user_display_name is not None, _raise_exception(ParsingError("Missing user display name tag"))
-    assert tag_title_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
+    assert tag_user_title is not None, _raise_exception(ParsingError("Missing user title tag"))
     assert tag_avatar is not None, _raise_exception(ParsingError("Missing user icon tag"))
 
+    tag_join_date: Optional[Tag] = tag_user_title.select_one("span.popup_date[data-time]")
+
+    assert tag_join_date is not None, _raise_exception(ParsingError("Missing join date tag"))
+
     tag_user_symbol: Optional[Tag] = tag_user_name.select_one("span.c-usernameBlock__symbol")
+    tag_title: Optional[NavigableString] = ns if isinstance(ns := next(tag_user_title.children, None), NavigableString) else None
 
     status: str = tag_user_symbol.text.strip() if tag_user_symbol else ""
     name: str = tag_user_name.text.strip().removeprefix(status).strip()
     display_name: str = tag_user_display_name.text.strip()
 
-    title: str = ttd[0].strip() if len(ttd := tag_title_join_date.text.rsplit("|", 1)) > 1 else ""
-    join_date: datetime = parse_date(ttd[-1].strip().split(":", 1)[1])
+    title: str = tag_title.text.strip() if tag_title else ""
+    join_date: datetime = datetime.fromtimestamp(int(get_attr(tag_join_date, "data-time")))
     avatar_url: str = "https:" + get_attr(tag_avatar, "src")
     avatar_url = f"{avatar_url.rsplit('/', 1)[0]}/{quote(avatar_url.rsplit('/', 1)[1])}"
 
