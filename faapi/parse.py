@@ -648,7 +648,10 @@ def parse_user_header(user_header: Tag) -> dict[str, Any]:
     assert tag_unique_id is not None, _raise_exception(ParsingError("Missing unique id tag"))
 
     tag_user_symbol: Optional[Tag] = tag_user_name.select_one("span.c-usernameBlock__symbol")
-    tag_title: Optional[NavigableString] = ns if isinstance(ns := next(tag_user_title.children, None), NavigableString) else None
+    tag_title: Optional[NavigableString] = ns if isinstance(
+        ns := next(tag_user_title.children, None),
+        NavigableString
+    ) else None
 
     status: str = tag_user_symbol.text.strip() if tag_user_symbol else ""
     name: str = tag_user_name.text.strip().removeprefix(status).strip()
