@@ -233,6 +233,7 @@ If no `user_tag` is passed then the object fields will remain at their default -
 
 The main class storing all of a user's metadata.
 
+* `id: UUID` unique Fur Affinity user ID
 * `name: str` display name with capital letters and extra characters such as "_"
 * `status: str` user status (~, !, etc.)
 * `title: str` the user title as it appears on their userpage
